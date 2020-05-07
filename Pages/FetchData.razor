@@ -1,6 +1,8 @@
 ﻿@page "/fetchdata"
-
+@using C1.Blazor.Grid
+@using C1.DataCollection
 @using nats_ui.Data
+@using System.Threading
 @inject WeatherForecastService ForecastService
 
 <h1>Weather forecast</h1>
@@ -13,34 +15,35 @@
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+    <FlexGrid ItemsSource="forecasts" 
+              AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
+              ColumnHeaderStyle="@("font-weight:bold")">  
+        <FlexGridColumns>  
+            <GridColumn Binding="Date" Format="d"/>  
+            <GridColumn Binding="TemperatureC" Header="Temp. (C)" />  
+            <GridColumn Binding="TemperatureF" Header="Temp. (F)" />  
+            <GridColumn Binding="Summary" />  
+        </FlexGridColumns>  
+    </FlexGrid>}
 
 @code {
-    private WeatherForecast[] forecasts;
+    private C1DataCollection<WeatherForecast> forecasts;
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        WeatherForecast[] data = await ForecastService.GetForecastAsync(DateTime.Now);
+        forecasts = new C1DataCollection<WeatherForecast>(new List<WeatherForecast>(data));
     }
+
+    private async Task IncrementCount()
+    {
+        await forecasts.InsertAsync(0, new WeatherForecast
+        {
+            Summary = "Yo !"
+        });
+    }
+
 }
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+

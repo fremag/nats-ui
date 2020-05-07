@@ -7,6 +7,9 @@ namespace nats_ui.Data
         public string Url => $"nats://{Host}:{Port}";
 
         [Required]
+        public string Name { get; set; } = "localhost";
+        
+        [Required]
         public string Host { get; set; } = "127.0.0.1";
 
         [Required]
