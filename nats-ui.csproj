@@ -5,4 +5,15 @@
     <RootNamespace>nats_ui</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Update="Pages\NatsSession.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NATS.Client" Version="0.10.1-pre2" />
+    <PackageReference Include="NLog" Version="4.7.0" />
+  </ItemGroup>
+
 </Project>

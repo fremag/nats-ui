@@ -1,0 +1,14 @@
+﻿@page "/nats"
+@inherits NatsSessionComponent
+
+<h1>Nats</h1>
+
+<EditForm Model="@NatsSession" OnSubmit="@CreateSession">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="host" @bind-Value="NatsSession.Host" />
+    <InputNumber id="port" @bind-Value="NatsSession.Port" />
+
+    <button type="submit">Create</button>
+</EditForm>
