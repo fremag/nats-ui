@@ -1,5 +1,6 @@
 ﻿@page "/nats"
 @inherits NatsConnectionComponent
+
 @using C1.Blazor.Grid
 
 <h1>Nats</h1>
@@ -17,7 +18,8 @@
 
 <FlexGrid ItemsSource="connections" 
           AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
-          ColumnHeaderStyle="@("font-weight:bold")">  
+          ColumnHeaderStyle="@("font-weight:bold")"
+          SelectionChanged="@SelectedConnectionChanged">  
     <FlexGridColumns>  
         <GridColumn Binding="Selected"  Header="Sel" />  
         <GridColumn Binding="Name"/>  
