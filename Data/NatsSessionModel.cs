@@ -6,6 +6,8 @@ namespace nats_ui.Data
     {
         public string Url => $"nats://{Host}:{Port}";
 
+        public bool Selected { get; set; } = false;
+        
         [Required]
         public string Name { get; set; } = "localhost";
         
@@ -14,5 +16,15 @@ namespace nats_ui.Data
 
         [Required]
         public int Port { get; set; } = 4222;
+
+        public override string ToString()
+        {
+            return $"{Name}, {Host}, {Port}, {Selected}";
+        }
+
+        public NatsSessionModel Clone()
+        {
+            return (NatsSessionModel)MemberwiseClone();
+        }
     }
 }

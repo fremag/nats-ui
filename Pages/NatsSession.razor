@@ -1,5 +1,6 @@
 ﻿@page "/nats"
 @inherits NatsSessionComponent
+@using C1.Blazor.Grid
 
 <h1>Nats</h1>
 
@@ -7,8 +8,20 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
 
+    <InputText id="name" @bind-Value="NatsSession.Name" />
     <InputText id="host" @bind-Value="NatsSession.Host" />
     <InputNumber id="port" @bind-Value="NatsSession.Port" />
 
     <button type="submit">Create</button>
 </EditForm>
+
+<FlexGrid ItemsSource="sessions" 
+          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
+          ColumnHeaderStyle="@("font-weight:bold")">  
+    <FlexGridColumns>  
+        <GridColumn Binding="Selected"  Header="Sel" />  
+        <GridColumn Binding="Name"/>  
+        <GridColumn Binding="Host"/>  
+        <GridColumn Binding="Summary" />  
+    </FlexGridColumns>  
+</FlexGrid>
