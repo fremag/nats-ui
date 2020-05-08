@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace nats_ui.Data
 {
-    public class NatsSessionModel
+    public class NatsConnectionModel
     {
         public string Url => $"nats://{Host}:{Port}";
 
@@ -22,9 +22,9 @@ namespace nats_ui.Data
             return $"{Name}, {Host}, {Port}, {Selected}";
         }
 
-        public NatsSessionModel Clone()
+        public NatsConnectionModel Clone()
         {
-            return (NatsSessionModel)MemberwiseClone();
+            return (NatsConnectionModel)MemberwiseClone();
         }
     }
 }

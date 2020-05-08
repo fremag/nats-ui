@@ -1,21 +1,21 @@
 ﻿@page "/nats"
-@inherits NatsSessionComponent
+@inherits NatsConnectionComponent
 @using C1.Blazor.Grid
 
 <h1>Nats</h1>
 
-<EditForm Model="@NatsSession" OnSubmit="@CreateSession">
+<EditForm Model="@NatsConnection" OnSubmit="@CreateConnection">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <InputText id="name" @bind-Value="NatsSession.Name" />
-    <InputText id="host" @bind-Value="NatsSession.Host" />
-    <InputNumber id="port" @bind-Value="NatsSession.Port" />
+    <InputText id="name" @bind-Value="NatsConnection.Name" />
+    <InputText id="host" @bind-Value="NatsConnection.Host" />
+    <InputNumber id="port" @bind-Value="NatsConnection.Port" />
 
     <button type="submit">Create</button>
 </EditForm>
 
-<FlexGrid ItemsSource="sessions" 
+<FlexGrid ItemsSource="connections" 
           AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
           ColumnHeaderStyle="@("font-weight:bold")">  
     <FlexGridColumns>  

@@ -11,45 +11,45 @@ namespace nats_ui.Data
      
         public NatsConfiguration Configuration { get; } = new NatsConfiguration();
         
-        public event Action<NatsSessionModel> SessionCreated;
-        public event Action<NatsSessionModel> SessionDeleted;
+        public event Action<NatsConnectionModel> ConnectionCreated;
+        public event Action<NatsConnectionModel> ConnectionDeleted;
         
-        public void Create(NatsSessionModel natsSession)
+        public void Create(NatsConnectionModel natsConnection)
         {
-            Logger.Info($"Create Session: {natsSession.Url}");
-            Configuration.Add(natsSession);
-            SessionCreated?.Invoke(natsSession);
+            Logger.Info($"Create Connection: {natsConnection.Url}");
+            Configuration.Add(natsConnection);
+            ConnectionCreated?.Invoke(natsConnection);
         }
         
-        public void Remove(NatsSessionModel natsSession)
+        public void Remove(NatsConnectionModel natsConnection)
         {
-            Logger.Info($"Create Session: {natsSession.Url}");
-            Configuration.Remove(natsSession.Name);
-            SessionDeleted?.Invoke(natsSession);
+            Logger.Info($"Remove Connection: {natsConnection.Url}");
+            Configuration.Remove(natsConnection.Name);
+            ConnectionDeleted?.Invoke(natsConnection);
         }
     }
 
     public class NatsConfiguration
     {
-        public List<NatsSessionModel> Sessions { get; set; } = new List<NatsSessionModel>();
+        public List<NatsConnectionModel> Connections { get; set; } = new List<NatsConnectionModel>();
 
-        public NatsSessionModel GetByName(string name)
+        public NatsConnectionModel GetByName(string name)
         {
-            return Sessions.FirstOrDefault(model => model.Name == name);
+            return Connections.FirstOrDefault(model => model.Name == name);
         }
         
-        public void Add(NatsSessionModel natsSession)
+        public void Add(NatsConnectionModel natsConnection)
         {
-            Remove(natsSession.Name);
-            Sessions.Add(natsSession);
+            Remove(natsConnection.Name);
+            Connections.Add(natsConnection);
         }
 
         public void Remove(string name)
         {
-            var session = GetByName(name);
-            if (session != null)
+            var connectionModel = GetByName(name);
+            if (connectionModel != null)
             {
-                Sessions.Remove(session);
+                Connections.Remove(connectionModel);
             }
         }
     }
