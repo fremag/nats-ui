@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace nats_ui.Data
@@ -25,6 +26,24 @@ namespace nats_ui.Data
         public NatsConnectionModel Clone()
         {
             return (NatsConnectionModel)MemberwiseClone();
+        }
+
+        protected bool Equals(NatsConnectionModel other)
+        {
+            return Name == other.Name && Host == other.Host && Port == other.Port;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((NatsConnectionModel) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, Host, Port);
         }
     }
 }

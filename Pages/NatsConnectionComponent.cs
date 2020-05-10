@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using C1.Blazor.Grid;
 using C1.DataCollection;
@@ -23,11 +24,34 @@ namespace nats_ui.Pages
             Logger.Info($"CreateConnection: {NatsConnection}");
             NatsService.Create(NatsConnection.Clone());
         }
+
+        protected void RemoveConnections()
+        {
+            Logger.Info("RemoveConnections");
+            foreach (var connection in connections.OfType<NatsConnectionModel>().Where(conn => conn.Selected).ToArray())
+            {
+                Logger.Info($"RemoveConnection: {connection}");
+                NatsService.Remove(connection);
+            }
+        }
         
         protected override async Task OnInitializedAsync()
         {
             NatsService.ConnectionCreated += OnConnectionCreated;
+            NatsService.ConnectionRemoved += OnConnectionRemoved;
             connections = new C1DataCollection<NatsConnectionModel>(new List<NatsConnectionModel>(NatsService.Configuration.Connections));
+        }
+
+        private void OnConnectionRemoved(NatsConnectionModel connection)
+        {
+            for (int i = connections.Count - 1; i >= 0; i--)
+            {
+                if (connections[i].Equals(connection))
+                {
+                    connections.RemoveAsync(i);
+                    return;
+                }
+            }
         }
 
         private void OnConnectionCreated(NatsConnectionModel connection)
@@ -37,13 +61,7 @@ namespace nats_ui.Pages
 
         protected void SelectedConnectionChanged(object sender, GridCellRangeEventArgs e)
         {
-            var cellRange = e.CellRange;
-            if (cellRange == null)
-            {
-                return;
-            }
-            
-            var selected = connections[cellRange.Row] as NatsConnectionModel;
+            var selected = GetSelected(e.CellRange);
             if (selected == null)
             {
                 return;
@@ -53,6 +71,40 @@ namespace nats_ui.Pages
             NatsConnection.Port = selected.Port;
             
             InvokeAsync(StateHasChanged);
+        }
+
+        private NatsConnectionModel GetSelected(GridCellRange cellRange)
+        {
+            if (cellRange == null)
+            {
+                return null;
+            }
+            
+            var selected = connections[cellRange.Row] as NatsConnectionModel;
+            return selected;
+        }
+
+        protected void OnCellTaped(object? sender, GridInputEventArgs e)
+        {
+            var selected = GetSelected(e.CellRange);
+            if (selected == null)
+            {
+                return;
+            }
+
+            if (e.CellRange.Column == 0)
+            {
+                selected.Selected = ! selected.Selected;
+            }
+        }
+
+        public void DumpConnections()
+        {
+            Logger.Info("DumpConnections");
+            foreach (var connection in connections)
+            {
+                Logger.Info(connection);
+            }
         }
     }
 }

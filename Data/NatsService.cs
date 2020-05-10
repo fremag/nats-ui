@@ -12,7 +12,7 @@ namespace nats_ui.Data
         public NatsConfiguration Configuration { get; } = new NatsConfiguration();
         
         public event Action<NatsConnectionModel> ConnectionCreated;
-        public event Action<NatsConnectionModel> ConnectionDeleted;
+        public event Action<NatsConnectionModel> ConnectionRemoved;
         
         public void Create(NatsConnectionModel natsConnection)
         {
@@ -25,7 +25,7 @@ namespace nats_ui.Data
         {
             Logger.Info($"Remove Connection: {natsConnection.Url}");
             Configuration.Remove(natsConnection.Name);
-            ConnectionDeleted?.Invoke(natsConnection);
+            ConnectionRemoved?.Invoke(natsConnection);
         }
     }
 

@@ -1,6 +1,5 @@
 ﻿@page "/nats"
 @inherits NatsConnectionComponent
-
 @using C1.Blazor.Grid
 
 <h1>Nats</h1>
@@ -13,17 +12,23 @@
     <InputText id="host" @bind-Value="NatsConnection.Host" />
     <InputNumber id="port" @bind-Value="NatsConnection.Port" />
 
-    <button type="submit">Create</button>
+    <button class="btn btn-primary" type="submit">Create</button>
 </EditForm>
+
+<button class="btn btn-primary" @onclick="RemoveConnections">Remove</button>
+<button class="btn btn-primary" @onclick="DumpConnections">Dump</button>
 
 <FlexGrid ItemsSource="connections" 
           AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
           ColumnHeaderStyle="@("font-weight:bold")"
-          SelectionChanged="@SelectedConnectionChanged">  
+          SelectionChanged="@SelectedConnectionChanged"
+          SelectionMode="GridSelectionMode.Row"
+          CellTapped="OnCellTaped"
+          >  
     <FlexGridColumns>  
-        <GridColumn Binding="Selected"  Header="Sel" />  
-        <GridColumn Binding="Name"/>  
-        <GridColumn Binding="Host"/>  
-        <GridColumn Binding="Summary" />  
+        <GridColumn Binding="Selected"  Header="Sel" IsReadOnly="true" Width="50" />  
+        <GridColumn Binding="Name" IsReadOnly="true"/>  
+        <GridColumn Binding="Host" IsReadOnly="true"/>  
+        <GridColumn Binding="Port" IsReadOnly="true" />  
     </FlexGridColumns>  
 </FlexGrid>
