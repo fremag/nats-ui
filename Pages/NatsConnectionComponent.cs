@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using C1.Blazor.Core;
 using C1.Blazor.Grid;
 using C1.DataCollection;
 using Microsoft.AspNetCore.Components;
@@ -18,11 +19,13 @@ namespace nats_ui.Pages
 
         protected NatsConnectionModel NatsConnection { get; } = new NatsConnectionModel();
         protected C1DataCollection<NatsConnectionModel> connections;
+        public string Status { get; set; }
 
         protected void CreateConnection()
         {
             Logger.Info($"CreateConnection: {NatsConnection}");
-            NatsService.Create(NatsConnection.Clone());
+            Status = NatsService.Create(NatsConnection.Clone());
+            InvokeAsync(StateHasChanged);
         }
 
         protected void RemoveConnections()
@@ -33,8 +36,11 @@ namespace nats_ui.Pages
                 Logger.Info($"RemoveConnection: {connection}");
                 NatsService.Remove(connection);
             }
+
+            Status = "Connection removed";
+            InvokeAsync(StateHasChanged);
         }
-        
+
         protected override async Task OnInitializedAsync()
         {
             NatsService.ConnectionCreated += OnConnectionCreated;
@@ -66,10 +72,11 @@ namespace nats_ui.Pages
             {
                 return;
             }
+
             NatsConnection.Name = selected.Name;
             NatsConnection.Host = selected.Host;
             NatsConnection.Port = selected.Port;
-            
+
             InvokeAsync(StateHasChanged);
         }
 
@@ -79,7 +86,7 @@ namespace nats_ui.Pages
             {
                 return null;
             }
-            
+
             var selected = connections[cellRange.Row] as NatsConnectionModel;
             return selected;
         }
@@ -94,7 +101,7 @@ namespace nats_ui.Pages
 
             if (e.CellRange.Column == 0)
             {
-                selected.Selected = ! selected.Selected;
+                selected.Selected = !selected.Selected;
             }
         }
 
@@ -104,6 +111,24 @@ namespace nats_ui.Pages
             foreach (var connection in connections)
             {
                 Logger.Info(connection);
+            }
+        }
+
+        protected ConnectionCellFactory GridCellFactory { get; } = new ConnectionCellFactory();
+
+        protected class ConnectionCellFactory : GridCellFactory
+        {
+            public override void PrepareCellStyle(GridCellType cellType, GridCellRange range, C1Style style)
+            {
+                base.PrepareCellStyle(cellType, range, style);
+                var selectedColumn = Grid.Columns[nameof(NatsConnectionModel.Selected)];
+                if (cellType != GridCellType.Cell)
+                {
+                    return;
+                }
+
+                var value = (bool) Grid[range.Row, selectedColumn.Index];
+                style.BackgroundColor = value ? C1Color.Green : C1Color.Gray;
             }
         }
     }

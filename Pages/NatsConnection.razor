@@ -14,7 +14,7 @@
 
     <button class="btn btn-primary" type="submit">Create</button>
 </EditForm>
-
+<div>@Status</div>
 <button class="btn btn-primary" @onclick="RemoveConnections">Remove</button>
 <button class="btn btn-primary" @onclick="DumpConnections">Dump</button>
 
@@ -24,9 +24,10 @@
           SelectionChanged="@SelectedConnectionChanged"
           SelectionMode="GridSelectionMode.Row"
           CellTapped="OnCellTaped"
+          CellFactory="@GridCellFactory"
           >  
     <FlexGridColumns>  
-        <GridColumn Binding="Selected"  Header="Sel" IsReadOnly="true" Width="50" />  
+        <GridColumn Binding="Selected" Header="Sel" IsReadOnly="true" Width="50"/>
         <GridColumn Binding="Name" IsReadOnly="true"/>  
         <GridColumn Binding="Host" IsReadOnly="true"/>  
         <GridColumn Binding="Port" IsReadOnly="true" />  
