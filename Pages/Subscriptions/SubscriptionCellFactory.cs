@@ -2,9 +2,9 @@ using C1.Blazor.Core;
 using C1.Blazor.Grid;
 using nats_ui.Data;
 
-namespace nats_ui.Pages.Subjects
+namespace nats_ui.Pages.Subscriptions
 {
-    public class SubjectCellFactory : GridCellFactory
+    public class SubscriptionCellFactory : GridCellFactory
     {
         public override void PrepareCellStyle(GridCellType cellType, GridCellRange range, C1Style style)
         {
@@ -14,7 +14,7 @@ namespace nats_ui.Pages.Subjects
                 return;
             }
 
-            var subscribedColumn = Grid.Columns[nameof(NatsSubject.Subscribed)];
+            var subscribedColumn = Grid.Columns[nameof(NatsSubscription.Subscribed)];
             var subscribed = (bool) Grid[range.Row, subscribedColumn.Index];
             if (range.Column == subscribedColumn.Index && subscribed)
             {
@@ -22,7 +22,7 @@ namespace nats_ui.Pages.Subjects
                 return;
             }
 
-            var selectedColumn = Grid.Columns[nameof(NatsSubject.Selected)];
+            var selectedColumn = Grid.Columns[nameof(NatsSubscription.Selected)];
             var isSelected = (bool) Grid[range.Row, selectedColumn.Index];
             if (isSelected)
             {

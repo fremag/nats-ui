@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Components;
 using nats_ui.Data;
 using NLog;
 
-namespace nats_ui.Pages.Subjects
+namespace nats_ui.Pages.Subscriptions
 {
-    public class SubjectsComponent : ComponentBase
+    public class SubscriptionsComponent : ComponentBase
     {
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
@@ -23,54 +23,53 @@ namespace nats_ui.Pages.Subjects
         private NatsService NatsService { get; set; }
 
         protected SubjectModel Model { get; } = new SubjectModel();
-        protected C1DataCollection<NatsSubject> Subjects { get; private set; }
-        protected SubjectCellFactory GridCellFactory { get; } = new SubjectCellFactory();
+        protected C1DataCollection<NatsSubscription> Subscriptions { get; private set; }
+        protected SubscriptionCellFactory GridCellFactory { get; } = new SubscriptionCellFactory();
 
         protected override Task OnInitializedAsync()
         {
-            NatsService.SubjectCreated += OnSubjectCreated;
-            NatsService.SubjectRemoved += OnSubjectRemoved;
-            Subjects = new C1DataCollection<NatsSubject>(new List<NatsSubject>(NatsService.Configuration.Subjects));
+            NatsService.SubscriptionCreated += OnSubscriptionCreated;
+            NatsService.SubscriptionRemoved += OnSubscriptionRemoved;
+            Subscriptions = new C1DataCollection<NatsSubscription>(new List<NatsSubscription>(NatsService.Configuration.Subjects));
             return Task.CompletedTask;
         }
 
-
-        private void OnSubjectRemoved(NatsSubject subject)
+        private void OnSubscriptionRemoved(NatsSubscription subscription)
         {
-            for (int i = Subjects.Count - 1; i >= 0; i--)
+            for (int i = Subscriptions.Count - 1; i >= 0; i--)
             {
-                if (Subjects[i].Equals(subject))
+                if (Subscriptions[i].Equals(subscription))
                 {
-                    Subjects.RemoveAsync(i);
+                    Subscriptions.RemoveAsync(i);
                     return;
                 }
             }
         }
 
-        private void OnSubjectCreated(NatsSubject subject)
+        private void OnSubscriptionCreated(NatsSubscription subscription)
         {
-            Subjects.InsertAsync(0, subject);
+            Subscriptions.InsertAsync(0, subscription);
         }
 
-        protected void CreateSubject()
+        protected void CreateSubscription()
         {
-            Logger.Info($"{nameof(CreateSubject)}: {Model}");
-            if (Subjects.Contains(Model.Subject))
+            Logger.Info($"{nameof(CreateSubscription)}: {Model}");
+            if (Subscriptions.Contains(Model.Subject))
             {
                 return;
             }
 
-            NatsService.Create(new NatsSubject(Model.Subject)
+            NatsService.Create(new NatsSubscription(Model.Subject)
             {
                 Selected = false,
                 Subscribed = false
             });
         }
 
-        protected void RemoveSubjects()
+        protected void RemoveSubscriptions()
         {
-            Logger.Info(nameof(RemoveSubjects));
-            foreach (var subject in Subjects.OfType<NatsSubject>().Where(natsSubject => natsSubject.Selected).ToArray())
+            Logger.Info(nameof(RemoveSubscriptions));
+            foreach (var subject in Subscriptions.OfType<NatsSubscription>().Where(natsSubject => natsSubject.Selected).ToArray())
             {
                 Logger.Info($"RemoveSubject: {subject}");
                 NatsService.Remove(subject);
@@ -91,14 +90,14 @@ namespace nats_ui.Pages.Subjects
             InvokeAsync(StateHasChanged);
         }
 
-        private NatsSubject GetSelected(GridCellRange cellRange)
+        private NatsSubscription GetSelected(GridCellRange cellRange)
         {
             if (cellRange == null)
             {
                 return null;
             }
 
-            var selected = Subjects[cellRange.Row] as NatsSubject;
+            var selected = Subscriptions[cellRange.Row] as NatsSubscription;
             return selected;
         }
 
@@ -135,14 +134,14 @@ namespace nats_ui.Pages.Subjects
         
         }
 
-        private void Subscribe(NatsSubject natsSubject)
+        private void Subscribe(NatsSubscription natsSubscription)
         {
-            NatsService.Subscribe(natsSubject);
+            NatsService.Subscribe(natsSubscription);
         }
 
-        private void Unsubscribe(NatsSubject natsSubject)
+        private void Unsubscribe(NatsSubscription natsSubscription)
         {
-            NatsService.Unsubscribe(natsSubject);
+            NatsService.Unsubscribe(natsSubscription);
         }
     }
 }

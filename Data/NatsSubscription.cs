@@ -1,17 +1,17 @@
 namespace nats_ui.Data
 {
-    public class NatsSubject
+    public class NatsSubscription
     {
         public bool Selected { get; set; }
         public bool Subscribed { get; set; }
         public string Subject { get; }
 
-        public NatsSubject(string subject)
+        public NatsSubscription(string subject)
         {
             Subject = subject;
         }
 
-        protected bool Equals(NatsSubject other)
+        protected bool Equals(NatsSubscription other)
         {
             return Subject == other.Subject;
         }
@@ -21,7 +21,7 @@ namespace nats_ui.Data
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((NatsSubject) obj);
+            return Equals((NatsSubscription) obj);
         }
 
         public override int GetHashCode()

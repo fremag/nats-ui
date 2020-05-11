@@ -1,18 +1,18 @@
-@page "/subjects" 
-@inherits SubjectsComponent 
+@page "/subscriptions" 
+@inherits SubscriptionsComponent 
 
 @using C1.Blazor.Grid
 
 <h1>Subjects</h1>
 
-<EditForm Model="@Model" OnSubmit="@CreateSubject">
+<EditForm Model="@Model" OnSubmit="@CreateSubscription">
     <InputText id="subject" @bind-Value="Model.Subject" />
 
     <button class="btn btn-primary" type="submit">Create</button>
 </EditForm>
-<button class="btn btn-primary" @onclick="RemoveSubjects">Remove</button>
+<button class="btn btn-primary" @onclick="RemoveSubscriptions">Remove</button>
 
-<FlexGrid ItemsSource="Subjects" 
+<FlexGrid ItemsSource="Subscriptions" 
           AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
           ColumnHeaderStyle="@("font-weight:bold")"
           SelectionChanged="@SelectedSubjectChanged"

@@ -11,12 +11,12 @@ namespace nats_ui.Data
      
         public NatsConfiguration Configuration { get; } = new NatsConfiguration();
         private Dictionary<string, IConnection> ConnectionsByName { get; } = new Dictionary<string, IConnection>();
-        private Dictionary<NatsSubject, List<IAsyncSubscription>> SubscriptionsBySubject { get; } = new Dictionary<NatsSubject, List<IAsyncSubscription>>();
+        private Dictionary<NatsSubscription, List<IAsyncSubscription>> Subscriptions { get; } = new Dictionary<NatsSubscription, List<IAsyncSubscription>>();
         
         public event Action<Connection> ConnectionCreated;
         public event Action<Connection> ConnectionRemoved;
-        public event Action<NatsSubject> SubjectCreated;
-        public event Action<NatsSubject> SubjectRemoved;
+        public event Action<NatsSubscription> SubscriptionCreated;
+        public event Action<NatsSubscription> SubscriptionRemoved;
 
         private ConnectionFactory Factory { get; } = new ConnectionFactory();
 
@@ -41,25 +41,25 @@ namespace nats_ui.Data
             ConnectionRemoved?.Invoke(connection);
         }
 
-        public string Create(NatsSubject natsSubject)
+        public string Create(NatsSubscription natsSubscription)
         {
-            Logger.Info($"Create NatsSubject: {natsSubject.Subject}");
-            if (Configuration.GetSubject(natsSubject.Subject) != null)
+            Logger.Info($"Create NatsSubject: {natsSubscription.Subject}");
+            if (Configuration.GetSubject(natsSubscription.Subject) != null)
             {
-                var msg = $"A subject already exists with subject: {natsSubject.Subject}";
+                var msg = $"A subject already exists with subject: {natsSubscription.Subject}";
                 Logger.Warn(msg);
                 return msg;
             }
-            Configuration.Add(natsSubject);
-            SubjectCreated?.Invoke(natsSubject);
-            return $"NatsSubject created: {natsSubject}";
+            Configuration.Add(natsSubscription);
+            SubscriptionCreated?.Invoke(natsSubscription);
+            return $"NatsSubject created: {natsSubscription}";
         }
         
-        public void Remove(NatsSubject natsSubject)
+        public void Remove(NatsSubscription natsSubscription)
         {
-            Logger.Info($"Remove NatsSubject: {natsSubject.Subject}");
-            Configuration.RemoveSubject(natsSubject.Subject);
-            SubjectRemoved?.Invoke(natsSubject);
+            Logger.Info($"Remove NatsSubject: {natsSubscription.Subject}");
+            Configuration.RemoveSubject(natsSubscription.Subject);
+            SubscriptionRemoved?.Invoke(natsSubscription);
         }
 
         public void Connect(Connection connection)
@@ -83,35 +83,35 @@ namespace nats_ui.Data
             }
         }
 
-        public void Subscribe(NatsSubject natsSubject)
+        public void Subscribe(NatsSubscription natsSubscription)
         {
             List<IAsyncSubscription> subs = new List<IAsyncSubscription>();
             foreach (var conn in ConnectionsByName.Values)
             {
-                IAsyncSubscription sub = conn.SubscribeAsync(natsSubject.Subject, OnMessage);
+                IAsyncSubscription sub = conn.SubscribeAsync(natsSubscription.Subject, OnMessage);
                 subs.Add(sub);
             }
 
-            SubscriptionsBySubject[natsSubject] = subs;
-            natsSubject.Subscribed = true;
+            Subscriptions[natsSubscription] = subs;
+            natsSubscription.Subscribed = true;
         }
 
         private void OnMessage(object sender, MsgHandlerEventArgs e)
         {
-            
+            var url = e.Message.ArrivalSubscription.Connection.ConnectedUrl;
         }
 
-        public void Unsubscribe(NatsSubject natsSubject)
+        public void Unsubscribe(NatsSubscription natsSubscription)
         {
-            if (SubscriptionsBySubject.TryGetValue(natsSubject, out var subs))
+            if (Subscriptions.TryGetValue(natsSubscription, out var subs))
             {
                 foreach (var subscription in subs)
                 {
                     subscription.Unsubscribe();
                 }
 
-                SubscriptionsBySubject.Remove(natsSubject);
-                natsSubject.Subscribed = false;
+                Subscriptions.Remove(natsSubscription);
+                natsSubscription.Subscribed = false;
             }
         }
     }

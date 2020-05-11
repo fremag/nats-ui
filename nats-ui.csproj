@@ -15,7 +15,7 @@
     <Content Update="Pages\Connections\Connections.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Update="Pages\Subjects\Subjects.razor">
+    <Content Update="Pages\Subjects\Subscriptions.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

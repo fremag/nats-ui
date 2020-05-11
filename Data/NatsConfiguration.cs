@@ -6,10 +6,10 @@ namespace nats_ui.Data
     public class NatsConfiguration
     {
         public List<Connection> Connections { get; } = new List<Connection>();
-        public List<NatsSubject> Subjects { get; } = new List<NatsSubject>();
+        public List<NatsSubscription> Subjects { get; } = new List<NatsSubscription>();
 
         public Connection GetConnection(string name) => Connections.FirstOrDefault(model => model.Name == name);
-        public NatsSubject GetSubject(string subject) => Subjects.FirstOrDefault(model => model.Subject == subject);
+        public NatsSubscription GetSubject(string subject) => Subjects.FirstOrDefault(model => model.Subject == subject);
 
         public void Add(Connection connection)
         {
@@ -17,10 +17,10 @@ namespace nats_ui.Data
             Connections.Add(connection);
         }
 
-        public void Add(NatsSubject subject)
+        public void Add(NatsSubscription subscription)
         {
-            RemoveSubject(subject.Subject);
-            Subjects.Add(subject);
+            RemoveSubject(subscription.Subject);
+            Subjects.Add(subscription);
         }
 
         public void RemoveConnection(string name)
