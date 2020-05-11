@@ -17,21 +17,32 @@ namespace nats_ui.Pages
         [Inject]
         private NatsService NatsService { get; set; }
 
-        protected NatsConnectionModel NatsConnection { get; } = new NatsConnectionModel();
-        protected C1DataCollection<NatsConnectionModel> connections;
-        public string Status { get; set; }
+        public class ConnectionModel
+        {
+            public string Name { get; set; }
+            public string Host { get; set;}
+            public int Port { get; set;}
+        }
+
+        protected C1DataCollection<Data.NatsConnection> Connections { get; private set; }
+
+        protected string Status { get; set; }
+        protected ConnectionModel Model { get; } = new ConnectionModel
+        {
+            Host = "127.0.0.1", Name = "localhost", Port = 4222
+        };
 
         protected void CreateConnection()
         {
-            Logger.Info($"CreateConnection: {NatsConnection}");
-            Status = NatsService.Create(NatsConnection.Clone());
+            Logger.Info($"CreateConnection: {null}");
+            Status = NatsService.Create(new Data.NatsConnection(Model.Name, Model.Host, Model.Port));
             InvokeAsync(StateHasChanged);
         }
 
         protected void RemoveConnections()
         {
             Logger.Info("RemoveConnections");
-            foreach (var connection in connections.OfType<NatsConnectionModel>().Where(conn => conn.Selected).ToArray())
+            foreach (var connection in Connections.OfType<Data.NatsConnection>().Where(conn => conn.Selected).ToArray())
             {
                 Logger.Info($"RemoveConnection: {connection}");
                 NatsService.Remove(connection);
@@ -41,28 +52,29 @@ namespace nats_ui.Pages
             InvokeAsync(StateHasChanged);
         }
 
-        protected override async Task OnInitializedAsync()
+        protected override Task OnInitializedAsync()
         {
             NatsService.ConnectionCreated += OnConnectionCreated;
             NatsService.ConnectionRemoved += OnConnectionRemoved;
-            connections = new C1DataCollection<NatsConnectionModel>(new List<NatsConnectionModel>(NatsService.Configuration.Connections));
+            Connections = new C1DataCollection<Data.NatsConnection>(new List<Data.NatsConnection>(NatsService.Configuration.Connections));
+            return Task.CompletedTask;
         }
 
-        private void OnConnectionRemoved(NatsConnectionModel connection)
+        private void OnConnectionRemoved(Data.NatsConnection connection)
         {
-            for (int i = connections.Count - 1; i >= 0; i--)
+            for (int i = Connections.Count - 1; i >= 0; i--)
             {
-                if (connections[i].Equals(connection))
+                if (Connections[i].Equals(connection))
                 {
-                    connections.RemoveAsync(i);
+                    Connections.RemoveAsync(i);
                     return;
                 }
             }
         }
 
-        private void OnConnectionCreated(NatsConnectionModel connection)
+        private void OnConnectionCreated(Data.NatsConnection connection)
         {
-            connections.InsertAsync(0, connection);
+            Connections.InsertAsync(0, connection);
         }
 
         protected void SelectedConnectionChanged(object sender, GridCellRangeEventArgs e)
@@ -73,25 +85,25 @@ namespace nats_ui.Pages
                 return;
             }
 
-            NatsConnection.Name = selected.Name;
-            NatsConnection.Host = selected.Host;
-            NatsConnection.Port = selected.Port;
+            Model.Name = selected.Name;
+            Model.Host = selected.Host;
+            Model.Port = selected.Port;
 
             InvokeAsync(StateHasChanged);
         }
 
-        private NatsConnectionModel GetSelected(GridCellRange cellRange)
+        private Data.NatsConnection GetSelected(GridCellRange cellRange)
         {
             if (cellRange == null)
             {
                 return null;
             }
 
-            var selected = connections[cellRange.Row] as NatsConnectionModel;
+            var selected = Connections[cellRange.Row] as Data.NatsConnection;
             return selected;
         }
 
-        protected void OnCellTaped(object? sender, GridInputEventArgs e)
+        protected void OnCellTaped(object sender, GridInputEventArgs e)
         {
             var selected = GetSelected(e.CellRange);
             if (selected == null)
@@ -105,10 +117,42 @@ namespace nats_ui.Pages
             }
         }
 
+        protected void OnCellDoubleTaped(object sender, GridInputEventArgs e)
+        {
+            var connectionModel = GetSelected(e.CellRange);
+            if (connectionModel == null)
+            {
+                return;
+            }
+
+            if (connectionModel.Status == ConnectionStatus.Connected)
+            {
+                Disconnect(connectionModel);
+            }
+            else
+            {
+                Connect(connectionModel);
+            }
+        }
+
+        private void Disconnect(Data.NatsConnection connection)
+        {
+            Logger.Info($"{nameof(Disconnect)}: {connection}");
+            connection.Status = ConnectionStatus.Disconnected;
+            InvokeAsync(StateHasChanged);
+        }
+
+        private void Connect(Data.NatsConnection connection)
+        {
+            Logger.Info($"{nameof(Connect)}: {connection}");
+            connection.Status = ConnectionStatus.Connected;
+            InvokeAsync(StateHasChanged);
+        }
+
         public void DumpConnections()
         {
             Logger.Info("DumpConnections");
-            foreach (var connection in connections)
+            foreach (var connection in Connections)
             {
                 Logger.Info(connection);
             }
@@ -121,14 +165,25 @@ namespace nats_ui.Pages
             public override void PrepareCellStyle(GridCellType cellType, GridCellRange range, C1Style style)
             {
                 base.PrepareCellStyle(cellType, range, style);
-                var selectedColumn = Grid.Columns[nameof(NatsConnectionModel.Selected)];
                 if (cellType != GridCellType.Cell)
                 {
                     return;
                 }
 
-                var value = (bool) Grid[range.Row, selectedColumn.Index];
-                style.BackgroundColor = value ? C1Color.Green : C1Color.Gray;
+                var statusColumn = Grid.Columns[nameof(Data.NatsConnection.Status)];
+                var status = (ConnectionStatus) Grid[range.Row, statusColumn.Index];
+                if (range.Column == statusColumn.Index && status == ConnectionStatus.Connected )
+                {
+                    style.BackgroundColor = C1Color.Green;
+                    return;
+                }
+
+                var selectedColumn = Grid.Columns[nameof(Data.NatsConnection.Selected)];
+                var isSelected = (bool) Grid[range.Row, selectedColumn.Index];
+                if (isSelected)
+                {
+                    style.BackgroundColor = C1Color.Gray;
+                }
             }
         }
     }

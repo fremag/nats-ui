@@ -11,10 +11,10 @@ namespace nats_ui.Data
      
         public NatsConfiguration Configuration { get; } = new NatsConfiguration();
         
-        public event Action<NatsConnectionModel> ConnectionCreated;
-        public event Action<NatsConnectionModel> ConnectionRemoved;
+        public event Action<NatsConnection> ConnectionCreated;
+        public event Action<NatsConnection> ConnectionRemoved;
         
-        public string Create(NatsConnectionModel natsConnection)
+        public string Create(NatsConnection natsConnection)
         {
             Logger.Info($"Create Connection: {natsConnection.Url}");
             if (Configuration.Connections.Any(model => model.Name == natsConnection.Name))
@@ -28,7 +28,7 @@ namespace nats_ui.Data
             return $"Connection created: {natsConnection}";
         }
         
-        public void Remove(NatsConnectionModel natsConnection)
+        public void Remove(NatsConnection natsConnection)
         {
             Logger.Info($"Remove Connection: {natsConnection.Url}");
             Configuration.Remove(natsConnection.Name);
@@ -38,14 +38,14 @@ namespace nats_ui.Data
 
     public class NatsConfiguration
     {
-        public List<NatsConnectionModel> Connections { get; set; } = new List<NatsConnectionModel>();
+        public List<NatsConnection> Connections { get; set; } = new List<NatsConnection>();
 
-        public NatsConnectionModel GetByName(string name)
+        public NatsConnection GetByName(string name)
         {
             return Connections.FirstOrDefault(model => model.Name == name);
         }
         
-        public void Add(NatsConnectionModel natsConnection)
+        public void Add(NatsConnection natsConnection)
         {
             Remove(natsConnection.Name);
             Connections.Add(natsConnection);
