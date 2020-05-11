@@ -1,0 +1,29 @@
+@page "/subjects" 
+@inherits SubjectsComponent 
+
+@using C1.Blazor.Grid
+
+<h1>Subjects</h1>
+
+<EditForm Model="@Model" OnSubmit="@CreateSubject">
+    <InputText id="subject" @bind-Value="Model.Subject" />
+
+    <button class="btn btn-primary" type="submit">Create</button>
+</EditForm>
+<button class="btn btn-primary" @onclick="RemoveSubjects">Remove</button>
+
+<FlexGrid ItemsSource="Subjects" 
+          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
+          ColumnHeaderStyle="@("font-weight:bold")"
+          SelectionChanged="@SelectedSubjectChanged"
+          SelectionMode="GridSelectionMode.Row"
+          CellTapped="OnCellTaped"
+          CellDoubleTapped="OnCellDoubleTaped"
+          CellFactory="@GridCellFactory"
+>  
+    <FlexGridColumns>  
+        <GridColumn Binding="Selected" IsReadOnly="true" Width="50" Header="Sel" />
+        <GridColumn Binding="Subscribed" IsReadOnly="true"  Width="50" Header="Sub" />  
+        <GridColumn Binding="Subject" IsReadOnly="true"/>  
+    </FlexGridColumns>  
+</FlexGrid>

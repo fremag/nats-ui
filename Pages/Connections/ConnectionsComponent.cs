@@ -1,21 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using C1.Blazor.Core;
 using C1.Blazor.Grid;
 using C1.DataCollection;
 using Microsoft.AspNetCore.Components;
 using nats_ui.Data;
 using NLog;
 
-namespace nats_ui.Pages
+namespace nats_ui.Pages.Connections
 {
-    public class NatsConnectionComponent : ComponentBase
+    public class ConnectionsComponent : ComponentBase
     {
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
-
-        [Inject]
-        private NatsService NatsService { get; set; }
 
         public class ConnectionModel
         {
@@ -24,9 +20,13 @@ namespace nats_ui.Pages
             public int Port { get; set;}
         }
 
-        protected C1DataCollection<Connection> Connections { get; private set; }
+        [Inject]
+        private NatsService NatsService { get; set; }
 
-        protected string Status { get; set; }
+        protected C1DataCollection<Connection> Connections { get; private set; }
+        protected ConnectionCellFactory GridCellFactory { get; } = new ConnectionCellFactory();
+        protected string Status { get; private set; }
+        
         protected ConnectionModel Model { get; } = new ConnectionModel
         {
             Host = "127.0.0.1", Name = "localhost", Port = 4222
@@ -157,35 +157,6 @@ namespace nats_ui.Pages
             foreach (var connection in Connections)
             {
                 Logger.Info(connection);
-            }
-        }
-
-        protected ConnectionCellFactory GridCellFactory { get; } = new ConnectionCellFactory();
-
-        protected class ConnectionCellFactory : GridCellFactory
-        {
-            public override void PrepareCellStyle(GridCellType cellType, GridCellRange range, C1Style style)
-            {
-                base.PrepareCellStyle(cellType, range, style);
-                if (cellType != GridCellType.Cell)
-                {
-                    return;
-                }
-
-                var statusColumn = Grid.Columns[nameof(Connection.Status)];
-                var status = (ConnectionStatus) Grid[range.Row, statusColumn.Index];
-                if (range.Column == statusColumn.Index && status == ConnectionStatus.Connected )
-                {
-                    style.BackgroundColor = C1Color.Green;
-                    return;
-                }
-
-                var selectedColumn = Grid.Columns[nameof(Connection.Selected)];
-                var isSelected = (bool) Grid[range.Row, selectedColumn.Index];
-                if (isSelected)
-                {
-                    style.BackgroundColor = C1Color.Gray;
-                }
             }
         }
     }

@@ -6,15 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Update="Pages\Connections.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="C1.Blazor.Grid" Version="3.1.20201.445" />
     <PackageReference Include="NATS.Client" Version="0.10.1-pre2" />
     <PackageReference Include="NLog" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Pages\Connections\Connections.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+    <Content Update="Pages\Subjects\Subjects.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
