@@ -139,6 +139,7 @@ namespace nats_ui.Pages
         {
             Logger.Info($"{nameof(Disconnect)}: {connection}");
             connection.Status = ConnectionStatus.Disconnected;
+            NatsService.Disconnect(connection);
             InvokeAsync(StateHasChanged);
         }
 
@@ -146,6 +147,7 @@ namespace nats_ui.Pages
         {
             Logger.Info($"{nameof(Connect)}: {connection}");
             connection.Status = ConnectionStatus.Connected;
+            NatsService.Connect(connection);
             InvokeAsync(StateHasChanged);
         }
 
