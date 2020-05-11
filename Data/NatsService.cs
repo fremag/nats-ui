@@ -11,44 +11,44 @@ namespace nats_ui.Data
      
         public NatsConfiguration Configuration { get; } = new NatsConfiguration();
         
-        public event Action<NatsConnection> ConnectionCreated;
-        public event Action<NatsConnection> ConnectionRemoved;
+        public event Action<Connection> ConnectionCreated;
+        public event Action<Connection> ConnectionRemoved;
         
-        public string Create(NatsConnection natsConnection)
+        public string Create(Connection connection)
         {
-            Logger.Info($"Create Connection: {natsConnection.Url}");
-            if (Configuration.Connections.Any(model => model.Name == natsConnection.Name))
+            Logger.Info($"Create Connection: {connection.Url}");
+            if (Configuration.Connections.Any(model => model.Name == connection.Name))
             {
-                var msg = $"A connection already exists with name: {natsConnection.Name}";
+                var msg = $"A connection already exists with name: {connection.Name}";
                 Logger.Warn(msg);
                 return msg;
             }
-            Configuration.Add(natsConnection);
-            ConnectionCreated?.Invoke(natsConnection);
-            return $"Connection created: {natsConnection}";
+            Configuration.Add(connection);
+            ConnectionCreated?.Invoke(connection);
+            return $"Connection created: {connection}";
         }
         
-        public void Remove(NatsConnection natsConnection)
+        public void Remove(Connection connection)
         {
-            Logger.Info($"Remove Connection: {natsConnection.Url}");
-            Configuration.Remove(natsConnection.Name);
-            ConnectionRemoved?.Invoke(natsConnection);
+            Logger.Info($"Remove Connection: {connection.Url}");
+            Configuration.Remove(connection.Name);
+            ConnectionRemoved?.Invoke(connection);
         }
     }
 
     public class NatsConfiguration
     {
-        public List<NatsConnection> Connections { get; set; } = new List<NatsConnection>();
+        public List<Connection> Connections { get; set; } = new List<Connection>();
 
-        public NatsConnection GetByName(string name)
+        public Connection GetByName(string name)
         {
             return Connections.FirstOrDefault(model => model.Name == name);
         }
         
-        public void Add(NatsConnection natsConnection)
+        public void Add(Connection connection)
         {
-            Remove(natsConnection.Name);
-            Connections.Add(natsConnection);
+            Remove(connection.Name);
+            Connections.Add(connection);
         }
 
         public void Remove(string name)

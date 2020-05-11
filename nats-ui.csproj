@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Update="Pages\NatsConnection.razor">
+    <Content Update="Pages\Connections.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
   </ItemGroup>

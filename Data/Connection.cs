@@ -8,7 +8,7 @@ namespace nats_ui.Data
         Disconnected
     }
 
-    public class NatsConnection
+    public class Connection
     {
         public string Url => $"nats://{Host}:{Port}";
 
@@ -18,7 +18,7 @@ namespace nats_ui.Data
         public string Host { get; }
         public int Port { get; }
 
-        public NatsConnection(string name, string host, int port)
+        public Connection(string name, string host, int port)
         {
             Name = name;
             Host = host;
@@ -30,7 +30,7 @@ namespace nats_ui.Data
             return $"{Name}, {Host}, {Port}, {Selected}, {Status}";
         }
 
-        protected bool Equals(NatsConnection other)
+        protected bool Equals(Connection other)
         {
             return Name == other.Name && Host == other.Host && Port == other.Port;
         }
@@ -40,7 +40,7 @@ namespace nats_ui.Data
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((NatsConnection) obj);
+            return Equals((Connection) obj);
         }
 
         public override int GetHashCode()
