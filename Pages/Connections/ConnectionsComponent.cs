@@ -5,6 +5,7 @@ using C1.Blazor.Grid;
 using C1.DataCollection;
 using Microsoft.AspNetCore.Components;
 using nats_ui.Data;
+using nats_ui.Pages.Messages;
 using NLog;
 
 namespace nats_ui.Pages.Connections

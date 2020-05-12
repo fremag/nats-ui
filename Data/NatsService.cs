@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using NATS.Client;
 using NLog;
 
@@ -17,8 +18,10 @@ namespace nats_ui.Data
         public event Action<Connection> ConnectionRemoved;
         public event Action<NatsSubscription> SubscriptionCreated;
         public event Action<NatsSubscription> SubscriptionRemoved;
+        public event Action<NatsMessage> MessageReceived;
 
         private ConnectionFactory Factory { get; } = new ConnectionFactory();
+        public List<NatsMessage> Messages { get; } = new List<NatsMessage>();
 
         public string Create(Connection connection)
         {
@@ -99,6 +102,15 @@ namespace nats_ui.Data
         private void OnMessage(object sender, MsgHandlerEventArgs e)
         {
             var url = e.Message.ArrivalSubscription.Connection.ConnectedUrl;
+            NatsMessage msg = new NatsMessage
+            {
+                TimeStamp = DateTime.Now,
+                Subject = e.Message.Subject,
+                Data = Encoding.Default.GetString(e.Message.Data),
+                Url = url
+            };
+            Messages.Add(msg);
+            MessageReceived?.Invoke(msg);
         }
 
         public void Unsubscribe(NatsSubscription natsSubscription)
