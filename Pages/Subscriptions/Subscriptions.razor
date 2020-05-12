@@ -3,10 +3,12 @@
 
 @using C1.Blazor.Grid
 
-<h1>Subjects</h1>
+<h1>Subscriptions<hr/></h1>
 
 <EditForm Model="@Model" OnSubmit="@CreateSubscription">
-    <InputText id="subject" @bind-Value="Model.Subject" />
+    <label>Subject:
+    <InputText id="subject" @bind-Value="Model.Subject"/>
+    </label>
 
     <button class="btn btn-primary" type="submit">Create</button>
 </EditForm>

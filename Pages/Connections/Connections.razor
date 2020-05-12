@@ -2,15 +2,17 @@
 @inherits ConnectionsComponent
 @using C1.Blazor.Grid
 
-<h1>Nats</h1>
+<h1>Connections<hr/></h1>
 
 <EditForm Model="@Model" OnSubmit="@CreateConnection">
     <DataAnnotationsValidator />
     <ValidationSummary />
-
+    <label for="name">Name: 
     <InputText id="name" @bind-Value="Model.Name" />
-    <InputText id="host" @bind-Value="Model.Host" />
-    <InputNumber id="port" @bind-Value="Model.Port" />
+    </label>
+    <label for="host">Host: <InputText id="host" @bind-Value="Model.Host" />
+    </label>
+    <label for="port">Port:<InputNumber id="port" @bind-Value="Model.Port" /></label>
 
     <button class="btn btn-primary" type="submit">Create</button>
 </EditForm>
