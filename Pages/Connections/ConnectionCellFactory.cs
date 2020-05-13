@@ -22,7 +22,7 @@ namespace nats_ui.Pages.Connections
                 return;
             }
 
-            var selectedColumn = Grid.Columns[nameof(Connection.Selected)];
+            var selectedColumn = Grid.Columns[nameof(Connection.Checked)];
             var isSelected = (bool) Grid[range.Row, selectedColumn.Index];
             if (isSelected)
             {

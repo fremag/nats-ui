@@ -48,7 +48,7 @@ namespace nats_ui.Pages.Connections
         {
             Logger.Info("RemoveConnections");
 
-            foreach(var (index, connection) in Connections.GetSelectedItems()) 
+            foreach(var (index, connection) in Connections.GetCheckedItems()) 
             {
                 Logger.Info($"RemoveConnection: {connection}");
                 NatsService.Remove(connection);

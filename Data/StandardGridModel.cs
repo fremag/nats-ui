@@ -7,7 +7,7 @@ using C1.DataCollection;
 
 namespace nats_ui.Data
 {
-    public class StandardGridModel<T> : IEnumerable<T> where T : class, ISelectable
+    public class StandardGridModel<T> : IEnumerable<T> where T : class, ICheckable
     {
         public C1DataCollection<T> Items { get; private set; }
         public event Action<T> SelectedItemChanged;
@@ -58,7 +58,7 @@ namespace nats_ui.Data
             }
             if (e.CellRange.Column == 0)
             {
-                selected.Selected = !selected.Selected;
+                selected.Checked = !selected.Checked;
             }
             ItemClicked?.Invoke(e.CellRange.Column, selected);
         }
@@ -78,11 +78,11 @@ namespace nats_ui.Data
             Items.RemoveAsync(index);
         }
 
-        public IEnumerable<(int i, T item)> GetSelectedItems()
+        public IEnumerable<(int i, T item)> GetCheckedItems()
         {
             for (int i = Items.Count - 1; i >= 0; i--)
             {
-                if (Items[i] is T item && item.Selected)
+                if (Items[i] is T item && item.Checked)
                 {
                     yield return (i, item);
                 }

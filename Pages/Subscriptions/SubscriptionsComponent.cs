@@ -35,7 +35,7 @@ namespace nats_ui.Pages.Subscriptions
             Logger.Info($"{nameof(CreateSubscription)}: {Model}");
             var natsSubscription = new NatsSubscription(Model.Subject)
             {
-                Selected = false,
+                Checked = false,
                 Subscribed = false
             };
             
@@ -48,7 +48,7 @@ namespace nats_ui.Pages.Subscriptions
         protected void RemoveSubscriptions()
         {
             Logger.Info(nameof(RemoveSubscriptions));
-            foreach(var (i, subscription) in Subscriptions.GetSelectedItems())
+            foreach(var (i, subscription) in Subscriptions.GetCheckedItems())
             {
                 Logger.Info($"{nameof(RemoveSubscriptions)}: {subscription}");
                 NatsService.Remove(subscription);

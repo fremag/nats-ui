@@ -22,7 +22,7 @@ namespace nats_ui.Pages.Subscriptions
                 return;
             }
 
-            var selectedColumn = Grid.Columns[nameof(NatsSubscription.Selected)];
+            var selectedColumn = Grid.Columns[nameof(NatsSubscription.Checked)];
             var isSelected = (bool) Grid[range.Row, selectedColumn.Index];
             if (isSelected)
             {

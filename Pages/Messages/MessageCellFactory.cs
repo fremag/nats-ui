@@ -14,7 +14,7 @@ namespace nats_ui.Pages.Messages
                 return;
             }
 
-            var selectedColumn = Grid.Columns[nameof(NatsMessage.Selected)];
+            var selectedColumn = Grid.Columns[nameof(NatsMessage.Checked)];
             var isSelected = (bool) Grid[range.Row, selectedColumn.Index];
             if (isSelected)
             {

@@ -8,11 +8,11 @@ namespace nats_ui.Data
         Disconnected
     }
 
-    public class Connection : ISelectable
+    public class Connection : ICheckable
     {
         public string Url => $"nats://{Host}:{Port}";
 
-        public bool Selected { get; set; }
+        public bool Checked { get; set; }
         public ConnectionStatus Status { get; set; } = ConnectionStatus.Disconnected;
         public string Name { get; }
         public string Host { get; }
@@ -27,7 +27,7 @@ namespace nats_ui.Data
 
         public override string ToString()
         {
-            return $"{Name}, {Host}, {Port}, {Selected}, {Status}";
+            return $"{Name}, {Host}, {Port}, {Checked}, {Status}";
         }
 
         protected bool Equals(Connection other)
