@@ -38,7 +38,7 @@ namespace nats_ui.Pages.Sessions
                 Checked = false,
             };
             
-            if (NatsService.Create(session, out var msg))
+            if (NatsService.Create(session, out _))
             {
                 Sessions.Insert(0, session);
             }
@@ -64,6 +64,11 @@ namespace nats_ui.Pages.Sessions
         private void OnItemDoubleClicked(int index, Session session)
         {
             NatsService.Init(session);
+        }
+
+        protected void Save()
+        {
+            NatsService.Save();
         }
     }
 }

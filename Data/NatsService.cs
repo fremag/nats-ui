@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using NATS.Client;
 using NLog;
@@ -10,6 +9,7 @@ namespace nats_ui.Data
     public class NatsService
     {
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
+        private const string NatsXml = "nats.xml";
      
         public NatsConfiguration Configuration { get; } = new NatsConfiguration();
         private Dictionary<Connection, IConnection> ConnectionsByName { get; } = new Dictionary<Connection, IConnection>();
@@ -19,6 +19,11 @@ namespace nats_ui.Data
 
         private ConnectionFactory Factory { get; } = new ConnectionFactory();
         public List<NatsMessage> Messages { get; } = new List<NatsMessage>();
+
+        public NatsService()
+        {
+            Load();
+        }
 
         public bool Create(Connection connection, out string msg)
         {
@@ -178,6 +183,17 @@ namespace nats_ui.Data
 
             Subscriptions.Clear();
             ConnectionsByName.Clear();
+        }
+
+        public void Save()
+        {
+            Configuration.Save(NatsXml);
+        }
+        
+        public void Load()
+        {
+            Close();
+            Configuration.Load(NatsXml);
         }
     }
 }

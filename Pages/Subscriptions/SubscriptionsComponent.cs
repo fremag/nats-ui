@@ -24,7 +24,7 @@ namespace nats_ui.Pages.Subscriptions
 
         protected override Task OnInitializedAsync()
         {
-            Subscriptions.SetData(NatsService.Configuration.Subjects);
+            Subscriptions.SetData(NatsService.Configuration.Subscriptions);
             Subscriptions.SelectedItemChanged += OnSelectedItemChanged;
             Subscriptions.ItemDoubleClicked += OnItemDoubleClicked;
             return Task.CompletedTask;
@@ -39,7 +39,7 @@ namespace nats_ui.Pages.Subscriptions
                 Subscribed = false
             };
             
-            if (NatsService.Create(natsSubscription, out var msg))
+            if (NatsService.Create(natsSubscription, out _))
             {
                 Subscriptions.Insert(0, natsSubscription);
             }
