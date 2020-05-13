@@ -8,7 +8,7 @@ namespace nats_ui.Data
         Disconnected
     }
 
-    public class Connection
+    public class Connection : ISelectable
     {
         public string Url => $"nats://{Host}:{Port}";
 

@@ -20,13 +20,13 @@
 <button class="btn btn-primary" @onclick="RemoveConnections">Remove</button>
 <button class="btn btn-primary" @onclick="DumpConnections">Dump</button>
 
-<FlexGrid ItemsSource="Connections" 
+<FlexGrid ItemsSource="Connections.Items" 
           AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
           ColumnHeaderStyle="@("font-weight:bold")"
-          SelectionChanged="@SelectedConnectionChanged"
+          SelectionChanged="@Connections.SelectionChanged"
           SelectionMode="GridSelectionMode.Row"
-          CellTapped="OnCellTaped"
-          CellDoubleTapped="OnCellDoubleTaped"
+          CellTapped="Connections.OnCellTaped"
+          CellDoubleTapped="Connections.OnCellDoubleTaped"
           CellFactory="@GridCellFactory"
           >  
     <FlexGridColumns>  
