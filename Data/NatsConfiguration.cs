@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml.Serialization;
+using XSerializer;
 
 namespace nats_ui.Data
 {
     public class NatsConfiguration
     {
-        private static readonly XmlSerializer Xml = new XmlSerializer(typeof(NatsConfiguration)); 
-
+        private static XmlSerializer<NatsConfiguration> Serializer { get; }= new XmlSerializer<NatsConfiguration>(typeof(NatsSubscription), typeof(Connection));
         public List<Connection> Connections { get; } = new List<Connection>();
         public List<NatsSubscription> Subscriptions { get; } = new List<NatsSubscription>();
         public List<Session> Sessions { get; } = new List<Session>();
@@ -64,7 +63,8 @@ namespace nats_ui.Data
 
         public void Save(string xmlFile)
         {
-            Xml.Serialize(File.Open(xmlFile, FileMode.Create), this);
+            using var stream = File.Open(xmlFile, FileMode.Create);
+            Serializer.Serialize(stream, this);
         }
         
         public void Load(string xmlFile)
@@ -73,7 +73,13 @@ namespace nats_ui.Data
             {
                 return;
             }
-            var config = (NatsConfiguration)Xml.Deserialize(File.Open(xmlFile, FileMode.Create));
+
+            var xml = File.ReadAllText(xmlFile);
+            if (string.IsNullOrEmpty(xml))
+            {
+                return;
+            }
+            var config = Serializer.Deserialize(xml);
             Sessions.Clear();
             Connections.Clear();
             Subscriptions.Clear();           
