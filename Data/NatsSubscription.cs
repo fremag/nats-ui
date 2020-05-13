@@ -1,6 +1,6 @@
 namespace nats_ui.Data
 {
-    public class NatsSubscription
+    public class NatsSubscription : ISelectable
     {
         public bool Selected { get; set; }
         public bool Subscribed { get; set; }

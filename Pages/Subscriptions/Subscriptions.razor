@@ -14,13 +14,13 @@
 </EditForm>
 <button class="btn btn-primary" @onclick="RemoveSubscriptions">Remove</button>
 
-<FlexGrid ItemsSource="Subscriptions" 
+<FlexGrid ItemsSource="Subscriptions.Items" 
           AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
           ColumnHeaderStyle="@("font-weight:bold")"
-          SelectionChanged="@SelectedSubjectChanged"
+          SelectionChanged="@Subscriptions.SelectionChanged"
           SelectionMode="GridSelectionMode.Row"
-          CellTapped="OnCellTaped"
-          CellDoubleTapped="OnCellDoubleTaped"
+          CellTapped="Subscriptions.OnCellTaped"
+          CellDoubleTapped="Subscriptions.OnCellDoubleTaped"
           CellFactory="@GridCellFactory"
 >  
     <FlexGridColumns>  
