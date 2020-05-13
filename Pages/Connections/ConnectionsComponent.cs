@@ -40,8 +40,13 @@ namespace nats_ui.Pages.Connections
         {
             Logger.Info($"CreateConnection: {null}");
             var connection = new Connection(Model.Name, Model.Host, Model.Port);
-            Status = NatsService.Create(connection);
-            Connections.Insert(0, connection);
+            if( NatsService.Create(connection, out var msg)) 
+            {
+                Connections.Insert(0, connection);
+            }
+
+            Status = msg;
+            InvokeAsync(StateHasChanged);
         }
 
         protected void RemoveConnections()

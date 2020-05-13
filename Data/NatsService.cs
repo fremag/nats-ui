@@ -12,7 +12,7 @@ namespace nats_ui.Data
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
      
         public NatsConfiguration Configuration { get; } = new NatsConfiguration();
-        private Dictionary<string, IConnection> ConnectionsByName { get; } = new Dictionary<string, IConnection>();
+        private Dictionary<Connection, IConnection> ConnectionsByName { get; } = new Dictionary<Connection, IConnection>();
         private Dictionary<NatsSubscription, List<IAsyncSubscription>> Subscriptions { get; } = new Dictionary<NatsSubscription, List<IAsyncSubscription>>();
         
         public event Action<NatsMessage> MessageReceived;
@@ -20,17 +20,18 @@ namespace nats_ui.Data
         private ConnectionFactory Factory { get; } = new ConnectionFactory();
         public List<NatsMessage> Messages { get; } = new List<NatsMessage>();
 
-        public string Create(Connection connection)
+        public bool Create(Connection connection, out string msg)
         {
             Logger.Info($"Create Connection: {connection.Url}");
             if (Configuration.GetConnection(connection.Name) != null)
             {
-                var msg = $"A connection already exists with name: {connection.Name}";
+                msg = $"A connection already exists with name: {connection.Name}";
                 Logger.Warn(msg);
-                return msg;
+                return false;
             }
             Configuration.Add(connection);
-            return $"Connection created: {connection}";
+            msg =  $"Connection created: {connection}";
+            return true;
         }
         
         public void Remove(Connection connection)
@@ -61,7 +62,7 @@ namespace nats_ui.Data
 
         public void Connect(Connection connection)
         {
-            if (ConnectionsByName.ContainsKey(connection.Url))
+            if (ConnectionsByName.ContainsKey(connection))
             {
                 return;
             }
@@ -69,13 +70,13 @@ namespace nats_ui.Data
             Logger.Info($"Connect: {connection.Url}");
             var conn = Factory.CreateConnection(connection.Url);
             connection.Status = ConnectionStatus.Connected;
-            ConnectionsByName[connection.Url] = conn;
+            ConnectionsByName[connection] = conn;
         }
 
         public void Disconnect(Connection connection)
         {
             Logger.Info($"Diconnect: {connection.Url}");
-            if (ConnectionsByName.TryGetValue(connection.Url, out var conn))
+            if (ConnectionsByName.TryGetValue(connection, out var conn))
             {
                 conn.Close();
                 connection.Status = ConnectionStatus.Disconnected;
@@ -132,9 +133,7 @@ namespace nats_ui.Data
             }
 
             session.Subscriptions.AddRange(Subscriptions.Keys);
-            var names = ConnectionsByName.Keys.ToHashSet();
-            var connections = Configuration.Connections.Where(connection => names.Contains(connection.Name)).ToArray();
-            session.Connections.AddRange(connections);
+            session.Connections.AddRange(ConnectionsByName.Keys);
 
             Configuration.Add(session);
             
