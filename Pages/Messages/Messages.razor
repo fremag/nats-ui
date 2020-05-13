@@ -16,13 +16,13 @@
     <button class="btn btn-primary" type="submit">Send</button>
 </EditForm>
 
-<FlexGrid ItemsSource="Messages" 
+<FlexGrid ItemsSource="MessageGrid.Items" 
           AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
           ColumnHeaderStyle="@("font-weight:bold")"
-          SelectionChanged="@SelectedMessageChanged"
+          SelectionChanged="@MessageGrid.SelectionChanged"
           SelectionMode="GridSelectionMode.Row"
-          CellTapped="OnCellTaped"
-          CellDoubleTapped="OnCellDoubleTaped"
+          CellTapped="MessageGrid.OnCellTaped"
+          CellDoubleTapped="MessageGrid.OnCellDoubleTaped"
           CellFactory="@GridCellFactory"
           >  
     <FlexGridColumns>  

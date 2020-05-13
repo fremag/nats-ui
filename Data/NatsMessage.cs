@@ -2,7 +2,7 @@ using System;
 
 namespace nats_ui.Data
 {
-    public class NatsMessage
+    public class NatsMessage : ISelectable
     {
         public bool Selected { get; set; }
         public DateTime TimeStamp { get; set; }
