@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using NATS.Client;
 using NLog;
@@ -120,6 +121,64 @@ namespace nats_ui.Data
                 Subscriptions.Remove(natsSubscription);
                 natsSubscription.Subscribed = false;
             }
+        }
+        
+        public bool Create(Session session, out string msg)
+        {
+            if (Configuration.GetSession(session.Name) != null)
+            {
+                msg = $"A session already exists with this name: {session.Name}";
+                return false;
+            }
+
+            session.Subscriptions.AddRange(Subscriptions.Keys);
+            var names = ConnectionsByName.Keys.ToHashSet();
+            var connections = Configuration.Connections.Where(connection => names.Contains(connection.Name)).ToArray();
+            session.Connections.AddRange(connections);
+
+            Configuration.Add(session);
+            
+            msg = $"Session created: {session.Name}";
+            return true;
+        }
+
+        public void Remove(Session session)
+        {
+            Logger.Info($"Remove Session: {session.Name}");
+            Configuration.RemoveSession(session.Name);
+        }
+
+        public void Init(Session session)
+        {
+            Close();
+
+            foreach (var connection in session.Connections)
+            {
+                Connect(connection);
+            }
+            foreach (var subscription in session.Subscriptions)
+            {
+                Subscribe(subscription);
+            }
+        }
+
+        public void Close()
+        {
+            foreach (List<IAsyncSubscription> subscriptions in Subscriptions.Values)
+            {
+                foreach (var subscription in subscriptions)
+                {
+                    subscription.Unsubscribe();
+                }
+            }
+
+            foreach (var connection in ConnectionsByName.Values)
+            {
+                connection.Close();
+            }
+
+            Subscriptions.Clear();
+            ConnectionsByName.Clear();
         }
     }
 }

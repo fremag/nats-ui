@@ -7,9 +7,11 @@ namespace nats_ui.Data
     {
         public List<Connection> Connections { get; } = new List<Connection>();
         public List<NatsSubscription> Subjects { get; } = new List<NatsSubscription>();
+        public List<Session> Sessions { get; } = new List<Session>();
 
-        public Connection GetConnection(string name) => Connections.FirstOrDefault(model => model.Name == name);
-        public NatsSubscription GetSubject(string subject) => Subjects.FirstOrDefault(model => model.Subject == subject);
+        public Connection GetConnection(string name) => Connections.FirstOrDefault(connection => connection.Name == name);
+        public NatsSubscription GetSubject(string subject) => Subjects.FirstOrDefault(subscription => subscription.Subject == subject);
+        public Session GetSession(string name) => Sessions.FirstOrDefault(session => session.Name == name);
 
         public void Add(Connection connection)
         {
@@ -21,6 +23,12 @@ namespace nats_ui.Data
         {
             RemoveSubject(subscription.Subject);
             Subjects.Add(subscription);
+        }
+
+        public void Add(Session session)
+        {
+            RemoveSession(session.Name);
+            Sessions.Add(session);
         }
 
         public void RemoveConnection(string name)
@@ -38,6 +46,15 @@ namespace nats_ui.Data
             if (sub != null)
             {
                 Subjects.Remove(sub);
+            }
+        }
+
+        public void RemoveSession(string name)
+        {
+            var session = GetSession(name);
+            if (session != null)
+            {
+                Sessions.Remove(session);
             }
         }
     }

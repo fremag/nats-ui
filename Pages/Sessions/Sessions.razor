@@ -1,0 +1,32 @@
+@page "/sessions" 
+@inherits SessionsComponent 
+
+@using C1.Blazor.Grid
+
+<h1>Subscriptions<hr/></h1>
+
+<EditForm Model="@Model" OnSubmit="@CreateSession">
+    <label for="name">Name:
+    <InputText id="name" @bind-Value="Model.Name"/>
+    </label>
+
+    <button class="btn btn-primary" type="submit">Create</button>
+</EditForm>
+<button class="btn btn-primary" @onclick="RemoveSession">Remove</button>
+
+<FlexGrid ItemsSource="Sessions.Items" 
+          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
+          ColumnHeaderStyle="@("font-weight:bold")"
+          SelectionChanged="@Sessions.SelectionChanged"
+          SelectionMode="GridSelectionMode.Row"
+          CellTapped="Sessions.OnCellTaped"
+          CellDoubleTapped="Sessions.OnCellDoubleTaped"
+          CellFactory="@GridCellFactory"
+>  
+    <FlexGridColumns>  
+        <GridColumn Binding="Checked" IsReadOnly="true" Width="50" Header="Sel" />
+        <GridColumn Binding="Name" IsReadOnly="true"  Width="50" Header="Sub" />  
+        <GridColumn Binding="ConnectionCount" IsReadOnly="true"/>  
+        <GridColumn Binding="SubscriptionCount" IsReadOnly="true"/>  
+    </FlexGridColumns>  
+</FlexGrid>
