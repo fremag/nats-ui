@@ -28,27 +28,8 @@ namespace nats_ui.Pages.Subscriptions
 
         protected override Task OnInitializedAsync()
         {
-            NatsService.SubscriptionCreated += OnSubscriptionCreated;
-            NatsService.SubscriptionRemoved += OnSubscriptionRemoved;
             Subscriptions = new C1DataCollection<NatsSubscription>(new List<NatsSubscription>(NatsService.Configuration.Subjects));
             return Task.CompletedTask;
-        }
-
-        private void OnSubscriptionRemoved(NatsSubscription subscription)
-        {
-            for (int i = Subscriptions.Count - 1; i >= 0; i--)
-            {
-                if (Subscriptions[i].Equals(subscription))
-                {
-                    Subscriptions.RemoveAsync(i);
-                    return;
-                }
-            }
-        }
-
-        private void OnSubscriptionCreated(NatsSubscription subscription)
-        {
-            Subscriptions.InsertAsync(0, subscription);
         }
 
         protected void CreateSubscription()
@@ -59,23 +40,32 @@ namespace nats_ui.Pages.Subscriptions
                 return;
             }
 
-            NatsService.Create(new NatsSubscription(Model.Subject)
+            var natsSubscription = new NatsSubscription(Model.Subject)
             {
                 Selected = false,
                 Subscribed = false
-            });
+            };
+            if (NatsService.Create(natsSubscription, out var msg))
+            {
+                Subscriptions.InsertAsync(0, natsSubscription);
+            }
         }
 
         protected void RemoveSubscriptions()
         {
             Logger.Info(nameof(RemoveSubscriptions));
-            foreach (var subject in Subscriptions.OfType<NatsSubscription>().Where(natsSubject => natsSubject.Selected).ToArray())
+            for (int i = Subscriptions.Count - 1; i >= 0; i--)
             {
-                Logger.Info($"RemoveSubject: {subject}");
-                NatsService.Remove(subject);
+                var subscription = Subscriptions[i] as NatsSubscription;
+                if (subscription!= null && ! subscription.Selected)
+                {
+                    continue;
+                }
+                
+                Logger.Info($"{nameof(RemoveSubscriptions)}: {subscription}");
+                NatsService.Remove(subscription);
+                Subscriptions.RemoveAsync(i);
             }
-
-            InvokeAsync(StateHasChanged);
         }
         
         protected void SelectedSubjectChanged(object sender, GridCellRangeEventArgs e)

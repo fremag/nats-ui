@@ -14,10 +14,6 @@ namespace nats_ui.Data
         private Dictionary<string, IConnection> ConnectionsByName { get; } = new Dictionary<string, IConnection>();
         private Dictionary<NatsSubscription, List<IAsyncSubscription>> Subscriptions { get; } = new Dictionary<NatsSubscription, List<IAsyncSubscription>>();
         
-        public event Action<Connection> ConnectionCreated;
-        public event Action<Connection> ConnectionRemoved;
-        public event Action<NatsSubscription> SubscriptionCreated;
-        public event Action<NatsSubscription> SubscriptionRemoved;
         public event Action<NatsMessage> MessageReceived;
 
         private ConnectionFactory Factory { get; } = new ConnectionFactory();
@@ -33,7 +29,6 @@ namespace nats_ui.Data
                 return msg;
             }
             Configuration.Add(connection);
-            ConnectionCreated?.Invoke(connection);
             return $"Connection created: {connection}";
         }
         
@@ -41,28 +36,26 @@ namespace nats_ui.Data
         {
             Logger.Info($"Remove Connection: {connection.Url}");
             Configuration.RemoveConnection(connection.Name);
-            ConnectionRemoved?.Invoke(connection);
         }
 
-        public string Create(NatsSubscription natsSubscription)
+        public bool Create(NatsSubscription natsSubscription, out string msg)
         {
             Logger.Info($"Create NatsSubject: {natsSubscription.Subject}");
             if (Configuration.GetSubject(natsSubscription.Subject) != null)
             {
-                var msg = $"A subject already exists with subject: {natsSubscription.Subject}";
+                msg = $"A subject already exists with subject: {natsSubscription.Subject}";
                 Logger.Warn(msg);
-                return msg;
+                return false;
             }
             Configuration.Add(natsSubscription);
-            SubscriptionCreated?.Invoke(natsSubscription);
-            return $"NatsSubject created: {natsSubscription}";
+            msg = $"NatsSubject created: {natsSubscription}";
+            return true;
         }
         
         public void Remove(NatsSubscription natsSubscription)
         {
             Logger.Info($"Remove NatsSubject: {natsSubscription.Subject}");
             Configuration.RemoveSubject(natsSubscription.Subject);
-            SubscriptionRemoved?.Invoke(natsSubscription);
         }
 
         public void Connect(Connection connection)
@@ -74,6 +67,7 @@ namespace nats_ui.Data
 
             Logger.Info($"Connect: {connection.Url}");
             var conn = Factory.CreateConnection(connection.Url);
+            connection.Status = ConnectionStatus.Connected;
             ConnectionsByName[connection.Url] = conn;
         }
 
@@ -83,6 +77,7 @@ namespace nats_ui.Data
             if (ConnectionsByName.TryGetValue(connection.Url, out var conn))
             {
                 conn.Close();
+                connection.Status = ConnectionStatus.Disconnected;
             }
         }
 

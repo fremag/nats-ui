@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using C1.Blazor.Grid;
 using C1.DataCollection;
@@ -35,46 +34,35 @@ namespace nats_ui.Pages.Connections
         protected void CreateConnection()
         {
             Logger.Info($"CreateConnection: {null}");
-            Status = NatsService.Create(new Connection(Model.Name, Model.Host, Model.Port));
-            InvokeAsync(StateHasChanged);
+            var connection = new Connection(Model.Name, Model.Host, Model.Port);
+            Status = NatsService.Create(connection);
+            Connections.InsertAsync(0, connection);
         }
 
         protected void RemoveConnections()
         {
             Logger.Info("RemoveConnections");
-            foreach (var connection in Connections.OfType<Connection>().Where(conn => conn.Selected).ToArray())
+
+            for (int i = Connections.Count - 1; i >= 0; i--)
             {
+                var connection = Connections[i] as Connection;
+                if (connection != null && !connection.Selected)
+                {
+                    continue;
+                }
+
                 Logger.Info($"RemoveConnection: {connection}");
                 NatsService.Remove(connection);
+                Connections.RemoveAsync(i);
             }
 
             Status = "Connection removed";
-            InvokeAsync(StateHasChanged);
         }
 
         protected override Task OnInitializedAsync()
         {
-            NatsService.ConnectionCreated += OnConnectionCreated;
-            NatsService.ConnectionRemoved += OnConnectionRemoved;
             Connections = new C1DataCollection<Connection>(new List<Connection>(NatsService.Configuration.Connections));
             return Task.CompletedTask;
-        }
-
-        private void OnConnectionRemoved(Connection connection)
-        {
-            for (int i = Connections.Count - 1; i >= 0; i--)
-            {
-                if (Connections[i].Equals(connection))
-                {
-                    Connections.RemoveAsync(i);
-                    return;
-                }
-            }
-        }
-
-        private void OnConnectionCreated(Connection connection)
-        {
-            Connections.InsertAsync(0, connection);
         }
 
         protected void SelectedConnectionChanged(object sender, GridCellRangeEventArgs e)
@@ -138,7 +126,6 @@ namespace nats_ui.Pages.Connections
         private void Disconnect(Connection connection)
         {
             Logger.Info($"{nameof(Disconnect)}: {connection}");
-            connection.Status = ConnectionStatus.Disconnected;
             NatsService.Disconnect(connection);
             InvokeAsync(StateHasChanged);
         }
@@ -146,7 +133,6 @@ namespace nats_ui.Pages.Connections
         private void Connect(Connection connection)
         {
             Logger.Info($"{nameof(Connect)}: {connection}");
-            connection.Status = ConnectionStatus.Connected;
             NatsService.Connect(connection);
             InvokeAsync(StateHasChanged);
         }
