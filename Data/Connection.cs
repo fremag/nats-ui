@@ -1,4 +1,5 @@
 using System;
+using System.Xml.Serialization;
 
 namespace nats_ui.Data
 {
@@ -12,7 +13,9 @@ namespace nats_ui.Data
     {
         public string Url => $"nats://{Host}:{Port}";
 
+        [XmlIgnore]
         public bool Checked { get; set; }
+        [XmlIgnore]
         public ConnectionStatus Status { get; set; } = ConnectionStatus.Disconnected;
         public string Name { get; }
         public string Host { get; }

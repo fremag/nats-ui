@@ -1,8 +1,12 @@
+using System.Xml.Serialization;
+
 namespace nats_ui.Data
 {
     public class NatsSubscription : ICheckable
     {
+        [XmlIgnore]
         public bool Checked { get; set; }
+        [XmlIgnore]
         public bool Subscribed { get; set; }
         public string Subject { get; }
 

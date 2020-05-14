@@ -90,6 +90,12 @@ namespace nats_ui.Data
 
         public void Subscribe(NatsSubscription natsSubscription)
         {
+            if (Subscriptions.ContainsKey(natsSubscription))
+            {
+                return;
+            }
+            
+            Logger.Info($"{nameof(Subscribe)}: {natsSubscription.Subject}");
             List<IAsyncSubscription> subs = new List<IAsyncSubscription>();
             foreach (var conn in ConnectionsByName.Values)
             {
@@ -154,14 +160,17 @@ namespace nats_ui.Data
 
         public void Init(Session session)
         {
+            Logger.Info($"{nameof(Init)}: {session.Name}");
             Close();
 
             foreach (var connection in session.Connections)
             {
+                Configuration.Add(connection);
                 Connect(connection);
             }
             foreach (var subscription in session.Subscriptions)
             {
+                Configuration.Add(subscription);
                 Subscribe(subscription);
             }
         }
