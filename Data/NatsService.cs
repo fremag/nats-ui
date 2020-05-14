@@ -137,11 +137,7 @@ namespace nats_ui.Data
         
         public bool Create(Session session, out string msg)
         {
-            if (Configuration.GetSession(session.Name) != null)
-            {
-                msg = $"A session already exists with this name: {session.Name}";
-                return false;
-            }
+            Configuration.RemoveSession(session.Name);
 
             session.Subscriptions.AddRange(Subscriptions.Keys);
             session.Connections.AddRange(ConnectionsByName.Keys);
