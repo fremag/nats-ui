@@ -1,13 +1,14 @@
 @page "/sessions" 
-@inherits SessionsComponent 
+@inherits SessionsComponent     
 
 @using C1.Blazor.Grid
 
 <h1>Subscriptions<hr/></h1>
 
 <EditForm Model="@Model" OnSubmit="@CreateSession">
-    <label for="name">Name:
-    <InputText id="name" @bind-Value="Model.Name"/>
+    <label for="name">
+        Name:
+        <InputText id="name" @bind-Value="Model.Name"/>
     </label>
 
     <button class="btn btn-primary" type="submit">Create</button>
@@ -15,19 +16,46 @@
 <button class="btn btn-primary" @onclick="RemoveSession">Remove</button>
 <button class="btn btn-primary" @onclick="Save">Save</button>
 
-<FlexGrid ItemsSource="Sessions.Items" 
-          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
+<FlexGrid ItemsSource="Sessions.Items"
+          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
           ColumnHeaderStyle="@("font-weight:bold")"
           SelectionChanged="@Sessions.SelectionChanged"
           SelectionMode="GridSelectionMode.Row"
           CellTapped="Sessions.OnCellTaped"
           CellDoubleTapped="Sessions.OnCellDoubleTaped"
-          CellFactory="@GridCellFactory"
->  
-    <FlexGridColumns>  
-        <GridColumn Binding="Checked" IsReadOnly="true" Width="50" Header="Sel" />
-        <GridColumn Binding="Name" IsReadOnly="true" />  
-        <GridColumn Binding="ConnectionCount" IsReadOnly="true" Width="50"  Header="# Conn"/>  
-        <GridColumn Binding="SubscriptionCount" IsReadOnly="true" Width="50"  Header="# Sub"/>  
-    </FlexGridColumns>  
+          CellFactory="@GridCellFactory">
+    <FlexGridColumns>
+        <GridColumn Binding="Checked" IsReadOnly="true" Width="50" Header="Sel"/>
+        <GridColumn Binding="Name" IsReadOnly="true"/>
+        <GridColumn Binding="ConnectionCount" IsReadOnly="true" Width="50" Header="# Conn"/>
+        <GridColumn Binding="SubscriptionCount" IsReadOnly="true" Width="50" Header="# Sub"/>
+    </FlexGridColumns>
 </FlexGrid>
+<hr/>
+<div class="container">
+    <div class="row">
+        <h2>Session:@SelectedName</h2>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <FlexGrid ItemsSource="Urls.Items"
+                      AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+                      ColumnHeaderStyle="@("font-weight:bold")"
+                      SelectionMode="GridSelectionMode.Row">
+                <FlexGridColumns>
+                    <GridColumn Binding="Url" IsReadOnly="true"/>
+                </FlexGridColumns>
+            </FlexGrid>
+        </div>
+        <div class="col-sm">
+            <FlexGrid ItemsSource="Subjects.Items"
+                      AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+                      ColumnHeaderStyle="@("font-weight:bold")"
+                      SelectionMode="GridSelectionMode.Row">
+                <FlexGridColumns>
+                    <GridColumn Binding="Subject" IsReadOnly="true"/>
+                </FlexGridColumns>
+            </FlexGrid>
+        </div>
+    </div>
+</div>
