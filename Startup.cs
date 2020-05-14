@@ -22,7 +22,6 @@ namespace nats_ui
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<NatsService>();
         }
 
