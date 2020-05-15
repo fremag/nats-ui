@@ -11,6 +11,7 @@ namespace nats_ui.Data
         public List<Connection> Connections { get; } = new List<Connection>();
         public List<NatsSubscription> Subscriptions { get; } = new List<NatsSubscription>();
         public List<Session> Sessions { get; } = new List<Session>();
+        public List<NatsMessage> SavedMessages { get; } = new List<NatsMessage>();
 
         public Connection GetConnection(string name) => Connections.FirstOrDefault(connection => connection.Name == name);
         public NatsSubscription GetSubject(string subject) => Subscriptions.FirstOrDefault(subscription => subscription.Subject == subject);
@@ -83,6 +84,7 @@ namespace nats_ui.Data
             Sessions.Clear();
             Connections.Clear();
             Subscriptions.Clear();           
+
             Sessions.AddRange(config.Sessions);
             Connections.AddRange(config.Connections);
             Subscriptions.AddRange(config.Subscriptions);

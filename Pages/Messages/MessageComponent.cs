@@ -13,6 +13,7 @@ namespace nats_ui.Pages.Messages
         {
             public string Subject { get; set; }
             public string Data { get; set;}
+            public string Url { get; set;}
         }
 
         [Inject]
@@ -26,7 +27,7 @@ namespace nats_ui.Pages.Messages
         protected override Task OnInitializedAsync()
         {
             NatsService.MessageReceived += OnMessageReceived;
-            MessageGrid.SetData(NatsService.Messages);
+            MessageGrid.SetData(NatsService.ReceivedMessages);
             MessageGrid.SelectedItemChanged += OnSelectedItemChanged;
             return Task.CompletedTask;
         }
@@ -35,6 +36,7 @@ namespace nats_ui.Pages.Messages
         {
             Model.Subject = message.Subject;
             Model.Data = message.Data;
+            Model.Url = message.Url;
 
             InvokeAsync(StateHasChanged);
         }
@@ -44,9 +46,16 @@ namespace nats_ui.Pages.Messages
             InvokeAsync(() => MessageGrid.Insert(0, message));
         }
 
-        protected void SendMessage()
+        protected void SaveMessage()
         {
-        
+            var message = new NatsMessage
+            {
+                Url = Model.Url,
+                Subject = Model.Url,
+                Data = Model.Data
+            };
+
+            NatsService.Save(message);
         }
     }
 }

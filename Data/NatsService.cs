@@ -16,9 +16,10 @@ namespace nats_ui.Data
         private Dictionary<NatsSubscription, List<IAsyncSubscription>> Subscriptions { get; } = new Dictionary<NatsSubscription, List<IAsyncSubscription>>();
         
         public event Action<NatsMessage> MessageReceived;
+        public event Action<NatsMessage> MessageSaved;
 
         private ConnectionFactory Factory { get; } = new ConnectionFactory();
-        public List<NatsMessage> Messages { get; } = new List<NatsMessage>();
+        public List<NatsMessage> ReceivedMessages { get; } = new List<NatsMessage>();
 
         public NatsService()
         {
@@ -117,7 +118,7 @@ namespace nats_ui.Data
                 Data = Encoding.Default.GetString(e.Message.Data),
                 Url = url
             };
-            Messages.Add(msg);
+            ReceivedMessages.Add(msg);
             MessageReceived?.Invoke(msg);
         }
 
@@ -199,6 +200,12 @@ namespace nats_ui.Data
         {
             Close();
             Configuration.Load(NatsXml);
+        }
+
+        public void Save(NatsMessage message)
+        {
+            Configuration.SavedMessages.Add(message);
+            MessageSaved?.Invoke(message);
         }
     }
 }
