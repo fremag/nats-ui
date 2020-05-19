@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using NATS.Client;
 using NLog;
@@ -20,6 +21,7 @@ namespace nats_ui.Data
 
         private ConnectionFactory Factory { get; } = new ConnectionFactory();
         public List<NatsMessage> ReceivedMessages { get; } = new List<NatsMessage>();
+        public List<Connection> Connections => ConnectionsByName.Keys.Select(c => c.Clone()).ToList();
 
         public NatsService()
         {
@@ -66,17 +68,18 @@ namespace nats_ui.Data
             Configuration.RemoveSubject(natsSubscription.Subject);
         }
 
-        public void Connect(Connection connection)
+        public IConnection Connect(Connection connection)
         {
-            if (ConnectionsByName.ContainsKey(connection))
+            if (ConnectionsByName.TryGetValue(connection, out var conn))
             {
-                return;
+                return conn;
             }
 
             Logger.Info($"Connect: {connection.Url}");
-            var conn = Factory.CreateConnection(connection.Url);
+            conn = Factory.CreateConnection(connection.Url);
             connection.Status = ConnectionStatus.Connected;
             ConnectionsByName[connection] = conn;
+            return conn;
         }
 
         public void Disconnect(Connection connection)
@@ -206,6 +209,20 @@ namespace nats_ui.Data
         {
             Configuration.SavedMessages.Add(message);
             MessageSaved?.Invoke(message);
+        }
+
+        public void Send(NatsMessage message)
+        {
+            Logger.Info($"{nameof(Send)}: {message.Subject}, {message.Url}");
+            var conn = ConnectionsByName.Values.FirstOrDefault(c => c.ConnectedUrl == message.Url);
+            if (conn != null)
+            {
+                conn.Publish(message.Subject, Encoding.Default.GetBytes(message.Data));
+            }
+            else
+            {
+                Logger.Error($"Can't find connection with Url: {message.Url} !");
+            }
         }
     }
 }

@@ -88,6 +88,7 @@ namespace nats_ui.Data
             Sessions.AddRange(config.Sessions);
             Connections.AddRange(config.Connections);
             Subscriptions.AddRange(config.Subscriptions);
+            SavedMessages.AddRange(config.SavedMessages);
         }
     }
 }

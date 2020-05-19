@@ -88,5 +88,16 @@ namespace nats_ui.Data
                 }
             }
         }
+
+        public void CheckAll()
+        {
+            for (int i = Items.Count - 1; i >= 0; i--)
+            {
+                if (Items[i] is T item)
+                {
+                    item.Checked = true;
+                }
+            }
+        }
     }
 }

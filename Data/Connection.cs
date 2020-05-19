@@ -50,5 +50,10 @@ namespace nats_ui.Data
         {
             return HashCode.Combine(Name, Host, Port);
         }
+
+        public Connection Clone()
+        {
+            return (Connection)MemberwiseClone();
+        }
     }
 }
