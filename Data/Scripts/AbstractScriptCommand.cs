@@ -7,11 +7,21 @@ namespace nats_ui.Data.Scripts
     {
         Unknown, Ready, Error, Waiting, Executed, Failed
     }
-    
-    public abstract class AbstractScriptCommand : ICheckable
+
+    public interface IScriptCommand : ICheckable
     {
-        public virtual string ParamName1 { get; } = "Unknown";
-        public virtual string ParamName2 { get; } = "Unknown";
+        string ParamName1 { get; }
+        string ParamName2 { get; }
+
+        string Name { get; set; }
+        string Param1 { get; set; }
+        string Param2 { get; set; }
+    }
+    
+    public abstract class AbstractScriptCommand : IScriptCommand 
+    {
+        public virtual string ParamName1 { get; }
+        public virtual string ParamName2 { get; }
 
         public string Name { get; set; }
         public string Param1 { get; set; }

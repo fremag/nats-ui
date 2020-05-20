@@ -1,0 +1,53 @@
+﻿@page "/editor"
+@inherits EditorComponent
+
+@using C1.Blazor.Grid
+
+<EditForm Model="@Model" OnSubmit="@Save">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+    <div class="form-group row">
+        <label for="type" class="col-sm-2 col-form-label">Type</label>
+        <div class="col-sm-10">
+            <InputSelect id="type" class="form-control" @bind-Value="Model.Name">
+                @foreach (var type in ScriptService.CommandsByName.Keys)
+                {
+                    <option value="@type">@type</option>
+                }
+            </InputSelect>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="param1" class="col-sm-2 col-form-label">@Model.ParamName1</label>
+        <div class="col-sm-10">
+            <InputText id="param1" class="form-control" @bind-Value="Model.Param1"/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="param2" class="col-sm-2 col-form-label">@Model.ParamName2</label>
+        <div class="col-sm-10">
+            <InputTextArea id="param2" class="form-control" @bind-Value="Model.Param2"/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <button class="btn btn-primary" type="submit">Save</button>
+    </div>
+</EditForm>
+
+<hr/>
+
+<FlexGrid ItemsSource="@CommandsGrid.Items"
+          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+          ColumnHeaderStyle="@("font-weight:bold")"
+          SelectionChanged="@CommandsGrid.SelectionChanged"
+          SelectionMode="GridSelectionMode.Row"
+          CellTapped="@CommandsGrid.OnCellTaped"
+          CellDoubleTapped="@CommandsGrid.OnCellDoubleTaped"
+          CellFactory="@GridCellFactory">
+    <FlexGridColumns>
+        <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50"/>
+        <GridColumn Binding="Name" IsReadOnly="true"/>
+        <GridColumn Binding="Param1" IsReadOnly="true"/>
+        <GridColumn Binding="Param2" IsReadOnly="true"/>
+    </FlexGridColumns>
+</FlexGrid>

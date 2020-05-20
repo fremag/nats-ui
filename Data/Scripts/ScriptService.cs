@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using XSerializer;
 
 namespace nats_ui.Data.Scripts
@@ -11,13 +14,16 @@ namespace nats_ui.Data.Scripts
         public const string DefaultScriptDirectory = "Scripts";
         public string ScriptDirectory { get; }
         public List<Script> Scripts { get; } = new List<Script>();
-
+        public Dictionary<string, Type> CommandsByName;
+        
         public ScriptService(string scriptDirectory = DefaultScriptDirectory)
         {
             ScriptDirectory = scriptDirectory;
             Load(ScriptDirectory);
-        }
 
+            CommandsByName = Assembly.GetEntryAssembly().GetTypes().Where(type => !type.IsAbstract && type.GetInterfaces().Any(interf => interf == typeof(IScriptCommand))).ToDictionary(type => type.Name, type => type);
+        }
+        
         public void Load(string directory)
         {
             var scriptFiles = Directory.EnumerateFiles(directory);
