@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using nats_ui.Data;
+using nats_ui.Data.Scripts;
 
 namespace nats_ui
 {
@@ -23,6 +24,7 @@ namespace nats_ui
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<NatsService>();
+            services.AddSingleton<ScriptService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
