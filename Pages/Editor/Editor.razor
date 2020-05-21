@@ -3,16 +3,17 @@
 
 @using C1.Blazor.Grid
 
-<EditForm Model="@Model" OnSubmit="@Save">
+<EditForm Model="@Model" OnSubmit="@Add">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
     <div class="form-group row">
-        <label for="type" class="col-sm-2 col-form-label">Type</label>
+        <label for="name" class="col-sm-2 col-form-label">Name</label>
         <div class="col-sm-10">
-            <InputSelect id="type" class="form-control" @bind-Value="Model.Name">
-                @foreach (var type in ScriptService.CommandsByName.Keys)
+            <InputSelect id="name" class="form-control" @bind-Value="Model.Name">
+                <option value="">Select a command...</option>
+                @foreach (var name in ScriptService.CommandsByName.Keys)
                 {
-                    <option value="@type">@type</option>
+                    <option value="@name">@name</option>
                 }
             </InputSelect>
         </div>
@@ -30,7 +31,7 @@
         </div>
     </div>
     <div class="form-group row">
-        <button class="btn btn-primary" type="submit">Save</button>
+        <button class="btn btn-primary" type="submit">Add</button>
     </div>
 </EditForm>
 

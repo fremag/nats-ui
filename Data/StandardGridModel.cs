@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using C1.Blazor.Grid;
 using C1.DataCollection;
 
@@ -27,6 +28,11 @@ namespace nats_ui.Data
             Items.InsertAsync(index, message);
         }
             
+        public void Add(T message)
+        {
+            Items.AddAsync(message);
+        }
+
         private T GetSelected(GridCellRange cellRange)
         {
             if (cellRange == null)

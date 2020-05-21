@@ -14,7 +14,8 @@ namespace nats_ui.Data.Scripts
         public const string DefaultScriptDirectory = "Scripts";
         public string ScriptDirectory { get; }
         public List<Script> Scripts { get; } = new List<Script>();
-        public Dictionary<string, Type> CommandsByName;
+        public Dictionary<string, Type> CommandsByName { get; }
+        public Script Current { get; private set; } = new Script();
         
         public ScriptService(string scriptDirectory = DefaultScriptDirectory)
         {
@@ -52,8 +53,34 @@ namespace nats_ui.Data.Scripts
             return script;
         }
 
+        public void SetCurrent(Script script)
+        {
+            Current = script;
+        }
+        
         public void Save(string path, Script script)
         {
+        }
+        
+        public IScriptCommand Create(string name)
+        {
+            if (name == null || !CommandsByName.TryGetValue(name, out var type))
+            {
+                throw new ArgumentException($"Unknown command name: {name} !");
+            }
+
+            var obj = (IScriptCommand) Activator.CreateInstance(type);
+            return obj;
+        }
+
+        public void Add(IScriptCommand scriptCommand)
+        {
+            if (Current == null)
+            {
+                Current = new Script();
+            }   
+            
+            Current.Commands.Add(scriptCommand);
         }
     }
 }

@@ -10,10 +10,12 @@ namespace nats_ui.Data.Scripts
 
     public interface IScriptCommand : ICheckable
     {
+        [XmlIgnore]
+        string Name { get; }
+
         string ParamName1 { get; }
         string ParamName2 { get; }
 
-        string Name { get; set; }
         string Param1 { get; set; }
         string Param2 { get; set; }
     }
@@ -23,7 +25,8 @@ namespace nats_ui.Data.Scripts
         public virtual string ParamName1 { get; }
         public virtual string ParamName2 { get; }
 
-        public string Name { get; set; }
+        [XmlIgnore]
+        public string Name => GetType().Name; 
         public string Param1 { get; set; }
         public string Param2 { get; set; }
 

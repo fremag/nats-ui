@@ -6,7 +6,7 @@ namespace nats_ui.Data.Scripts
     public class Script : ICheckable
     {
         public string Name { get; set; }
-        public List<AbstractScriptCommand> Commands { get; set; } = new List<AbstractScriptCommand>();
+        public List<IScriptCommand> Commands { get; set; } = new List<IScriptCommand>();
 
         [XmlIgnore]
         public bool Checked { get; set; }

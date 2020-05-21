@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using nats_ui.Data;
@@ -28,8 +27,7 @@ namespace nats_ui.Pages.Editor
                 set
                 {
                     name = value;
-                    var type = ScriptService.CommandsByName[name];
-                    var obj = (IScriptCommand)Activator.CreateInstance(type);
+                    var obj = ScriptService.Create(name);
                     ParamName1 = obj.ParamName1;
                     ParamName2 = obj.ParamName2;
                 }
@@ -44,7 +42,7 @@ namespace nats_ui.Pages.Editor
         [Inject]
         protected ScriptService ScriptService { get; set; }
 
-        protected StandardGridModel<AbstractScriptCommand> CommandsGrid { get; } = new StandardGridModel<AbstractScriptCommand>(); 
+        protected StandardGridModel<IScriptCommand> CommandsGrid { get; } = new StandardGridModel<IScriptCommand>(); 
         protected EditorCellFactory GridCellFactory { get; } = new EditorCellFactory();
 
         protected CommandModel Model { get; private set; }
@@ -52,10 +50,12 @@ namespace nats_ui.Pages.Editor
         protected override Task OnInitializedAsync()
         {
             Model = new CommandModel(ScriptService);
+            CommandsGrid.SetData(ScriptService.Current.Commands);
+            
             return Task.CompletedTask;
         }
 
-        private void OnSelectedItemChanged(AbstractScriptCommand message)
+        private void OnSelectedItemChanged(IScriptCommand message)
         {
             Model.Name = message.GetType().Name;
             Model.Param1 = message.Param1;
@@ -66,9 +66,18 @@ namespace nats_ui.Pages.Editor
             InvokeAsync(StateHasChanged);
         }
 
-        protected void Save()
+        protected void Add()
         {
-            
+            if (string.IsNullOrEmpty(Model.Name))
+            {
+                return;
+            }
+            var scriptCommand = ScriptService.Create(Model.Name);
+            scriptCommand.Param1 = Model.Param1;
+            scriptCommand.Param2 = Model.Param2;
+            ScriptService.Add(scriptCommand);
+            CommandsGrid.Add(scriptCommand);
+            InvokeAsync(StateHasChanged);
         }
     }
 }
