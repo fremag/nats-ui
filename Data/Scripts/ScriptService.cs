@@ -3,26 +3,33 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using NLog;
 using XSerializer;
 
 namespace nats_ui.Data.Scripts
 {
     public class ScriptService
     {
-        private static XmlSerializer<Script> Serializer { get; } = new XmlSerializer<Script>();
+        static ScriptService()
+        {
+            CommandsByName = Assembly.GetEntryAssembly().GetTypes().Where(type => !type.IsAbstract && type.GetInterfaces().Any(interf => interf == typeof(IScriptCommand))).ToDictionary(type => type.Name, type => type);
+            XmlSerializationOptions options = new XmlSerializationOptions(shouldIndent: true);
+            Serializer = new XmlSerializer<Script>(options, CommandsByName.Values.ToArray());
+        }
 
+        private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
+        public static Dictionary<string, Type> CommandsByName { get; }
+        private static XmlSerializer<Script> Serializer { get; }
+    
         public const string DefaultScriptDirectory = "Scripts";
         public string ScriptDirectory { get; }
         public List<Script> Scripts { get; } = new List<Script>();
-        public Dictionary<string, Type> CommandsByName { get; }
         public Script Current { get; private set; } = new Script();
         
         public ScriptService(string scriptDirectory = DefaultScriptDirectory)
         {
             ScriptDirectory = scriptDirectory;
             Load(ScriptDirectory);
-
-            CommandsByName = Assembly.GetEntryAssembly().GetTypes().Where(type => !type.IsAbstract && type.GetInterfaces().Any(interf => interf == typeof(IScriptCommand))).ToDictionary(type => type.Name, type => type);
         }
         
         public void Load(string directory)
@@ -49,7 +56,7 @@ namespace nats_ui.Data.Scripts
             }
 
             var script = Serializer.Deserialize(xml);
-            script.File = xmlFile;
+            script.File = Path.GetFileName(xmlFile);
             return script;
         }
 
@@ -58,8 +65,24 @@ namespace nats_ui.Data.Scripts
             Current = script;
         }
         
-        public void Save(string path, Script script)
+        public void SaveScript(string path, Script script)
         {
+            Logger.Info($"Save script: {path}");
+            using var fileStream = File.OpenWrite(path);
+            Serializer.Serialize(fileStream, script);
+        }
+        
+        public void Save(string name, string file)
+        {
+            if (string.IsNullOrEmpty(file))
+            {
+                Logger.Error($"Can't save: file is null or empty: {file} !");
+                return;
+            }
+
+            Current.Name = name;
+            var path = Path.Combine(ScriptDirectory, file);
+            SaveScript(path, Current);
         }
         
         public IScriptCommand Create(string name)

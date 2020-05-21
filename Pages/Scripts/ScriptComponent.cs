@@ -22,7 +22,13 @@ namespace nats_ui.Pages.Scripts
         protected override Task OnInitializedAsync()
         {
             ScriptGrid.SetData(ScriptService.Scripts);
+            ScriptGrid.ItemDoubleClicked += OnItemDoubleClicked; 
             return Task.CompletedTask;
+        }
+
+        private void OnItemDoubleClicked(int index, Script script)
+        {
+            ScriptService.SetCurrent(script);
         }
     }
 }

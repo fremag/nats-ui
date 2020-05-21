@@ -10,11 +10,11 @@ namespace nats_ui.Pages.Editor
     {
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
-        public class CommandModel
+        public class CommandFormModel
         {
             private ScriptService ScriptService { get; }
 
-            public CommandModel(ScriptService scriptService)
+            public CommandFormModel(ScriptService scriptService)
             {
                 ScriptService = scriptService;
             }
@@ -39,45 +39,59 @@ namespace nats_ui.Pages.Editor
             public string ParamName2 { get; set; }
         }
 
+        public class SaveFormModel
+        {
+            public string Name { get; set; }
+            public string File { get; set; }
+        }
+        
         [Inject]
         protected ScriptService ScriptService { get; set; }
 
         protected StandardGridModel<IScriptCommand> CommandsGrid { get; } = new StandardGridModel<IScriptCommand>(); 
         protected EditorCellFactory GridCellFactory { get; } = new EditorCellFactory();
 
-        protected CommandModel Model { get; private set; }
+        protected CommandFormModel CommandModel { get; private set; }
+        protected SaveFormModel SaveModel { get; private set; }
 
         protected override Task OnInitializedAsync()
         {
-            Model = new CommandModel(ScriptService);
+            CommandModel = new CommandFormModel(ScriptService);
+            SaveModel = new SaveFormModel();
             CommandsGrid.SetData(ScriptService.Current.Commands);
-            
+            SaveModel.File = ScriptService.Current.File; 
+            SaveModel.Name = ScriptService.Current.Name; 
+
             return Task.CompletedTask;
         }
 
-        private void OnSelectedItemChanged(IScriptCommand message)
+        private void OnSelectedItemChanged(IScriptCommand command)
         {
-            Model.Name = message.GetType().Name;
-            Model.Param1 = message.Param1;
-            Model.Param2 = message.Param2;
-            Model.ParamName1 = message.ParamName1;
-            Model.ParamName2 = message.ParamName2;
-
+            CommandModel.Name = command.GetType().Name;
+            CommandModel.Param1 = command.Param1;
+            CommandModel.Param2 = command.Param2;
+            CommandModel.ParamName1 = command.ParamName1;
+            CommandModel.ParamName2 = command.ParamName2;
             InvokeAsync(StateHasChanged);
         }
 
         protected void Add()
         {
-            if (string.IsNullOrEmpty(Model.Name))
+            if (string.IsNullOrEmpty(CommandModel.Name))
             {
                 return;
             }
-            var scriptCommand = ScriptService.Create(Model.Name);
-            scriptCommand.Param1 = Model.Param1;
-            scriptCommand.Param2 = Model.Param2;
+            var scriptCommand = ScriptService.Create(CommandModel.Name);
+            scriptCommand.Param1 = CommandModel.Param1;
+            scriptCommand.Param2 = CommandModel.Param2;
             ScriptService.Add(scriptCommand);
             CommandsGrid.Add(scriptCommand);
             InvokeAsync(StateHasChanged);
+        }
+
+        protected void Save()
+        {
+            ScriptService.Save(SaveModel.Name, SaveModel.File);
         }
     }
 }
