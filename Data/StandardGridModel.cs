@@ -35,6 +35,24 @@ namespace nats_ui.Data
             Items.AddAsync(message);
         }
 
+        public void Remove(int index)
+        {
+            Items.RemoveAsync(index);
+        }
+
+        public void Swap(int indexA, int indexB)
+        {
+            if (indexA < 0 || indexB < 0 || indexA >= Items.Count || indexB >= Items.Count)
+            {
+                return;
+            }
+            
+            var itemA = Items[indexA];
+            var itemB = Items[indexB];
+            Items.ReplaceAsync(indexA, itemB);
+            Items.ReplaceAsync(indexB, itemA);
+        }
+        
         private T GetSelected(GridCellRange cellRange)
         {
             if (cellRange == null || cellRange.Row < 0 || cellRange.Row >= Items.Count)

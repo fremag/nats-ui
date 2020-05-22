@@ -68,16 +68,23 @@ namespace nats_ui.Pages.Editor
 
         private void OnItemClicked(string colName, IScriptCommand command)
         {
+            int index = ScriptService.Current.Commands.IndexOf(command);
             switch (colName)
             {
                 case nameof(IScriptCommand.Up):
-                    Logger.Info($"Up !");
+                    Logger.Info($"Up ! {index}");
+                    CommandsGrid.Swap(index, index-1);
+                    ScriptService.Current.Swap(index, index - 1);
                     break;
                 case nameof(IScriptCommand.Down):
-                    Logger.Info($"Down !");
+                    Logger.Info($"Down !  {index}");
+                    CommandsGrid.Swap(index, index+1);
+                    ScriptService.Current.Swap(index, index + 1);
                     break;
                 case nameof(IScriptCommand.Trash):
-                    Logger.Info($"Trash !");
+                    Logger.Info($"Trash !  {index}");
+                    CommandsGrid.Remove(index);
+                    ScriptService.Current.Remove(index);
                     break;
             }
         }
