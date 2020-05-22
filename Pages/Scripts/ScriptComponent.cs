@@ -26,7 +26,7 @@ namespace nats_ui.Pages.Scripts
             return Task.CompletedTask;
         }
 
-        private void OnItemDoubleClicked(int index, Script script)
+        private void OnItemDoubleClicked(string colName, Script script)
         {
             ScriptService.SetCurrent(script);
         }

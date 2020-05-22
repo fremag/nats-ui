@@ -83,7 +83,7 @@ namespace nats_ui.Pages.Sessions
             InvokeAsync(StateHasChanged);
         }
 
-        private void OnItemDoubleClicked(int index, Session session)
+        private void OnItemDoubleClicked(string colName, Session session)
         {
             NatsService.Init(session);
         }

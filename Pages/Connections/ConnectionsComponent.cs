@@ -72,7 +72,7 @@ namespace nats_ui.Pages.Connections
             InvokeAsync(StateHasChanged);
         }
 
-        private void OnItemDoubleClicked(int index, Connection connection)
+        private void OnItemDoubleClicked(string colName, Connection connection)
         {
             if (connection.Status == ConnectionStatus.Connected)
             {

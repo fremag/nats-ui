@@ -18,12 +18,16 @@ namespace nats_ui.Data.Scripts
 
         string Param1 { get; set; }
         string Param2 { get; set; }
+
+        string Up => "https://img.icons8.com/flat_round/64/000000/collapse-arrow--v1.png";
+        string Down => "https://img.icons8.com/flat_round/64/000000/expand-arrow--v1.png";
+        string Trash => "img/trash.svg";
     }
     
-    public abstract class AbstractScriptCommand : IScriptCommand 
+    public abstract class AbstractScriptCommand : IScriptCommand
     {
-        public virtual string ParamName1 { get; }
-        public virtual string ParamName2 { get; }
+        public virtual string ParamName1 { get; } = null;
+        public virtual string ParamName2 { get; } = null;
 
         [XmlIgnore]
         public string Name => GetType().Name; 

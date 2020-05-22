@@ -62,7 +62,7 @@ namespace nats_ui.Pages.Subscriptions
             InvokeAsync(StateHasChanged);
         }
 
-        private void OnItemDoubleClicked(int index, NatsSubscription subscription)
+        private void OnItemDoubleClicked(string colName, NatsSubscription subscription)
         {
             if (subscription.Subscribed)
             {

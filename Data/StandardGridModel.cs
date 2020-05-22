@@ -2,18 +2,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using C1.Blazor.Grid;
 using C1.DataCollection;
 
 namespace nats_ui.Data
 {
+    public delegate void ItemClickedDelegate<T>(string colName, T item);
+    public delegate void ItemDoubleClickedDelegate<T>(string colName, T item);
+    
     public class StandardGridModel<T> : IEnumerable<T> where T : class, ICheckable
     {
         public C1DataCollection<T> Items { get; private set; }
         public event Action<T> SelectedItemChanged;
-        public event Action<int, T> ItemClicked;
-        public event Action<int, T> ItemDoubleClicked;
+        public event ItemClickedDelegate<T> ItemClicked;
+        public event ItemDoubleClickedDelegate<T> ItemDoubleClicked;
         
         public IEnumerator<T> GetEnumerator() => Items.OfType<T>().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -35,7 +37,7 @@ namespace nats_ui.Data
 
         private T GetSelected(GridCellRange cellRange)
         {
-            if (cellRange == null)
+            if (cellRange == null || cellRange.Row < 0 || cellRange.Row >= Items.Count)
             {
                 return null;
             }
@@ -66,7 +68,10 @@ namespace nats_ui.Data
             {
                 selected.Checked = !selected.Checked;
             }
-            ItemClicked?.Invoke(e.CellRange.Column, selected);
+
+            var grid = (FlexGrid) sender;
+            var colName = grid.Columns[e.CellRange.Column].Binding;
+            ItemClicked?.Invoke(colName, selected);
         }
 
         public void OnCellDoubleTaped(object sender, GridInputEventArgs e)
@@ -76,7 +81,9 @@ namespace nats_ui.Data
             {
                 return;
             }
-            ItemDoubleClicked?.Invoke(e.CellRange.Column, selected);
+            var grid = (FlexGrid) sender;
+            var colName = grid.Columns[e.CellRange.Column].Binding;
+            ItemDoubleClicked?.Invoke(colName, selected);
         }
 
         public void Remove(in int index)
