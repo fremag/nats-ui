@@ -76,7 +76,7 @@ namespace nats_ui.Data.Scripts
         {
             if (string.IsNullOrEmpty(file))
             {
-                Logger.Error($"Can't save: file is null or empty: {file} !");
+                Logger.Error($"Can't save: file is null or empty: {file} , name: {name}!");
                 return;
             }
 
