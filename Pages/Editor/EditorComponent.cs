@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using C1.Blazor.Grid;
 using Microsoft.AspNetCore.Components;
 using nats_ui.Data;
 using nats_ui.Data.Scripts;
@@ -48,14 +49,17 @@ namespace nats_ui.Pages.Editor
         [Inject]
         protected ScriptService ScriptService { get; set; }
 
-        protected StandardGridModel<IScriptCommand> CommandsGrid { get; } = new StandardGridModel<IScriptCommand>();
+        protected StandardGridModel<ScriptStatement> CommandsGrid { get; } = new StandardGridModel<ScriptStatement>();
         protected EditorCellFactory GridCellFactory { get; } = new EditorCellFactory();
 
         protected CommandFormModel CommandModel { get; private set; }
         protected SaveFormModel SaveModel { get; private set; }
+        public GridDataMap CommandMap { get; set; } = new GridDataMap();
+
 
         protected override Task OnInitializedAsync()
         {
+            CommandMap.ItemsSource = ScriptService.CommandsByName.Keys;
             CommandModel = new CommandFormModel(ScriptService);
             SaveModel = new SaveFormModel();
             CommandsGrid.SetData(ScriptService.Current.Commands);
@@ -66,22 +70,22 @@ namespace nats_ui.Pages.Editor
             return Task.CompletedTask;
         }
 
-        private void OnItemClicked(string colName, IScriptCommand command)
+        private void OnItemClicked(string colName, ScriptStatement command)
         {
             int index = ScriptService.Current.Commands.IndexOf(command);
             switch (colName)
             {
-                case nameof(IScriptCommand.Up):
+                case nameof(ScriptStatement.Up):
                     Logger.Info($"Up ! {index}");
                     CommandsGrid.Swap(index, index-1);
                     ScriptService.Current.Swap(index, index - 1);
                     break;
-                case nameof(IScriptCommand.Down):
+                case nameof(ScriptStatement.Down):
                     Logger.Info($"Down !  {index}");
                     CommandsGrid.Swap(index, index+1);
                     ScriptService.Current.Swap(index, index + 1);
                     break;
-                case nameof(IScriptCommand.Trash):
+                case nameof(ScriptStatement.Trash):
                     Logger.Info($"Trash !  {index}");
                     CommandsGrid.Remove(index);
                     ScriptService.Current.Remove(index);
@@ -106,7 +110,7 @@ namespace nats_ui.Pages.Editor
                 return;
             }
 
-            var scriptCommand = ScriptService.Create(CommandModel.Name);
+            var scriptCommand = new ScriptStatement { Name = CommandModel.Name};
             scriptCommand.Param1 = CommandModel.Param1;
             scriptCommand.Param2 = CommandModel.Param2;
             ScriptService.Add(scriptCommand);

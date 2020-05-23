@@ -65,12 +65,12 @@
           CellDoubleTapped="@CommandsGrid.OnCellDoubleTaped"
           CellFactory="@GridCellFactory">
     <FlexGridColumns>
-        <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50" />
-        <GridColumn Binding="Name" IsReadOnly="true"/>
+        <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50"/>
+        <GridColumn Binding="Name" IsReadOnly="false" DataMap="@CommandMap"/>
         <GridColumn Binding="Param1" IsReadOnly="false"/>
         <GridColumn Binding="Param2" IsReadOnly="false"/>
-        <GridImageColumn Binding="Up" IsReadOnly="true" Width="70" />
-        <GridImageColumn Binding="Down" IsReadOnly="true" Width="70" />
-        <GridImageColumn Binding="Trash" IsReadOnly="true" Width="70" />
+        <GridImageColumn Binding="Up" IsReadOnly="true" Width="70"/>
+        <GridImageColumn Binding="Down" IsReadOnly="true" Width="70"/>
+        <GridImageColumn Binding="Trash" IsReadOnly="true" Width="70"/>
     </FlexGridColumns>
 </FlexGrid>

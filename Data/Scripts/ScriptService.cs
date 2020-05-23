@@ -96,14 +96,14 @@ namespace nats_ui.Data.Scripts
             return obj;
         }
 
-        public void Add(IScriptCommand scriptCommand)
+        public void Add(ScriptStatement statement)
         {
             if (Current == null)
             {
                 Current = new Script();
             }   
             
-            Current.Commands.Add(scriptCommand);
+            Current.Commands.Add(statement);
         }
     }
 }

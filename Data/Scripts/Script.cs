@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
@@ -7,7 +6,7 @@ namespace nats_ui.Data.Scripts
     public class Script : ICheckable
     {
         public string Name { get; set; }
-        public List<IScriptCommand> Commands { get; set; } = new List<IScriptCommand>();
+        public List<ScriptStatement> Commands { get; set; } = new List<ScriptStatement>();
 
         [XmlIgnore]
         public bool Checked { get; set; }

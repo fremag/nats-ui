@@ -8,22 +8,6 @@ namespace nats_ui.Data.Scripts
         Unknown, Ready, Error, Waiting, Executed, Failed
     }
 
-    public interface IScriptCommand : ICheckable
-    {
-        [XmlIgnore]
-        string Name { get; }
-
-        string ParamName1 { get; }
-        string ParamName2 { get; }
-
-        string Param1 { get; set; }
-        string Param2 { get; set; }
-
-        string Up => "https://img.icons8.com/flat_round/64/000000/collapse-arrow--v1.png";
-        string Down => "https://img.icons8.com/flat_round/64/000000/expand-arrow--v1.png";
-        string Trash => "img/trash.svg";
-    }
-    
     public abstract class AbstractScriptCommand : IScriptCommand
     {
         public virtual string ParamName1 { get; } = null;
