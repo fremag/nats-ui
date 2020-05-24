@@ -8,17 +8,35 @@ using XSerializer;
 
 namespace nats_ui.Data.Scripts
 {
+    public class CommandInfo
+    {
+        public string Name { get; set; }
+        public Type Type { get; set; }
+        public string ParamName1 { get; set; }
+        public string ParamName2 { get; set; }
+    }
+    
     public class ScriptService
     {
         static ScriptService()
         {
-            CommandsByName = Assembly.GetEntryAssembly().GetTypes().Where(type => !type.IsAbstract && type.GetInterfaces().Any(interf => interf == typeof(IScriptCommand))).ToDictionary(type => type.Name, type => type);
+            CommandsByName = Assembly.GetEntryAssembly().GetTypes().Where(type => !type.IsAbstract && type.GetInterfaces().Any(interf => interf == typeof(IScriptCommand))).Select(type =>
+            {
+                var command = (AbstractScriptCommand)Activator.CreateInstance(type);
+                return new CommandInfo
+                {
+                    Name = type.Name,
+                    ParamName1 = command.ParamName1,
+                    ParamName2 = command.ParamName2
+                };
+            }
+                ).ToDictionary(info => info.Name, info => info);
             XmlSerializationOptions options = new XmlSerializationOptions(shouldIndent: true);
-            Serializer = new XmlSerializer<Script>(options, CommandsByName.Values.ToArray());
+            Serializer = new XmlSerializer<Script>(options);
         }
 
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
-        public static Dictionary<string, Type> CommandsByName { get; }
+        public static Dictionary<string, CommandInfo> CommandsByName { get; }
         private static XmlSerializer<Script> Serializer { get; }
     
         public const string DefaultScriptDirectory = "Scripts";
@@ -68,7 +86,7 @@ namespace nats_ui.Data.Scripts
         public void SaveScript(string path, Script script)
         {
             Logger.Info($"Save script: {path}");
-            using var fileStream = File.OpenWrite(path);
+            using var fileStream = File.Create(path);
             Serializer.Serialize(fileStream, script);
         }
         
@@ -87,12 +105,12 @@ namespace nats_ui.Data.Scripts
         
         public IScriptCommand Create(string name)
         {
-            if (name == null || !CommandsByName.TryGetValue(name, out var type))
+            if (name == null || !CommandsByName.TryGetValue(name, out var command))
             {
                 throw new ArgumentException($"Unknown command name: {name} !");
             }
 
-            var obj = (IScriptCommand) Activator.CreateInstance(type);
+            var obj = (IScriptCommand) Activator.CreateInstance(command.Type);
             return obj;
         }
 

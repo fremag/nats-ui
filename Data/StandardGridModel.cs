@@ -25,14 +25,19 @@ namespace nats_ui.Data
             Items = new C1DataCollection<T>(new List<T>(data));
         }
 
-        public void Insert(int index, T message)
+        public void Insert(int index, T item)
         {
-            Items.InsertAsync(index, message);
+            if (index >= Items.Count)
+            {
+                Add(item);
+                return;
+            }
+            Items.InsertAsync(index, item);
         }
             
-        public void Add(T message)
+        public void Add(T item)
         {
-            Items.AddAsync(message);
+            Items.AddAsync(item);
         }
 
         public void Remove(int index)
@@ -129,6 +134,12 @@ namespace nats_ui.Data
                     item.Checked = true;
                 }
             }
+        }
+
+        public void Update(T item)
+        {
+            var idx = Items.IndexOf(item);
+            Items.ReplaceAsync(idx, item);
         }
     }
 }

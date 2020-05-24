@@ -17,10 +17,6 @@ namespace nats_ui.Data.Scripts
         [XmlIgnore]
         public int Count => Commands.Count;
 
-        public void Run(NatsService natsService)
-        {
-        }
-
         public void Swap(int indexA, int indexB)
         {
             if (indexA < 0 || indexB < 0 || indexA >= Count || indexB >= Count)
@@ -37,6 +33,18 @@ namespace nats_ui.Data.Scripts
         public void Remove(int index)
         {
             Commands.RemoveAt(index);
+        }
+
+        public void Insert(int index, ScriptStatement statement)
+        {
+            if (index >= Commands.Count)
+            {
+                Commands.Add(statement);
+            }
+            else
+            {
+                Commands.Insert(index, statement);
+            }
         }
     }
 }

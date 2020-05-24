@@ -13,31 +13,13 @@ namespace nats_ui.Pages.Editor
 
         public class CommandFormModel
         {
-            private ScriptService ScriptService { get; }
-
-            public CommandFormModel(ScriptService scriptService)
-            {
-                ScriptService = scriptService;
-            }
-
-            private string name;
-
-            public string Name
-            {
-                get => name;
-                set
-                {
-                    name = value;
-                    var obj = ScriptService.Create(name);
-                    ParamName1 = obj.ParamName1;
-                    ParamName2 = obj.ParamName2;
-                }
-            }
-
+            public string Name { get; set; }
             public string Param1 { get; set; }
             public string Param2 { get; set; }
             public string ParamName1 { get; set; }
             public string ParamName2 { get; set; }
+            public ScriptStatement CurrentStatement { get; set; }
+            public bool Create { get; set; }
         }
 
         public class SaveFormModel
@@ -60,10 +42,11 @@ namespace nats_ui.Pages.Editor
         protected override Task OnInitializedAsync()
         {
             CommandMap.ItemsSource = ScriptService.CommandsByName.Keys;
-            CommandModel = new CommandFormModel(ScriptService);
+            CommandModel = new CommandFormModel();
             SaveModel = new SaveFormModel();
             CommandsGrid.SetData(ScriptService.Current.Commands);
             CommandsGrid.ItemClicked += OnItemClicked;
+            CommandsGrid.SelectedItemChanged += OnSelectedItemChanged;
             SaveModel.File = ScriptService.Current.File;
             SaveModel.Name = ScriptService.Current.Name;
 
@@ -75,47 +58,83 @@ namespace nats_ui.Pages.Editor
             int index = ScriptService.Current.Commands.IndexOf(command);
             switch (colName)
             {
+                case nameof(ScriptStatement.Insert):
+                    Logger.Debug($"Insert ! {index}");
+                    var scriptStatement = new ScriptStatement();
+                    CommandsGrid.Insert(index+1, scriptStatement);
+                    ScriptService.Current.Insert(index+1, scriptStatement);
+                    break;
                 case nameof(ScriptStatement.Up):
-                    Logger.Info($"Up ! {index}");
-                    CommandsGrid.Swap(index, index-1);
+                    Logger.Debug($"Up ! {index}");
+                    CommandsGrid.Swap(index, index - 1);
                     ScriptService.Current.Swap(index, index - 1);
                     break;
                 case nameof(ScriptStatement.Down):
-                    Logger.Info($"Down !  {index}");
-                    CommandsGrid.Swap(index, index+1);
+                    Logger.Debug($"Down !  {index}");
+                    CommandsGrid.Swap(index, index + 1);
                     ScriptService.Current.Swap(index, index + 1);
                     break;
                 case nameof(ScriptStatement.Trash):
-                    Logger.Info($"Trash !  {index}");
+                    Logger.Debug($"Trash !  {index}");
                     CommandsGrid.Remove(index);
                     ScriptService.Current.Remove(index);
                     break;
             }
         }
 
-        private void OnSelectedItemChanged(IScriptCommand command)
+        private void OnSelectedItemChanged(ScriptStatement statement)
         {
-            CommandModel.Name = command.GetType().Name;
-            CommandModel.Param1 = command.Param1;
-            CommandModel.Param2 = command.Param2;
-            CommandModel.ParamName1 = command.ParamName1;
-            CommandModel.ParamName2 = command.ParamName2;
+            if (! string.IsNullOrEmpty(statement.Name) && ScriptService.CommandsByName.TryGetValue(statement.Name, out var commandInfo))
+            {
+                CommandModel.Name = commandInfo.Name;
+                CommandModel.ParamName1 = commandInfo.ParamName1;
+                CommandModel.ParamName2 = commandInfo.ParamName2;
+            }
+            
+            CommandModel.CurrentStatement = statement;
+            CommandModel.Param1 = statement.Param1;
+            CommandModel.Param2 = statement.Param2;
             InvokeAsync(StateHasChanged);
         }
 
-        protected void Add()
+        protected void StatementSubmit()
+        {
+            if (CommandModel.Create)
+            {
+                Create();
+            }
+            else
+            {
+                Update();
+            }
+
+            InvokeAsync(StateHasChanged);
+        }
+
+        private void Create()
         {
             if (string.IsNullOrEmpty(CommandModel.Name))
             {
                 return;
             }
 
-            var scriptCommand = new ScriptStatement { Name = CommandModel.Name};
-            scriptCommand.Param1 = CommandModel.Param1;
-            scriptCommand.Param2 = CommandModel.Param2;
+            var scriptCommand = new ScriptStatement {Name = CommandModel.Name, Param1 = CommandModel.Param1, Param2 = CommandModel.Param2};
             ScriptService.Add(scriptCommand);
             CommandsGrid.Add(scriptCommand);
-            InvokeAsync(StateHasChanged);
+        }
+
+        private void Update()
+        {
+            var currentStatement = CommandModel.CurrentStatement;
+            if (currentStatement == null || string.IsNullOrEmpty(CommandModel.Name))
+            {
+                return;
+            }
+
+            currentStatement.Name = CommandModel.Name;
+            currentStatement.Param1 = CommandModel.Param1;
+            currentStatement.Param2 = CommandModel.Param2;
+            CommandsGrid.Update(currentStatement);
         }
 
         protected void Save()

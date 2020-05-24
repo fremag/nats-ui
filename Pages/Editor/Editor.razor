@@ -4,7 +4,7 @@
 @using C1.Blazor.Grid
 @using nats_ui.Data.Scripts
 
-<EditForm Model="@CommandModel" OnSubmit="@Add">
+<EditForm Model="@CommandModel" OnSubmit="@StatementSubmit">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
     <div class="form-group row">
@@ -32,7 +32,8 @@
         </div>
     </div>
     <div class="form-group row">
-        <button class="btn btn-primary" type="submit">Add</button>
+        <input class="btn btn-primary" value="Create" type="submit" @onclick="@(()=> CommandModel.Create = true)" />&nbsp;
+        <input class="btn btn-primary" value="Update" type="submit" @onclick="@(()=> CommandModel.Create = false)" />
     </div>
 </EditForm>
 <hr/>
@@ -52,7 +53,8 @@
         </div>
     </div>
     <div class="form-group row">
-        <button class="btn btn-primary" type="submit">Save</button>
+        <input class="btn btn-primary" value="Save" type="submit"/>
+        <input class="btn btn-primary" value="Reload" type="submit"/>
     </div>
 </EditForm>
 <hr/>
@@ -69,6 +71,7 @@
         <GridColumn Binding="Name" IsReadOnly="false" DataMap="@CommandMap"/>
         <GridColumn Binding="Param1" IsReadOnly="false"/>
         <GridColumn Binding="Param2" IsReadOnly="false"/>
+        <GridImageColumn Binding="Insert" IsReadOnly="true" Width="70"/>
         <GridImageColumn Binding="Up" IsReadOnly="true" Width="70"/>
         <GridImageColumn Binding="Down" IsReadOnly="true" Width="70"/>
         <GridImageColumn Binding="Trash" IsReadOnly="true" Width="70"/>
