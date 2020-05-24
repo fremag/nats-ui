@@ -121,7 +121,7 @@ namespace nats_ui.Data.Scripts
                 Current = new Script();
             }   
             
-            Current.Commands.Add(statement);
+            Current.Statements.Add(statement);
         }
     }
 }

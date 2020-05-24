@@ -6,7 +6,7 @@ namespace nats_ui.Data.Scripts
     public class Script : ICheckable
     {
         public string Name { get; set; }
-        public List<ScriptStatement> Commands { get; set; } = new List<ScriptStatement>();
+        public List<ScriptStatement> Statements { get; set; } = new List<ScriptStatement>();
 
         [XmlIgnore]
         public bool Checked { get; set; }
@@ -15,7 +15,7 @@ namespace nats_ui.Data.Scripts
         public string File { get; set; }
 
         [XmlIgnore]
-        public int Count => Commands.Count;
+        public int Count => Statements.Count;
 
         public void Swap(int indexA, int indexB)
         {
@@ -24,26 +24,26 @@ namespace nats_ui.Data.Scripts
                 return;
             }
             
-            var itemA = Commands[indexA];
-            var itemB = Commands[indexB];
-            Commands[indexA]= itemB;
-            Commands[indexB] = itemA;
+            var itemA = Statements[indexA];
+            var itemB = Statements[indexB];
+            Statements[indexA]= itemB;
+            Statements[indexB] = itemA;
         }
 
         public void Remove(int index)
         {
-            Commands.RemoveAt(index);
+            Statements.RemoveAt(index);
         }
 
         public void Insert(int index, ScriptStatement statement)
         {
-            if (index >= Commands.Count)
+            if (index >= Statements.Count)
             {
-                Commands.Add(statement);
+                Statements.Add(statement);
             }
             else
             {
-                Commands.Insert(index, statement);
+                Statements.Insert(index, statement);
             }
         }
     }

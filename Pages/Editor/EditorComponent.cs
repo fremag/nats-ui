@@ -44,7 +44,7 @@ namespace nats_ui.Pages.Editor
             CommandMap.ItemsSource = ScriptService.CommandsByName.Keys;
             CommandModel = new CommandFormModel();
             SaveModel = new SaveFormModel();
-            CommandsGrid.SetData(ScriptService.Current.Commands);
+            CommandsGrid.SetData(ScriptService.Current.Statements);
             CommandsGrid.ItemClicked += OnItemClicked;
             CommandsGrid.SelectedItemChanged += OnSelectedItemChanged;
             SaveModel.File = ScriptService.Current.File;
@@ -55,7 +55,7 @@ namespace nats_ui.Pages.Editor
 
         private void OnItemClicked(string colName, ScriptStatement command)
         {
-            int index = ScriptService.Current.Commands.IndexOf(command);
+            int index = ScriptService.Current.Statements.IndexOf(command);
             switch (colName)
             {
                 case nameof(ScriptStatement.Insert):
