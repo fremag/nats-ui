@@ -47,12 +47,13 @@ namespace nats_ui.Data.Scripts
         public ScriptService(string scriptDirectory = DefaultScriptDirectory)
         {
             ScriptDirectory = scriptDirectory;
-            Load(ScriptDirectory);
+            Load();
         }
         
-        public void Load(string directory)
+        public void Load()
         {
-            var scriptFiles = Directory.EnumerateFiles(directory);
+            Logger.Info($"Load scripts: {ScriptDirectory}");
+            var scriptFiles = Directory.EnumerateFiles(ScriptDirectory);
             foreach (var scriptFile in scriptFiles)
             {
                 var script = LoadScript(scriptFile);
@@ -62,6 +63,7 @@ namespace nats_ui.Data.Scripts
 
         public Script LoadScript(string xmlFile)
         {
+            Logger.Info($"Load script: {xmlFile}");
             if (!File.Exists(xmlFile))
             {
                 return null;
@@ -80,6 +82,7 @@ namespace nats_ui.Data.Scripts
 
         public void SetCurrent(Script script)
         {
+            Logger.Info($"Set current script: {script.Name}");
             Current = script;
         }
         
@@ -116,12 +119,17 @@ namespace nats_ui.Data.Scripts
 
         public void Add(ScriptStatement statement)
         {
-            if (Current == null)
-            {
-                Current = new Script();
-            }   
-            
+            Current ??= new Script();
             Current.Statements.Add(statement);
+        }
+
+        public void Reload(Script script)
+        {
+            var path = Path.Combine(ScriptDirectory, script.File);
+
+            var reloadedScript = LoadScript(path);
+            script.Name = reloadedScript.Name;
+            script.Statements = reloadedScript.Statements;
         }
     }
 }

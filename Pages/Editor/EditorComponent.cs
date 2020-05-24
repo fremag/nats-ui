@@ -31,22 +31,22 @@ namespace nats_ui.Pages.Editor
         [Inject]
         protected ScriptService ScriptService { get; set; }
 
-        protected StandardGridModel<ScriptStatement> CommandsGrid { get; } = new StandardGridModel<ScriptStatement>();
+        protected StandardGridModel<ScriptStatement> StatementsGrid { get; } = new StandardGridModel<ScriptStatement>();
         protected EditorCellFactory GridCellFactory { get; } = new EditorCellFactory();
 
-        protected CommandFormModel CommandModel { get; private set; }
+        protected CommandFormModel StatementModel { get; private set; }
         protected SaveFormModel SaveModel { get; private set; }
-        public GridDataMap CommandMap { get; set; } = new GridDataMap();
+        public GridDataMap StatementMap { get; } = new GridDataMap();
 
 
         protected override Task OnInitializedAsync()
         {
-            CommandMap.ItemsSource = ScriptService.CommandsByName.Keys;
-            CommandModel = new CommandFormModel();
+            StatementMap.ItemsSource = ScriptService.CommandsByName.Keys;
+            StatementModel = new CommandFormModel();
             SaveModel = new SaveFormModel();
-            CommandsGrid.SetData(ScriptService.Current.Statements);
-            CommandsGrid.ItemClicked += OnItemClicked;
-            CommandsGrid.SelectedItemChanged += OnSelectedItemChanged;
+            StatementsGrid.SetData(ScriptService.Current.Statements);
+            StatementsGrid.ItemClicked += OnItemClicked;
+            StatementsGrid.SelectedItemChanged += OnSelectedItemChanged;
             SaveModel.File = ScriptService.Current.File;
             SaveModel.Name = ScriptService.Current.Name;
 
@@ -61,22 +61,22 @@ namespace nats_ui.Pages.Editor
                 case nameof(ScriptStatement.Insert):
                     Logger.Debug($"Insert ! {index}");
                     var scriptStatement = new ScriptStatement();
-                    CommandsGrid.Insert(index+1, scriptStatement);
+                    StatementsGrid.Insert(index+1, scriptStatement);
                     ScriptService.Current.Insert(index+1, scriptStatement);
                     break;
                 case nameof(ScriptStatement.Up):
                     Logger.Debug($"Up ! {index}");
-                    CommandsGrid.Swap(index, index - 1);
+                    StatementsGrid.Swap(index, index - 1);
                     ScriptService.Current.Swap(index, index - 1);
                     break;
                 case nameof(ScriptStatement.Down):
                     Logger.Debug($"Down !  {index}");
-                    CommandsGrid.Swap(index, index + 1);
+                    StatementsGrid.Swap(index, index + 1);
                     ScriptService.Current.Swap(index, index + 1);
                     break;
                 case nameof(ScriptStatement.Trash):
                     Logger.Debug($"Trash !  {index}");
-                    CommandsGrid.Remove(index);
+                    StatementsGrid.Remove(index);
                     ScriptService.Current.Remove(index);
                     break;
             }
@@ -86,20 +86,20 @@ namespace nats_ui.Pages.Editor
         {
             if (! string.IsNullOrEmpty(statement.Name) && ScriptService.CommandsByName.TryGetValue(statement.Name, out var commandInfo))
             {
-                CommandModel.Name = commandInfo.Name;
-                CommandModel.ParamName1 = commandInfo.ParamName1;
-                CommandModel.ParamName2 = commandInfo.ParamName2;
+                StatementModel.Name = commandInfo.Name;
+                StatementModel.ParamName1 = commandInfo.ParamName1;
+                StatementModel.ParamName2 = commandInfo.ParamName2;
             }
             
-            CommandModel.CurrentStatement = statement;
-            CommandModel.Param1 = statement.Param1;
-            CommandModel.Param2 = statement.Param2;
+            StatementModel.CurrentStatement = statement;
+            StatementModel.Param1 = statement.Param1;
+            StatementModel.Param2 = statement.Param2;
             InvokeAsync(StateHasChanged);
         }
 
         protected void StatementSubmit()
         {
-            if (CommandModel.Create)
+            if (StatementModel.Create)
             {
                 Create();
             }
@@ -113,33 +113,61 @@ namespace nats_ui.Pages.Editor
 
         private void Create()
         {
-            if (string.IsNullOrEmpty(CommandModel.Name))
+            Logger.Info($"Create new statement");
+            if (string.IsNullOrEmpty(StatementModel.Name))
             {
                 return;
             }
 
-            var scriptCommand = new ScriptStatement {Name = CommandModel.Name, Param1 = CommandModel.Param1, Param2 = CommandModel.Param2};
+            var scriptCommand = new ScriptStatement {Name = StatementModel.Name, Param1 = StatementModel.Param1, Param2 = StatementModel.Param2};
             ScriptService.Add(scriptCommand);
-            CommandsGrid.Add(scriptCommand);
+            StatementsGrid.Add(scriptCommand);
         }
 
         private void Update()
         {
-            var currentStatement = CommandModel.CurrentStatement;
-            if (currentStatement == null || string.IsNullOrEmpty(CommandModel.Name))
+            Logger.Info($"Update: {StatementModel.Name}");
+
+            var currentStatement = StatementModel.CurrentStatement;
+            if (currentStatement == null || string.IsNullOrEmpty(StatementModel.Name))
             {
                 return;
             }
 
-            currentStatement.Name = CommandModel.Name;
-            currentStatement.Param1 = CommandModel.Param1;
-            currentStatement.Param2 = CommandModel.Param2;
-            CommandsGrid.Update(currentStatement);
+            currentStatement.Name = StatementModel.Name;
+            currentStatement.Param1 = StatementModel.Param1;
+            currentStatement.Param2 = StatementModel.Param2;
+            StatementsGrid.Update(currentStatement);
         }
 
         protected void Save()
         {
+            Logger.Info($"Save: {SaveModel.Name}, {SaveModel.File}");
             ScriptService.Save(SaveModel.Name, SaveModel.File);
+            ScriptService.Load();
+        }
+
+        protected void ReloadScript()
+        {
+            Logger.Info($"Reload current script: {ScriptService.Current.Name}");
+            ScriptService.Reload(ScriptService.Current);
+            StatementsGrid.SetData(ScriptService.Current.Statements);
+        }
+
+        protected void NewScript()
+        {
+            Logger.Info($"New Script");
+            ScriptService.SetCurrent(new Script());
+        }
+        
+        protected void Remove()
+        {
+            foreach(var (index, statement) in StatementsGrid.GetCheckedItems()) 
+            {
+                Logger.Info($"Remove: {statement}");
+                StatementsGrid.Remove(index);
+                ScriptService.Current.Remove(index);
+            }
         }
     }
 }

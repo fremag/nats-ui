@@ -11,9 +11,6 @@ namespace nats_ui.Pages.Scripts
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
         [Inject]
-        private NatsService NatsService { get; set; }
-
-        [Inject]
         private ScriptService ScriptService { get; set; }
 
         protected StandardGridModel<Script> ScriptGrid { get; } = new StandardGridModel<Script>(); 
@@ -28,6 +25,7 @@ namespace nats_ui.Pages.Scripts
 
         private void OnItemDoubleClicked(string colName, Script script)
         {
+            Logger.Info($"Set current script: {script.Name}");
             ScriptService.SetCurrent(script);
         }
     }
