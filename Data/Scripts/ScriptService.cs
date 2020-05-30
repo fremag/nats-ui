@@ -54,6 +54,7 @@ namespace nats_ui.Data.Scripts
         {
             Logger.Info($"Load scripts: {ScriptDirectory}");
             var scriptFiles = Directory.EnumerateFiles(ScriptDirectory);
+            Scripts.Clear();
             foreach (var scriptFile in scriptFiles)
             {
                 var script = LoadScript(scriptFile);

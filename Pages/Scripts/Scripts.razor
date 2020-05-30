@@ -2,6 +2,7 @@
 @inherits ScriptsComponent
 
 @using C1.Blazor.Grid
+@using C1.Blazor.Core
 
 <FlexGrid ItemsSource="ScriptGrid.Items"
           AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
@@ -9,11 +10,18 @@
           SelectionMode="GridSelectionMode.Row"
           CellTapped="ScriptGrid.OnCellTaped"
           CellDoubleTapped="ScriptGrid.OnCellDoubleTaped"
-          CellFactory="@GridCellFactory">
+          CellFactory="@GridCellFactory"
+          
+>
     <FlexGridColumns>
         <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50"/>
         <GridColumn Binding="Name" IsReadOnly="true"/>
         <GridColumn Binding="File" IsReadOnly="true"/>
         <GridColumn Binding="Count" IsReadOnly="true"/>
+        <GridColumn Binding="Load" IsReadOnly="true">
+            <CellTemplate>
+                <span class="@context" data-toggle="tooltip" title="Edit script"></span>
+            </CellTemplate>
+        </GridColumn>
     </FlexGridColumns>
 </FlexGrid>

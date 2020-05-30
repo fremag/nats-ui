@@ -17,16 +17,19 @@ namespace nats_ui.Data.Scripts
         [XmlIgnore]
         public int Count => Statements.Count;
 
+        [XmlIgnore]
+        public string Load => "oi oi-spreadsheet";
+
         public void Swap(int indexA, int indexB)
         {
             if (indexA < 0 || indexB < 0 || indexA >= Count || indexB >= Count)
             {
                 return;
             }
-            
+
             var itemA = Statements[indexA];
             var itemB = Statements[indexB];
-            Statements[indexA]= itemB;
+            Statements[indexA] = itemB;
             Statements[indexB] = itemA;
         }
 

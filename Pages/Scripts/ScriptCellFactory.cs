@@ -6,6 +6,7 @@ namespace nats_ui.Pages.Scripts
 {
     public class ScriptCellFactory : GridCellFactory
     {
+        
         public override void PrepareCellStyle(GridCellType cellType, GridCellRange range, C1Style style)
         {
             base.PrepareCellStyle(cellType, range, style);

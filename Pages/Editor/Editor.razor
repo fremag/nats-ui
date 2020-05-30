@@ -90,9 +90,25 @@
         <GridColumn Binding="Name" IsReadOnly="false" DataMap="@StatementMap"/>
         <GridColumn Binding="Param1" IsReadOnly="false"/>
         <GridColumn Binding="Param2" IsReadOnly="false"/>
-        <GridImageColumn Binding="Insert" IsReadOnly="true" Width="70"/>
-        <GridImageColumn Binding="Up" IsReadOnly="true" Width="70"/>
-        <GridImageColumn Binding="Down" IsReadOnly="true" Width="70"/>
-        <GridImageColumn Binding="Trash" IsReadOnly="true" Width="70"/>
+        <GridColumn Binding="Insert" IsReadOnly="true">
+        <CellTemplate>
+            <span class="@context" data-toggle="tooltip" title="Insert new statement"></span>
+        </CellTemplate>
+        </GridColumn>
+        <GridColumn Binding="Up" IsReadOnly="true">
+        <CellTemplate>
+            <span class="@context" data-toggle="tooltip" title="Move statement up"></span>
+        </CellTemplate>
+        </GridColumn>
+        <GridColumn Binding="Down" IsReadOnly="true">
+            <CellTemplate>
+                <span class="@context" data-toggle="tooltip" title="Move statement down"></span>
+            </CellTemplate>
+        </GridColumn>
+        <GridColumn Binding="Trash" IsReadOnly="true">
+            <CellTemplate>
+                <span class="@context" data-toggle="tooltip" title="Remove statement"></span>
+            </CellTemplate>
+        </GridColumn>
     </FlexGridColumns>
 </FlexGrid>
