@@ -26,6 +26,7 @@ namespace nats_ui.Data.Scripts
                 return new CommandInfo
                 {
                     Name = type.Name,
+                    Type = type,
                     ParamName1 = command.ParamName1,
                     ParamName2 = command.ParamName2
                 };

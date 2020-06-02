@@ -14,6 +14,12 @@ namespace nats_ui.Pages.Scripts
         private ScriptService ScriptService { get; set; }
 
         [Inject]
+        private NatsService NatsService { get; set; }
+
+        [Inject]
+        private ExecutorService ExecutorService { get; set; }
+
+        [Inject]
         private NavigationManager NavMgr { get; set; }
 
         protected StandardGridModel<Script> ScriptGrid { get; } = new StandardGridModel<Script>(); 
@@ -27,11 +33,17 @@ namespace nats_ui.Pages.Scripts
             return Task.CompletedTask;
         }
 
-        private void OnItemClicked(string colname, Script script)
+        private void OnItemClicked(string colName, Script script)
         {
-            if (colname == nameof(Script.Load))
+            switch (colName)
             {
-                OnItemDoubleClicked(colname, script);
+                case nameof(Script.Load):
+                    OnItemDoubleClicked(colName, script);
+                    break;
+                case nameof(Script.Run):
+                    ExecutorService.Setup(NatsService, script, ScriptService);
+                    NavMgr.NavigateTo("/executor");
+                    break;
             }
         }
 

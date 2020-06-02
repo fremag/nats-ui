@@ -1,0 +1,18 @@
+﻿@page "/executor"
+@inherits ExecutorComponent
+
+@using C1.Blazor.Grid
+
+<FlexGrid ItemsSource="ScriptCommandGrid.Items"
+          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+          ColumnHeaderStyle="@("font-weight:bold")"
+          SelectionMode="GridSelectionMode.Row"
+          CellFactory="@GridCellFactory"
+>
+    <FlexGridColumns>
+        <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50"/>
+        <GridColumn Binding="Name" IsReadOnly="true"/>
+        <GridColumn Binding="Param1" IsReadOnly="true"/>
+        <GridColumn Binding="Param2" IsReadOnly="true"/>
+    </FlexGridColumns>
+</FlexGrid>

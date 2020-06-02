@@ -2,7 +2,6 @@
 @inherits ScriptsComponent
 
 @using C1.Blazor.Grid
-@using C1.Blazor.Core
 
 <FlexGrid ItemsSource="ScriptGrid.Items"
           AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
@@ -21,6 +20,11 @@
         <GridColumn Binding="Load" IsReadOnly="true">
             <CellTemplate>
                 <span class="@context" data-toggle="tooltip" title="Edit script"></span>
+            </CellTemplate>
+        </GridColumn>
+        <GridColumn Binding="Run" IsReadOnly="true">
+            <CellTemplate>
+                <span class="@context" data-toggle="tooltip" title="Run script"></span>
             </CellTemplate>
         </GridColumn>
     </FlexGridColumns>

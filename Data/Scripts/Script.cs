@@ -20,6 +20,9 @@ namespace nats_ui.Data.Scripts
         [XmlIgnore]
         public string Load => "oi oi-spreadsheet";
 
+        [XmlIgnore]
+        public string Run => "oi oi-media-play";
+
         public void Swap(int indexA, int indexB)
         {
             if (indexA < 0 || indexB < 0 || indexA >= Count || indexB >= Count)
