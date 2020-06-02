@@ -44,7 +44,6 @@ namespace nats_ui.Pages.Editor
         protected SaveFormModel SaveModel { get; private set; }
         public GridDataMap StatementMap { get; } = new GridDataMap();
 
-
         protected override Task OnInitializedAsync()
         {
             StatementMap.ItemsSource = ScriptService.CommandsByName.Keys;
@@ -105,6 +104,7 @@ namespace nats_ui.Pages.Editor
 
         protected void StatementSubmit()
         {
+            Logger.Info($"{nameof(StatementSubmit)}: Create: {StatementModel.Create}");
             if (StatementModel.Create)
             {
                 Create();
@@ -137,6 +137,7 @@ namespace nats_ui.Pages.Editor
             var currentStatement = StatementModel.CurrentStatement;
             if (currentStatement == null || string.IsNullOrEmpty(StatementModel.Name))
             {
+                Logger.Warn($"Update: failed, no statement is selected.");
                 return;
             }
 
@@ -181,8 +182,6 @@ namespace nats_ui.Pages.Editor
             Logger.Info($"Start record");
             RecordService.StartRecord(NatsService, ScriptService);
         }
-
-        public bool Recording { get; private set; }
 
         protected void StopRecord()
         {
