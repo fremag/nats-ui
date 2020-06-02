@@ -25,6 +25,7 @@ namespace nats_ui
             services.AddServerSideBlazor();
             services.AddSingleton<NatsService>();
             services.AddSingleton<ScriptService>();
+            services.AddSingleton<RecordService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

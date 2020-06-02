@@ -18,6 +18,11 @@ namespace nats_ui.Data
         
         public event Action<NatsMessage> MessageReceived;
         public event Action<NatsMessage> MessageSaved;
+        public event Action<NatsMessage> MessageSent;
+        public event Action<Connection> Connected;
+        public event Action<Connection> Disconnected;
+        public event Action<NatsSubscription> Subscribed;
+        public event Action<NatsSubscription> Unsubscribed;
 
         private ConnectionFactory Factory { get; } = new ConnectionFactory();
         public List<NatsMessage> ReceivedMessages { get; } = new List<NatsMessage>();
@@ -79,6 +84,7 @@ namespace nats_ui.Data
             conn = Factory.CreateConnection(connection.Url);
             connection.Status = ConnectionStatus.Connected;
             ConnectionsByName[connection] = conn;
+            Connected?.Invoke(connection);
             return conn;
         }
 
@@ -89,6 +95,7 @@ namespace nats_ui.Data
             {
                 conn.Close();
                 connection.Status = ConnectionStatus.Disconnected;
+                Disconnected?.Invoke(connection);
             }
         }
 
@@ -109,6 +116,7 @@ namespace nats_ui.Data
 
             Subscriptions[natsSubscription] = subs;
             natsSubscription.Subscribed = true;
+            Subscribed?.Invoke(natsSubscription);
         }
 
         private void OnMessage(object sender, MsgHandlerEventArgs e)
@@ -136,6 +144,7 @@ namespace nats_ui.Data
 
                 Subscriptions.Remove(natsSubscription);
                 natsSubscription.Subscribed = false;
+                Unsubscribed?.Invoke(natsSubscription);
             }
         }
         
@@ -218,6 +227,7 @@ namespace nats_ui.Data
             if (conn != null)
             {
                 conn.Publish(message.Subject, Encoding.Default.GetBytes(message.Data));
+                MessageSent?.Invoke(message);
             }
             else
             {

@@ -31,6 +31,12 @@ namespace nats_ui.Pages.Editor
         [Inject]
         protected ScriptService ScriptService { get; set; }
 
+        [Inject]
+        protected NatsService NatsService { get; set; }
+
+        [Inject]
+        protected RecordService RecordService { get; set; }
+        
         protected StandardGridModel<ScriptStatement> StatementsGrid { get; } = new StandardGridModel<ScriptStatement>();
         protected EditorCellFactory GridCellFactory { get; } = new EditorCellFactory();
 
@@ -168,6 +174,20 @@ namespace nats_ui.Pages.Editor
                 StatementsGrid.Remove(index);
                 ScriptService.Current.Remove(index);
             }
+        }
+        
+        protected void StartRecord()
+        {
+            Logger.Info($"Start record");
+            RecordService.StartRecord(NatsService, ScriptService);
+        }
+
+        public bool Recording { get; private set; }
+
+        protected void StopRecord()
+        {
+            Logger.Info($"Stop record");
+            RecordService.StopRecord(NatsService);
         }
     }
 }
