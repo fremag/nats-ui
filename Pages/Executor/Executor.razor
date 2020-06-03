@@ -2,10 +2,12 @@
 @inherits ExecutorComponent
 
 @using C1.Blazor.Grid
+@using nats_ui.Data.Scripts
 
 <FlexGrid ItemsSource="ScriptCommandGrid.Items"
           AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
           ColumnHeaderStyle="@("font-weight:bold")"
+          HeadersVisibility="GridHeadersVisibility.All"
           SelectionMode="GridSelectionMode.Row"
           CellFactory="@GridCellFactory"
 >
@@ -16,4 +18,9 @@
         <GridColumn Binding="Param1" IsReadOnly="true"/>
         <GridColumn Binding="Param2" IsReadOnly="true"/>
     </FlexGridColumns>
+    <FlexGridBehaviors>
+        <FlexGridDetailProvider TItem="IScriptCommand" Height="130" DetailVisibilityMode="GridDetailVisibilityMode.ExpandMultiple">
+            <div>Result: @context.Result</div>
+        </FlexGridDetailProvider>
+    </FlexGridBehaviors>    
 </FlexGrid>

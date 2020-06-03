@@ -41,7 +41,7 @@ namespace nats_ui.Pages.Scripts
                     OnItemDoubleClicked(colName, script);
                     break;
                 case nameof(Script.Run):
-                    ExecutorService.Setup(NatsService, script, ScriptService);
+                    ExecutorService.Setup(script, ScriptService);
                     NavMgr.NavigateTo("/executor");
                     ExecutorService.Run();
                     break;
