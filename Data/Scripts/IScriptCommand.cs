@@ -1,10 +1,9 @@
-using System.Xml.Serialization;
+using System;
 
 namespace nats_ui.Data.Scripts
 {
     public interface IScriptCommand : ICheckable
     {
-        [XmlIgnore]
         string Name { get; }
 
         string ParamName1 { get; }
@@ -12,5 +11,12 @@ namespace nats_ui.Data.Scripts
 
         string Param1 { get; set; }
         string Param2 { get; set; }
+
+        CommandStatus Status { get; set; }
+        public string Result { get; set; }
+        public DateTime TimeStamp { get; set; }
+        public TimeSpan Duration { get; set; }
+
+        string Execute(NatsService natsService);
     }
 }

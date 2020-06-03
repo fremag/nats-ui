@@ -43,6 +43,7 @@ namespace nats_ui.Pages.Scripts
                 case nameof(Script.Run):
                     ExecutorService.Setup(NatsService, script, ScriptService);
                     NavMgr.NavigateTo("/executor");
+                    ExecutorService.Run();
                     break;
             }
         }

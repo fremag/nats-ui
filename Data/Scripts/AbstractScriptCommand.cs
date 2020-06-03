@@ -1,11 +1,10 @@
 using System;
-using System.Xml.Serialization;
 
 namespace nats_ui.Data.Scripts
 {
     public enum CommandStatus
     {
-        Unknown, Ready, Error, Waiting, Executed, Failed
+        Unknown, Waiting, Executed, Failed
     }
 
     public abstract class AbstractScriptCommand : IScriptCommand
@@ -13,31 +12,24 @@ namespace nats_ui.Data.Scripts
         public virtual string ParamName1 { get; } = null;
         public virtual string ParamName2 { get; } = null;
 
-        [XmlIgnore]
         public string Name => GetType().Name; 
         public string Param1 { get; set; }
         public string Param2 { get; set; }
 
-        [XmlIgnore]
         public bool Checked { get; set; }
-        [XmlIgnore]
         public string Result { get; set; }
-        [XmlIgnore]
-        public CommandStatus Status { get; set; }
-        [XmlIgnore]
+        public CommandStatus Status { get; set; } = CommandStatus.Unknown;
         public DateTime TimeStamp { get; set; }
-        [XmlIgnore]
-        public long ExecTime { get; set; }
+        public TimeSpan Duration { get; set; }
 
-        public virtual bool CheckParams(out string msg)
+        public virtual string Execute(NatsService natsService)
         {
-            msg = "Ok";
-            return true;
+            return "Ok";
         }
 
-        public virtual CommandStatus Execute()
+        public override string ToString()
         {
-            return CommandStatus.Executed;
+            return $"{Name}, {ParamName1}: {Param1?.Substring(0, Math.Min(100, Param1.Length))}, {ParamName2}: {Param2?.Substring(0, Math.Min(100, Param2.Length))}";
         }
     }
 }

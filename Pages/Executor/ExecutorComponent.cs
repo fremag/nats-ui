@@ -22,8 +22,18 @@ namespace nats_ui.Pages.Executor
 
         protected override Task OnInitializedAsync()
         {
-            ScriptCommandGrid.SetData(new List<IScriptCommand>(ExecutorService.Commands));
+            if (ExecutorService.Commands != null)
+            {
+                ScriptCommandGrid.SetData(new List<IScriptCommand>(ExecutorService.Commands));
+            }
+
+            ExecutorService.CommandUpdated += OnCommandUpdated; 
             return Task.CompletedTask;
+        }
+
+        private void OnCommandUpdated(IScriptCommand command)
+        {
+            InvokeAsync(() => ScriptCommandGrid.Update(command));
         }
     }
 }
