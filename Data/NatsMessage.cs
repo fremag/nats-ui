@@ -13,5 +13,10 @@ namespace nats_ui.Data
         public string Subject { get; set; }
         public string Data { get; set; }
         public string Url { get; set; }
+
+        public NatsMessage Clone()
+        {
+            return (NatsMessage)MemberwiseClone(); 
+        }
     }
 }

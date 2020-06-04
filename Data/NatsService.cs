@@ -228,6 +228,43 @@ namespace nats_ui.Data
             {
                 conn.Publish(message.Subject, Encoding.Default.GetBytes(message.Data));
                 MessageSent?.Invoke(message);
+                var clone = message.Clone();
+                ReceivedMessages.Add(clone);
+                MessageReceived?.Invoke(clone);
+            }
+            else
+            {
+                Logger.Error($"Can't find connection with Url: {message.Url} !");
+            }
+        }
+
+        public void Request(NatsMessage message)
+        {
+            Logger.Info($"{nameof(Send)}: {message.Subject}, {message.Url}");
+            var conn = ConnectionsByName.Values.FirstOrDefault(c => c.ConnectedUrl == message.Url);
+            if (conn != null)
+            {
+                try
+                {
+                    Msg reply = conn.Request(message.Subject, Encoding.Default.GetBytes(message.Data));
+                    var clone = message.Clone();
+                    ReceivedMessages.Add(clone);
+                    MessageReceived?.Invoke(clone);
+                    MessageSent?.Invoke(message);
+                    
+                    var replyMsg = new NatsMessage
+                    {
+                        Subject = reply.Subject,
+                        TimeStamp = DateTime.Now,
+                        Data = Encoding.Default.GetString(reply.Data)
+                    };
+                    ReceivedMessages.Add(replyMsg);
+                    MessageReceived?.Invoke(replyMsg);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Failed to send request message ! {ex.Message}");
+                }
             }
             else
             {

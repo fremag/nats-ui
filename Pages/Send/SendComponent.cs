@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using nats_ui.Data;
@@ -56,12 +57,29 @@ namespace nats_ui.Pages.Send
                 
                 var message = new NatsMessage
                 {
+                    TimeStamp = DateTime.Now,
                     Url = connection.item.Url,
                     Subject = Model.Subject,
                     Data = Model.Data
                 };
 
                 NatsService.Send(message);
+            }
+        }
+        protected void RequestMessage()
+        {
+            foreach ((int i, Connection item) connection in UrlGrid.GetCheckedItems())
+            {
+                
+                var message = new NatsMessage
+                {
+                    TimeStamp = DateTime.Now,
+                    Url = connection.item.Url,
+                    Subject = Model.Subject,
+                    Data = Model.Data
+                };
+
+                NatsService.Request(message);
             }
         }
     }
