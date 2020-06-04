@@ -18,7 +18,7 @@ namespace nats_ui.Data.Scripts
                     Data = Param2,
                     Url = connection.Url
                 };
-                natsService.Send(msg);
+                natsService.Publish(msg);
             }
 
             return "Message sent.";

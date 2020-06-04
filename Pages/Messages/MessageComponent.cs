@@ -26,8 +26,8 @@ namespace nats_ui.Pages.Messages
 
         protected override Task OnInitializedAsync()
         {
-            NatsService.MessageReceived += OnMessageReceived;
-            MessageGrid.SetData(NatsService.ReceivedMessages);
+            NatsService.MessageAdded += OnMessageAdded;
+            MessageGrid.SetData(NatsService.Messages);
             MessageGrid.SelectedItemChanged += OnSelectedItemChanged;
             return Task.CompletedTask;
         }
@@ -41,7 +41,7 @@ namespace nats_ui.Pages.Messages
             InvokeAsync(StateHasChanged);
         }
 
-        private void OnMessageReceived(NatsMessage message)
+        private void OnMessageAdded(NatsMessage message)
         {
             InvokeAsync(() => MessageGrid.Insert(0, message));
         }

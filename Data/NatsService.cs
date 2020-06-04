@@ -16,6 +16,7 @@ namespace nats_ui.Data
         private Dictionary<Connection, IConnection> ConnectionsByName { get; } = new Dictionary<Connection, IConnection>();
         private Dictionary<NatsSubscription, List<IAsyncSubscription>> Subscriptions { get; } = new Dictionary<NatsSubscription, List<IAsyncSubscription>>();
         
+        public event Action<NatsMessage> MessageAdded;
         public event Action<NatsMessage> MessageReceived;
         public event Action<NatsMessage> MessageSaved;
         public event Action<NatsMessage> MessageSent;
@@ -25,7 +26,7 @@ namespace nats_ui.Data
         public event Action<NatsSubscription> Unsubscribed;
 
         private ConnectionFactory Factory { get; } = new ConnectionFactory();
-        public List<NatsMessage> ReceivedMessages { get; } = new List<NatsMessage>();
+        public List<NatsMessage> Messages { get; } = new List<NatsMessage>();
         public List<Connection> Connections => ConnectionsByName.Keys.Select(c => c.Clone()).ToList();
 
         public NatsService()
@@ -130,8 +131,9 @@ namespace nats_ui.Data
                 Data = Encoding.Default.GetString(e.Message.Data),
                 Url = url
             };
-            ReceivedMessages.Add(msg);
+            Messages.Add(msg);
             MessageReceived?.Invoke(msg);
+            MessageAdded?.Invoke(msg);
         }
 
         public void Unsubscribe(NatsSubscription natsSubscription)
@@ -221,19 +223,19 @@ namespace nats_ui.Data
             MessageSaved?.Invoke(message);
         }
 
-        public void Send(NatsMessage message)
+        public void Publish(NatsMessage message)
         {
-            Logger.Info($"{nameof(Send)}: {message.Subject}, {message.Url}");
+            Logger.Info($"{nameof(Publish)}: {message.Subject}, {message.Url}");
             var conn = ConnectionsByName.Values.FirstOrDefault(c => c.ConnectedUrl == message.Url);
             if (conn != null)
             {
                 conn.Publish(message.Subject, Encoding.Default.GetBytes(message.Data));
                 MessageSent?.Invoke(message);
                 var clone = message.Clone();
-                clone.MessageType = MessageType.Sent;
+                clone.MessageType = MessageType.Publish;
 
-                ReceivedMessages.Add(clone);
-                MessageReceived?.Invoke(clone);
+                Messages.Add(clone);
+                MessageAdded?.Invoke(clone);
             }
             else
             {
@@ -243,7 +245,7 @@ namespace nats_ui.Data
 
         public void Request(NatsMessage message)
         {
-            Logger.Info($"{nameof(Send)}: {message.Subject}, {message.Url}");
+            Logger.Info($"{nameof(Publish)}: {message.Subject}, {message.Url}");
             var conn = ConnectionsByName.Values.FirstOrDefault(c => c.ConnectedUrl == message.Url);
             if (conn != null)
             {
@@ -252,8 +254,8 @@ namespace nats_ui.Data
                     Msg reply = conn.Request(message.Subject, Encoding.Default.GetBytes(message.Data));
                     var clone = message.Clone();
                     clone.MessageType = MessageType.Request;
-                    ReceivedMessages.Add(clone);
-                    MessageReceived?.Invoke(clone);
+                    Messages.Add(clone);
+                    MessageAdded?.Invoke(clone);
                     MessageSent?.Invoke(message);
                     
                     var replyMsg = new NatsMessage
@@ -263,8 +265,8 @@ namespace nats_ui.Data
                         TimeStamp = DateTime.Now,
                         Data = Encoding.Default.GetString(reply.Data)
                     };
-                    ReceivedMessages.Add(replyMsg);
-                    MessageReceived?.Invoke(replyMsg);
+                    Messages.Add(replyMsg);
+                    MessageAdded?.Invoke(replyMsg);
                 }
                 catch (Exception ex)
                 {

@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 
 namespace nats_ui.Data
 {
-    public enum MessageType {Received, Sent, Request, Reply}
+    public enum MessageType {Received, Publish, Request, Reply}
     public class NatsMessage : ICheckable
     {
         [XmlIgnore]

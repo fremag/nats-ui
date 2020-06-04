@@ -50,7 +50,7 @@ namespace nats_ui.Pages.Send
             InvokeAsync(() => MessageGrid.Insert(0, message));
         }
 
-        protected void SendMessage()
+        protected void PublishMessage()
         {
             foreach ((int i, Connection item) connection in UrlGrid.GetCheckedItems())
             {
@@ -63,7 +63,7 @@ namespace nats_ui.Pages.Send
                     Data = Model.Data
                 };
 
-                NatsService.Send(message);
+                NatsService.Publish(message);
             }
         }
         protected void RequestMessage()
