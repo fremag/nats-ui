@@ -243,7 +243,7 @@ namespace nats_ui.Data
             }
         }
 
-        public void Request(NatsMessage message)
+        public NatsMessage Request(NatsMessage message)
         {
             Logger.Info($"{nameof(Publish)}: {message.Subject}, {message.Url}");
             var conn = ConnectionsByName.Values.FirstOrDefault(c => c.ConnectedUrl == message.Url);
@@ -251,7 +251,9 @@ namespace nats_ui.Data
             {
                 try
                 {
-                    Msg reply = conn.Request(message.Subject, Encoding.Default.GetBytes(message.Data));
+                    var payload = message.Data == null ? new byte[0] : Encoding.Default.GetBytes(message.Data);
+                    
+                    Msg reply = conn.Request(message.Subject, payload);
                     var clone = message.Clone();
                     clone.MessageType = MessageType.Request;
                     Messages.Add(clone);
@@ -267,6 +269,7 @@ namespace nats_ui.Data
                     };
                     Messages.Add(replyMsg);
                     MessageAdded?.Invoke(replyMsg);
+                    return replyMsg;
                 }
                 catch (Exception ex)
                 {
@@ -277,6 +280,8 @@ namespace nats_ui.Data
             {
                 Logger.Error($"Can't find connection with Url: {message.Url} !");
             }
+
+            return null;
         }
     }
 }

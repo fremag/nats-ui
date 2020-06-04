@@ -22,7 +22,7 @@ namespace nats_ui.Data.Scripts
         public DateTime TimeStamp { get; set; }
         public TimeSpan Duration { get; set; }
 
-        public virtual string Execute(NatsService natsService)
+        public virtual string Execute(NatsService natsService, ExecutorService executorService)
         {
             return "Ok";
         }

@@ -17,6 +17,6 @@ namespace nats_ui.Data.Scripts
         public DateTime TimeStamp { get; set; }
         public TimeSpan Duration { get; set; }
 
-        string Execute(NatsService natsService);
+        string Execute(NatsService natsService, ExecutorService executorService);
     }
 }

@@ -10,7 +10,7 @@ namespace nats_ui.Data
 {
     public delegate void CommandUpdated(IScriptCommand command);
 
-    internal class ExecutorService
+    public class ExecutorService
     {
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
 
@@ -20,6 +20,7 @@ namespace nats_ui.Data
         private NatsService NatsService { get; set; }
         private Script Script { get; set; }
         private ScriptService ScriptService { get; set; }
+        public NatsMessage Message { get; set; }
 
         public void Setup(Script script, ScriptService scriptService)
         {
@@ -78,7 +79,7 @@ namespace nats_ui.Data
                 {
                     scriptCommand.TimeStamp = DateTime.Now;
                     sw.Restart();
-                    var result = scriptCommand.Execute(NatsService);
+                    var result = scriptCommand.Execute(NatsService, this);
                     sw.Stop();
                     scriptCommand.Status = CommandStatus.Executed;
                     scriptCommand.Result = result;
