@@ -20,7 +20,16 @@
     </FlexGridColumns>
     <FlexGridBehaviors>
         <FlexGridDetailProvider TItem="IScriptCommand" Height="130" DetailVisibilityMode="GridDetailVisibilityMode.ExpandMultiple">
-            <div>Result: @context.Result</div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm">Timestamp: @context.TimeStamp</div>                        
+                    <div class="col-sm">Duration: @context.Duration</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm">Result: @context.Result</div>
+                </div>
+            </div>
+            
         </FlexGridDetailProvider>
     </FlexGridBehaviors>    
 </FlexGrid>

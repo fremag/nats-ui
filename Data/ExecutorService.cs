@@ -67,10 +67,13 @@ namespace nats_ui.Data
 
         public void Execute()
         {
+            Logger.Info($"Execute: Begin");
             Stopwatch sw = new Stopwatch();
-            foreach (var scriptCommand in Commands)
+            var scriptCommands = Commands.ToArray();
+            for (var i = 0; i < scriptCommands.Length; i++)
             {
-                Logger.Info($"Execute: {scriptCommand}");
+                var scriptCommand = scriptCommands[i];
+                Logger.Info($"Execute[{i+1}/{scriptCommands.Length}]: {scriptCommand}");
                 try
                 {
                     scriptCommand.TimeStamp = DateTime.Now;
@@ -92,6 +95,7 @@ namespace nats_ui.Data
                 scriptCommand.Duration = sw.Elapsed;
                 CommandUpdated?.Invoke(scriptCommand);
             }
+            Logger.Info($"Execute: End");
         }
     }
 }
