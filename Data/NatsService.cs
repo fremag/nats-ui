@@ -124,6 +124,7 @@ namespace nats_ui.Data
             var url = e.Message.ArrivalSubscription.Connection.ConnectedUrl;
             NatsMessage msg = new NatsMessage
             {
+                MessageType = MessageType.Received,
                 TimeStamp = DateTime.Now,
                 Subject = e.Message.Subject,
                 Data = Encoding.Default.GetString(e.Message.Data),
@@ -229,6 +230,8 @@ namespace nats_ui.Data
                 conn.Publish(message.Subject, Encoding.Default.GetBytes(message.Data));
                 MessageSent?.Invoke(message);
                 var clone = message.Clone();
+                clone.MessageType = MessageType.Sent;
+
                 ReceivedMessages.Add(clone);
                 MessageReceived?.Invoke(clone);
             }
@@ -248,12 +251,14 @@ namespace nats_ui.Data
                 {
                     Msg reply = conn.Request(message.Subject, Encoding.Default.GetBytes(message.Data));
                     var clone = message.Clone();
+                    clone.MessageType = MessageType.Request;
                     ReceivedMessages.Add(clone);
                     MessageReceived?.Invoke(clone);
                     MessageSent?.Invoke(message);
                     
                     var replyMsg = new NatsMessage
                     {
+                        MessageType = MessageType.Reply,
                         Subject = reply.Subject,
                         TimeStamp = DateTime.Now,
                         Data = Encoding.Default.GetString(reply.Data)
