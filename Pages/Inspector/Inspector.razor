@@ -3,26 +3,31 @@
 
 <div class="overflow-auto">@Data</div>
 <hr/>
-
-<div class="accordion" id="accordion">
-  <div class="card">
-    <div class="card-header" id="headRegEx" >
-      <div class="mb-0" data-toggle="collapse" data-target="#colRegEx"><i class="fa fa-plus"></i>RegEx</div>
-    </div>
-    <div id="colRegEx" class="collapse show" data-parent="#accordion">
-      <div class="card card-body">
-        RegEx
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-header" id="headJson">
-      <div data-toggle="collapse" data-target="#colJson"><i class="fa fa-plus"></i>Json</div>
-    </div>
-    <div id="colJson" class="collapse" data-parent="#accordion">
-      <div class="card card-body">
-        JSon
-      </div>
-    </div>
-  </div>
+<div class="accordion">
+    <BSCollapseGroup>
+            <BSCollapseItem>
+                <BSCard CardType="CardType.Card">
+                    <BSCard CardType="CardType.Header">
+                        <BSCollapseToggle><i class="@RegexText"></i>Collapsable Group Item</BSCollapseToggle>
+                    </BSCard>
+                    <BSCollapse ShowEvent="@OnRegexShowEvent" HideEvent="@OnRegexHideEvent">
+                        <BSCard CardType="CardType.Body">
+                            <BSCard CardType="CardType.Text">Regex sandbox</BSCard>
+                        </BSCard>
+                    </BSCollapse>
+                </BSCard>
+            </BSCollapseItem>
+            <BSCollapseItem>
+                <BSCard CardType="CardType.Card">
+                    <BSCard CardType="CardType.Header">
+                        <BSCollapseToggle><i class="@JsonText"></i>Json</BSCollapseToggle>
+                    </BSCard>
+                    <BSCollapse ShowEvent="@OnJsonShowEvent" HideEvent="@OnJsonHideEvent">
+                        <BSCard CardType="CardType.Body">
+                            <BSCard CardType="CardType.Text">Json sandbox</BSCard>
+                        </BSCard>
+                    </BSCollapse>
+                </BSCard>
+            </BSCollapseItem>
+    </BSCollapseGroup>
 </div>
