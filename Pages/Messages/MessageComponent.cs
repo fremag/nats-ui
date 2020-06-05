@@ -19,6 +19,12 @@ namespace nats_ui.Pages.Messages
         [Inject]
         private NatsService NatsService { get; set; }
 
+        [Inject]
+        private InspectorService Inspector { get; set; }
+
+        [Inject]
+        private NavigationManager NavMgr { get; set; }
+
         protected StandardGridModel<NatsMessage> MessageGrid { get; } = new StandardGridModel<NatsMessage>(); 
         protected MessageCellFactory GridCellFactory { get; } = new MessageCellFactory();
 
@@ -29,7 +35,17 @@ namespace nats_ui.Pages.Messages
             NatsService.MessageAdded += OnMessageAdded;
             MessageGrid.SetData(NatsService.Messages);
             MessageGrid.SelectedItemChanged += OnSelectedItemChanged;
+            MessageGrid.ItemClicked += OnItemClicked;
             return Task.CompletedTask;
+        }
+
+        private void OnItemClicked(string colName, NatsMessage message)
+        {
+            if (colName == nameof(NatsMessage.Inspect))
+            {
+                Inspector.Data = message.Data;
+                NavMgr.NavigateTo("/inspector");
+            }
         }
 
         private void OnSelectedItemChanged(NatsMessage message)

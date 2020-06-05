@@ -17,6 +17,9 @@ namespace nats_ui.Data
         public string Data { get; set; }
         public string Url { get; set; }
 
+        [XmlIgnore]
+        public string Inspect => "oi oi-zoom-in";
+        
         public NatsMessage Clone()
         {
             return (NatsMessage)MemberwiseClone(); 

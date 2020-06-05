@@ -27,6 +27,7 @@ namespace nats_ui
             services.AddSingleton<ScriptService>();
             services.AddSingleton<RecordService>();
             services.AddSingleton<ExecutorService>();
+            services.AddSingleton<InspectorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
