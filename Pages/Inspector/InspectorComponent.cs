@@ -17,8 +17,7 @@ namespace nats_ui.Pages.Inspector
         [Inject]
         protected InspectorService Inspector { get; set; }
 
-        public RegexModel RegexModel { get; set; } = new RegexModel();
-        public JsonModel JsonModel { get; set; } = new JsonModel();
+        public PatternModel Model { get; set; } = new PatternModel();
         
         protected override Task OnInitializedAsync()
         {
@@ -28,35 +27,29 @@ namespace nats_ui.Pages.Inspector
 
         protected void ApplyRegex()
         {
-            Regex regex = new Regex(RegexModel.Pattern);
+            Regex regex = new Regex(Model.Pattern);
             var match = regex.Match(Data);
             if (match.Success && match.Groups.Count > 1)
             {
                 var capture = match.Groups[1];
-                RegexModel.Result = capture.Value;
+                Model.Result = capture.Value;
             }
             else
             {
-                RegexModel.Result = $"Failed: {match.Name} / {match.Value}";
+                Model.Result = $"Failed: {match.Name} / {match.Value}";
             }
         }
 
         protected void ApplyJson()
         {
-            IReadOnlyList<JsonElement> result = JsonPath.ExecutePath(JsonModel.Path, Data);
-            JsonModel.Result = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
+            IReadOnlyList<JsonElement> result = JsonPath.ExecutePath(Model.Pattern, Data);
+            Model.Result = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
         }
     }
 
-    public class RegexModel
+    public class PatternModel
     {
         public string Pattern { get; set; }
-        public string Result { get; set; }
-    }
-
-    public class JsonModel
-    {
-        public string Path { get; set; }
         public string Result { get; set; }
     }
 }
