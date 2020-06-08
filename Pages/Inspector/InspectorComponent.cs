@@ -1,5 +1,8 @@
+using System.Collections.Generic;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using JsonPathway;
 using Microsoft.AspNetCore.Components;
 using nats_ui.Data;
 using NLog;
@@ -15,6 +18,7 @@ namespace nats_ui.Pages.Inspector
         protected InspectorService Inspector { get; set; }
 
         public RegexModel RegexModel { get; set; } = new RegexModel();
+        public JsonModel JsonModel { get; set; } = new JsonModel();
         
         protected override Task OnInitializedAsync()
         {
@@ -36,11 +40,23 @@ namespace nats_ui.Pages.Inspector
                 RegexModel.Result = $"Failed: {match.Name} / {match.Value}";
             }
         }
+
+        protected void ApplyJson()
+        {
+            IReadOnlyList<JsonElement> result = JsonPath.ExecutePath(JsonModel.Path, Data);
+            JsonModel.Result = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
+        }
     }
 
     public class RegexModel
     {
         public string Pattern { get; set; }
+        public string Result { get; set; }
+    }
+
+    public class JsonModel
+    {
+        public string Path { get; set; }
         public string Result { get; set; }
     }
 }
