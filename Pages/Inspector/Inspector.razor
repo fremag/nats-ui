@@ -1,17 +1,25 @@
 @page "/inspector" 
+@using InputType = BlazorStrap.InputType
 @inherits InspectorComponent
 
 <BSContainer IsFluid="true">
     <BSRow>
-        <BSForm Model="@Model"  Class="col-sm-12">
-             <BSFormGroup IsRow="true">
+        <BSForm Model="@Model" Class="col-sm-12">
+            <BSFormGroup IsRow="true">
+                <BSLabel For="type">Type</BSLabel>
+                <BSBasicInput T="string" Id="type" InputType="InputType.Select" Size="Size.Small" @bind-value="Model.Type">
+                    <option>@(PatternType.Json.ToString())</option>
+                    <option>@(PatternType.Regex.ToString())</option>
+                </BSBasicInput>
+            </BSFormGroup>
+            <BSFormGroup IsRow="true">
                 <BSLabel For="pattern">Pattern</BSLabel>
                 <BSInput Size="Size.ExtraLarge" Id="pattern" @bind-Value="Model.Pattern"/>
-             </BSFormGroup>
-             <BSFormGroup  IsRow="true">
-                <BSButton @onclick="ApplyRegex">Regex</BSButton>
-                <BSButton @onclick="ApplyJson">JSon</BSButton>
-             </BSFormGroup>
+            </BSFormGroup>
+            <BSFormGroup IsRow="true">
+                <BSButton @onclick="Test">Test</BSButton>
+                <BSButton @onclick="Add">Add</BSButton>
+            </BSFormGroup>
         </BSForm>
     </BSRow>
     <hr/>
