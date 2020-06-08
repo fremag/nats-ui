@@ -18,6 +18,11 @@ namespace nats_ui.Pages.Send
 
         [Inject]
         private NatsService NatsService { get; set; }
+        [Inject]
+        private InspectorService Inspector { get; set; }
+
+        [Inject]
+        private NavigationManager NavMgr { get; set; }
 
         protected StandardGridModel<NatsMessage> MessageGrid { get; } = new StandardGridModel<NatsMessage>(); 
         protected SendCellFactory GridCellFactory { get; } = new SendCellFactory();
@@ -32,6 +37,7 @@ namespace nats_ui.Pages.Send
             NatsService.MessageSaved += OnMessageSaved;
             MessageGrid.SetData(NatsService.Configuration.SavedMessages);
             MessageGrid.SelectedItemChanged += OnSelectedItemChanged;
+            MessageGrid.ItemClicked += OnItemClicked;
             UrlGrid.SetData(NatsService.Connections);
             UrlGrid.CheckAll();
             return Task.CompletedTask;
@@ -82,5 +88,14 @@ namespace nats_ui.Pages.Send
                 NatsService.Request(message);
             }
         }
+        private void OnItemClicked(string colName, NatsMessage message)
+        {
+            if (colName == nameof(NatsMessage.Inspect))
+            {
+                Inspector.Data = message.Data;
+                NavMgr.NavigateTo("/inspector");
+            }
+        }
+        
     }
 }

@@ -1,5 +1,5 @@
 ﻿@page "/send"
-@inherits SendComponent    
+@inherits SendComponent
 
 @using C1.Blazor.Grid
 
@@ -53,5 +53,10 @@
         <GridColumn Binding="Subject" IsReadOnly="true"/>
         <GridColumn Binding="Data" IsReadOnly="true"/>
         <GridColumn Binding="Url" IsReadOnly="true"/>
+        <GridColumn Binding="Inspect" IsReadOnly="true">
+            <CellTemplate>
+                <span class="@context" data-toggle="tooltip" title="Inspect data"></span>
+            </CellTemplate>
+        </GridColumn>
     </FlexGridColumns>
 </FlexGrid>

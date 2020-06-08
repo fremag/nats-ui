@@ -1,5 +1,5 @@
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using BlazorStrap;
 using Microsoft.AspNetCore.Components;
 using nats_ui.Data;
 using NLog;
@@ -13,6 +13,8 @@ namespace nats_ui.Pages.Inspector
         
         [Inject]
         protected InspectorService Inspector { get; set; }
+
+        public RegexModel RegexModel { get; set; } = new RegexModel();
         
         protected override Task OnInitializedAsync()
         {
@@ -20,13 +22,25 @@ namespace nats_ui.Pages.Inspector
             return Task.CompletedTask;
         }
 
-        const string Plus = "oi oi-plus";
-        const string Minus = "oi oi-minus";
-        protected string RegexText { get; set; } = Plus;
-        protected string JsonText { get; set; } = Plus;
-        protected void OnRegexShowEvent(BSCollapseEvent ev) => RegexText = Minus;
-        protected void OnRegexHideEvent(BSCollapseEvent ev) => RegexText = Plus;
-        protected void OnJsonShowEvent(BSCollapseEvent ev) => JsonText = Minus;
-        protected void OnJsonHideEvent(BSCollapseEvent ev) => JsonText = Plus;
+        protected void ApplyRegex()
+        {
+            Regex regex = new Regex(RegexModel.Pattern);
+            var match = regex.Match(Data);
+            if (match.Success && match.Groups.Count > 1)
+            {
+                var capture = match.Groups[1];
+                RegexModel.Result = capture.Value;
+            }
+            else
+            {
+                RegexModel.Result = $"Failed: {match.Name} / {match.Value}";
+            }
+        }
+    }
+
+    public class RegexModel
+    {
+        public string Pattern { get; set; }
+        public string Result { get; set; }
     }
 }

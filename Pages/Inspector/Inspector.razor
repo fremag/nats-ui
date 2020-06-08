@@ -1,33 +1,59 @@
 @page "/inspector" 
 @inherits InspectorComponent
 
-<div class="overflow-auto">@Data</div>
-<hr/>
-<div class="accordion">
-    <BSCollapseGroup>
-            <BSCollapseItem>
-                <BSCard CardType="CardType.Card">
-                    <BSCard CardType="CardType.Header">
-                        <BSCollapseToggle><i class="@RegexText"></i>Collapsable Group Item</BSCollapseToggle>
-                    </BSCard>
-                    <BSCollapse ShowEvent="@OnRegexShowEvent" HideEvent="@OnRegexHideEvent">
-                        <BSCard CardType="CardType.Body">
-                            <BSCard CardType="CardType.Text">Regex sandbox</BSCard>
-                        </BSCard>
-                    </BSCollapse>
-                </BSCard>
-            </BSCollapseItem>
-            <BSCollapseItem>
-                <BSCard CardType="CardType.Card">
-                    <BSCard CardType="CardType.Header">
-                        <BSCollapseToggle><i class="@JsonText"></i>Json</BSCollapseToggle>
-                    </BSCard>
-                    <BSCollapse ShowEvent="@OnJsonShowEvent" HideEvent="@OnJsonHideEvent">
-                        <BSCard CardType="CardType.Body">
-                            <BSCard CardType="CardType.Text">Json sandbox</BSCard>
-                        </BSCard>
-                    </BSCollapse>
-                </BSCard>
-            </BSCollapseItem>
-    </BSCollapseGroup>
-</div>
+<BSContainer>
+    <BSTabGroup >
+        <BSTabList>
+            <BSTab InitialSelection="@true">
+                <BSTabLabel>Regex</BSTabLabel>
+                <BSTabContent>
+                    <BSRow>
+                        <BSCol XS="6">
+                            <h1>Data</h1>
+                            <div class="overflow-auto">@Data</div>
+                        </BSCol>
+                        <BSCol XS="6">
+
+                            <EditForm Model="@RegexModel">
+                                <DataAnnotationsValidator/>
+                                <ValidationSummary/>
+                                <div class="form-group row">
+                                    <label for="pattern" class="col-sm-2 col-form-label">Regex:</label>
+                                    <div class="col-sm-10">
+                                        <InputText id="pattern" class="form-control" @bind-Value="RegexModel.Pattern"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="result" class="col-sm-2 col-form-label">Result:</label>
+                                    <div class="col-sm-10">
+                                        @RegexModel.Result
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <button class="btn btn-primary" @onclick="ApplyRegex">Apply</button>
+                                </div>
+                            </EditForm>
+
+                        </BSCol>
+                    </BSRow>
+                </BSTabContent>
+            </BSTab>
+            <BSTab>
+                <BSTabLabel>JSon</BSTabLabel>
+                <BSTabContent>
+                    <BSRow>
+                        <BSCol XS="6">
+                            <h1>JSon</h1>
+                            <div class="overflow-auto">@Data</div>
+                        </BSCol>
+                        <BSCol XS="6">
+
+                        </BSCol>
+                    </BSRow>
+                </BSTabContent>
+            </BSTab>
+        </BSTabList>
+        <BSTabSelectedContent/>
+    </BSTabGroup>
+
+</BSContainer>
