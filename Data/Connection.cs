@@ -17,10 +17,17 @@ namespace nats_ui.Data
         public bool Checked { get; set; }
         [XmlIgnore]
         public ConnectionStatus Status { get; set; } = ConnectionStatus.Disconnected;
+        
+        public string StatusImg => Status == ConnectionStatus.Disconnected ? "" : "oi oi-check";
+        
         public string Name { get; }
         public string Host { get; }
         public int Port { get; }
 
+        public string Trash => "oi oi-trash";
+        public string Run => "oi oi-media-play";
+        public string Stop => "oi oi-media-stop";
+        
         public Connection(string name, string host, int port)
         {
             Name = name;

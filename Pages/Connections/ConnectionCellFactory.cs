@@ -1,32 +1,15 @@
 using C1.Blazor.Core;
-using C1.Blazor.Grid;
 using nats_ui.Data;
 
 namespace nats_ui.Pages.Connections
 {
-    public class ConnectionCellFactory : GridCellFactory
+    public class ConnectionCellFactory : StandardCellFactory<Connection>
     {
-        public override void PrepareCellStyle(GridCellType cellType, GridCellRange range, C1Style style)
+        protected override void PrepareCellStyle(string colName, Connection connection, C1Style style)
         {
-            base.PrepareCellStyle(cellType, range, style);
-            if (cellType != GridCellType.Cell)
+            if (colName == nameof(Connection.Status) && connection.Status == ConnectionStatus.Connected)
             {
-                return;
-            }
-
-            var statusColumn = Grid.Columns[nameof(Connection.Status)];
-            var status = (ConnectionStatus) Grid[range.Row, statusColumn.Index];
-            if (range.Column == statusColumn.Index && status == ConnectionStatus.Connected)
-            {
-                style.BackgroundColor = C1Color.Green;
-                return;
-            }
-
-            var selectedColumn = Grid.Columns[nameof(Connection.Checked)];
-            var isSelected = (bool) Grid[range.Row, selectedColumn.Index];
-            if (isSelected)
-            {
-                style.BackgroundColor = C1Color.Gray;
+                style.Color = C1Color.Green;
             }
         }
     }

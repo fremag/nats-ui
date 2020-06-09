@@ -96,6 +96,7 @@ namespace nats_ui.Data
             {
                 conn.Close();
                 connection.Status = ConnectionStatus.Disconnected;
+                ConnectionsByName.Remove(connection);
                 Disconnected?.Invoke(connection);
             }
         }

@@ -33,9 +33,30 @@ namespace nats_ui.Pages.Connections
             Connections.SetData(NatsService.Configuration.Connections);
             Connections.SelectedItemChanged += OnSelectedItemChanged;
             Connections.ItemDoubleClicked += OnItemDoubleClicked;
+            Connections.ItemClicked += OnItemClicked;
             return Task.CompletedTask;
         }
-        
+
+        private void OnItemClicked(string colName, Connection connection)
+        {
+            switch (colName)
+            {
+                case nameof(Connection.Trash):
+                    Logger.Info($"RemoveConnection: {connection}");
+                    NatsService.Remove(connection);
+                    Connections.Remove(connection);
+                    break;
+                case nameof(Connection.Run):
+                    Connect(connection);
+                    Connections.Update(connection);
+                    break;
+                case nameof(Connection.Stop):
+                    Disconnect(connection);
+                    Connections.Update(connection);
+                    break;
+            }
+        }
+
         protected void CreateConnection()
         {
             Logger.Info($"CreateConnection: {null}");
@@ -49,20 +70,6 @@ namespace nats_ui.Pages.Connections
             InvokeAsync(StateHasChanged);
         }
 
-        protected void RemoveConnections()
-        {
-            Logger.Info("RemoveConnections");
-
-            foreach(var (index, connection) in Connections.GetCheckedItems()) 
-            {
-                Logger.Info($"RemoveConnection: {connection}");
-                NatsService.Remove(connection);
-                Connections.Remove(index);
-            }
-
-            Status = "Connection removed";
-        }
-
         private void OnSelectedItemChanged(Connection connection)
         {
             Model.Name = connection.Name;
@@ -74,6 +81,11 @@ namespace nats_ui.Pages.Connections
 
         private void OnItemDoubleClicked(string colName, Connection connection)
         {
+            Run(connection);
+        }
+
+        private void Run(Connection connection)
+        {
             if (connection.Status == ConnectionStatus.Connected)
             {
                 Disconnect(connection);
@@ -82,29 +94,19 @@ namespace nats_ui.Pages.Connections
             {
                 Connect(connection);
             }
+            Connections.Update(connection);
         }
-        
+
         private void Disconnect(Connection connection)
         {
-            Logger.Info($"{nameof(Disconnect)}: {connection}");
+            Logger.Info($"{nameof(Disconnect)}: {connection.Url}");
             NatsService.Disconnect(connection);
-            InvokeAsync(StateHasChanged);
         }
 
         private void Connect(Connection connection)
         {
-            Logger.Info($"{nameof(Connect)}: {connection}");
+            Logger.Info($"{nameof(Connect)}: {connection.Url}");
             NatsService.Connect(connection);
-            InvokeAsync(StateHasChanged);
-        }
-
-        public void DumpConnections()
-        {
-            Logger.Info("DumpConnections");
-            foreach (Connection connection in Connections)
-            {
-                Logger.Info(connection);
-            }
         }
     }
 }

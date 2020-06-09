@@ -3,9 +3,9 @@
 @using C1.Blazor.Grid
 
 
-<BSCard>
+<BSCard Class="mb-1">
     <BSCard CardType="CardType.Body">
-        <BSCard CardType="CardType.Title">Create new connection</BSCard>
+        <BSCard CardType="CardType.Subtitle">Create new connection</BSCard>
     </BSCard>
     <BSCard CardType="CardType.Body">
         <EditForm Model="@Model" OnSubmit="@CreateConnection">
@@ -25,22 +25,43 @@
     </BSCard>
 </BSCard>
 
-<button class="btn btn-primary" @onclick="RemoveConnections">Remove</button>
-<button class="btn btn-primary" @onclick="DumpConnections">Dump</button>
+<BSCard Class="mb-1">
+    <BSCard CardType="CardType.Body">
+        <FlexGrid ItemsSource="Connections.Items"
+                  AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+                  ColumnHeaderStyle="@("font-weight:bold")"
+                  SelectionChanged="@Connections.SelectionChanged"
+                  SelectionMode="GridSelectionMode.Row"
+                  CellTapped="Connections.OnCellTaped"
+                  CellDoubleTapped="Connections.OnCellDoubleTaped"
+                  CellFactory="@GridCellFactory">
+            <FlexGridColumns>
+                <GridColumn Binding="StatusImg" IsReadOnly="true" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Connection status"></span>
+                    </CellTemplate>
+                </GridColumn>
 
-<FlexGrid ItemsSource="Connections.Items"
-          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
-          ColumnHeaderStyle="@("font-weight:bold")"
-          SelectionChanged="@Connections.SelectionChanged"
-          SelectionMode="GridSelectionMode.Row"
-          CellTapped="Connections.OnCellTaped"
-          CellDoubleTapped="Connections.OnCellDoubleTaped"
-          CellFactory="@GridCellFactory">
-    <FlexGridColumns>
-        <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50"/>
-        <GridColumn Binding="Status" IsReadOnly="true"/>
-        <GridColumn Binding="Name" IsReadOnly="true"/>
-        <GridColumn Binding="Host" IsReadOnly="true"/>
-        <GridColumn Binding="Port" IsReadOnly="true"/>
-    </FlexGridColumns>
-</FlexGrid>
+                <GridColumn Binding="Name" IsReadOnly="true"/>
+                <GridColumn Binding="Host" IsReadOnly="true"/>
+                <GridColumn Binding="Port" IsReadOnly="true"/>
+                <GridColumn Binding="Run" IsReadOnly="true" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Connect"></span>
+                    </CellTemplate>
+                </GridColumn>
+                <GridColumn Binding="Stop" IsReadOnly="true" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Disconnect"></span>
+                    </CellTemplate>
+                </GridColumn>
+                <GridColumn Binding="Trash" IsReadOnly="true" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Delete connection"></span>
+                    </CellTemplate>
+                </GridColumn>
+
+            </FlexGridColumns>
+        </FlexGrid>
+    </BSCard>
+</BSCard>

@@ -3,8 +3,10 @@ using C1.Blazor.Grid;
 
 namespace nats_ui.Data
 {
-    public class StandardCellFactory : GridCellFactory
+    public abstract class StandardCellFactory<T> : GridCellFactory where T : ICheckable
     {
+        protected abstract void PrepareCellStyle(string colName, T item, C1Style cellType);
+
         public override void PrepareCellStyle(GridCellType cellType, GridCellRange range, C1Style style)
         {
             base.PrepareCellStyle(cellType, range, style);
@@ -13,16 +15,20 @@ namespace nats_ui.Data
                 return;
             }
 
-            int selectedColumnIdx = Grid.Columns.IndexOf(nameof(Session.Checked));
-            if (selectedColumnIdx == -1)
+            var item = (T) Grid.Rows[range.Row].DataItem;
+            string colName = Grid.Columns[range.Column].Binding;
+            
+            if (colName == nameof(ICheckable.Checked))
             {
+                if (item.Checked)
+                {
+                    style.BackgroundColor = C1Color.Gray;
+                }
+
                 return;
-            } 
-            var isSelected = (bool) Grid[range.Row, selectedColumnIdx];
-            if (isSelected)
-            {
-                style.BackgroundColor = C1Color.Gray;
             }
+
+            PrepareCellStyle(colName, item, style);
         }
     }
 }
