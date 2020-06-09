@@ -27,7 +27,40 @@ namespace nats_ui.Pages.Subscriptions
             Subscriptions.SetData(NatsService.Configuration.Subscriptions);
             Subscriptions.SelectedItemChanged += OnSelectedItemChanged;
             Subscriptions.ItemDoubleClicked += OnItemDoubleClicked;
+            Subscriptions.ItemClicked += OnItemClicked;
             return Task.CompletedTask;
+        }
+
+        private void OnItemClicked(string colName, NatsSubscription subscription)
+        {
+            switch (colName)
+            {
+                case nameof(NatsSubscription.Unsubscribe):
+                    Unsubscribe(subscription);
+                    break;
+                case nameof(NatsSubscription.Subscribe):
+                    Subscribe(subscription);
+                    break;
+                case nameof(NatsSubscription.Trash):
+                    Logger.Info($"{nameof(NatsSubscription.Trash)}: {subscription}");
+                    NatsService.Remove(subscription);
+                    Subscriptions.Remove(subscription);
+                    break;
+            }
+        }
+
+        private void Unsubscribe(NatsSubscription subscription)
+        {
+            Logger.Info($"{nameof(NatsSubscription.Unsubscribe)}: {subscription}");
+            NatsService.Unsubscribe(subscription);
+            Subscriptions.Update(subscription);
+        }
+
+        private void Subscribe(NatsSubscription subscription)
+        {
+            Logger.Info($"{nameof(NatsSubscription.Subscribe)}: {subscription}");
+            NatsService.Subscribe(subscription);
+            Subscriptions.Update(subscription);
         }
 
         protected void CreateSubscription()
@@ -43,17 +76,7 @@ namespace nats_ui.Pages.Subscriptions
             {
                 Subscriptions.Insert(0, natsSubscription);
             }
-        }
-
-        protected void RemoveSubscriptions()
-        {
-            Logger.Info(nameof(RemoveSubscriptions));
-            foreach(var (i, subscription) in Subscriptions.GetCheckedItems())
-            {
-                Logger.Info($"{nameof(RemoveSubscriptions)}: {subscription}");
-                NatsService.Remove(subscription);
-                Subscriptions.Remove(i);
-            }
+            Subscribe(natsSubscription);
         }
         
         private void OnSelectedItemChanged(NatsSubscription subscription)
@@ -66,11 +89,11 @@ namespace nats_ui.Pages.Subscriptions
         {
             if (subscription.Subscribed)
             {
-                NatsService.Unsubscribe(subscription);
+                Unsubscribe(subscription); 
             }
             else
             {
-                NatsService.Subscribe(subscription);
+                Subscribe(subscription);
             }
         }
     }

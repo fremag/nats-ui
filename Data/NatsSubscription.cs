@@ -10,6 +10,11 @@ namespace nats_ui.Data
         public bool Subscribed { get; set; }
         public string Subject { get; }
 
+        public string StatusImg => Subscribed  ? "oi oi-check" : string.Empty;
+        public string Trash => "oi oi-trash";
+        public string Subscribe => "oi oi-media-play";
+        public string Unsubscribe => "oi oi-media-stop";
+        
         public NatsSubscription(string subject)
         {
             Subject = subject;

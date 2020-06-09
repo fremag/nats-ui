@@ -1,29 +1,54 @@
 @page "/subscriptions" 
-@inherits SubscriptionsComponent 
+@inherits SubscriptionsComponent
+
 
 @using C1.Blazor.Grid
 
-<EditForm Model="@Model" OnSubmit="@CreateSubscription">
-    <label>Subject:
-    <InputText id="subject" @bind-Value="Model.Subject"/>
-    </label>
+<BSCard Class="mb-1">
+    <BSCard CardType="CardType.Body">
+        <EditForm Model="@Model" OnSubmit="@CreateSubscription">
+            <label for="subject">Subject</label>
+            <InputText id="subject" @bind-Value="Model.Subject"/>
+            <button class="btn btn-primary" type="submit">Subscribe</button>
+        </EditForm>
+    </BSCard>
+</BSCard>
+<BSCard Class="mb-1">
+    <BSCard CardType="CardType.Body">
 
-    <button class="btn btn-primary" type="submit">Create</button>
-</EditForm>
-<button class="btn btn-primary" @onclick="RemoveSubscriptions">Remove</button>
+        <FlexGrid ItemsSource="Subscriptions.Items"
+                  AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+                  ColumnHeaderStyle="@("font-weight:bold")"
+                  SelectionChanged="@Subscriptions.SelectionChanged"
+                  SelectionMode="GridSelectionMode.Row"
+                  CellTapped="Subscriptions.OnCellTaped"
+                  CellDoubleTapped="Subscriptions.OnCellDoubleTaped"
+                  CellFactory="@GridCellFactory">
+            <FlexGridColumns>
+                <GridColumn Binding="StatusImg" IsReadOnly="true" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Subscription status"></span>
+                    </CellTemplate>
+                </GridColumn>
 
-<FlexGrid ItemsSource="Subscriptions.Items" 
-          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
-          ColumnHeaderStyle="@("font-weight:bold")"
-          SelectionChanged="@Subscriptions.SelectionChanged"
-          SelectionMode="GridSelectionMode.Row"
-          CellTapped="Subscriptions.OnCellTaped"
-          CellDoubleTapped="Subscriptions.OnCellDoubleTaped"
-          CellFactory="@GridCellFactory"
->  
-    <FlexGridColumns>  
-        <GridColumn Binding="Checked" IsReadOnly="true" Width="50" Header="Sel" />
-        <GridColumn Binding="Subscribed" IsReadOnly="true"  Width="50" Header="Sub" />  
-        <GridColumn Binding="Subject" IsReadOnly="true"/>  
-    </FlexGridColumns>  
-</FlexGrid>
+                <GridColumn Binding="Subject" IsReadOnly="true"/>
+
+                <GridColumn Binding="Subscribe" IsReadOnly="true" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Subscribe"></span>
+                    </CellTemplate>
+                </GridColumn>
+                <GridColumn Binding="Unsubscribe" IsReadOnly="true" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Unsubscribe"></span>
+                    </CellTemplate>
+                </GridColumn>
+                <GridColumn Binding="Trash" IsReadOnly="true" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Delete subscription"></span>
+                    </CellTemplate>
+                </GridColumn>
+            </FlexGridColumns>
+        </FlexGrid>
+    </BSCard>
+</BSCard>

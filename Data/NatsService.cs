@@ -117,7 +117,7 @@ namespace nats_ui.Data
             }
 
             Subscriptions[natsSubscription] = subs;
-            natsSubscription.Subscribed = true;
+            natsSubscription.Subscribed = subs.Any();
             Subscribed?.Invoke(natsSubscription);
         }
 
