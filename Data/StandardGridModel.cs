@@ -141,5 +141,14 @@ namespace nats_ui.Data
             var idx = Items.IndexOf(item);
             Items.ReplaceAsync(idx, item);
         }
+
+        public void Remove(T item)
+        {
+            int idx = Items.IndexOf(item);
+            if (idx >= 0)
+            {
+                Remove(idx);
+            }
+        }
     }
 }

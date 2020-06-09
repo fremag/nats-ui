@@ -2,36 +2,45 @@
 @inherits ConnectionsComponent
 @using C1.Blazor.Grid
 
-<EditForm Model="@Model" OnSubmit="@CreateConnection">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <label for="name">Name: 
-    <InputText id="name" @bind-Value="Model.Name" />
-    </label>
-    <label for="host">Host: <InputText id="host" @bind-Value="Model.Host" />
-    </label>
-    <label for="port">Port:<InputNumber id="port" @bind-Value="Model.Port" /></label>
 
-    <button class="btn btn-primary" type="submit">Create</button>
-</EditForm>
-<div>@Status</div>
+<BSCard>
+    <BSCard CardType="CardType.Body">
+        <BSCard CardType="CardType.Title">Create new connection</BSCard>
+    </BSCard>
+    <BSCard CardType="CardType.Body">
+        <EditForm Model="@Model" OnSubmit="@CreateConnection">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+            <label for="name">
+                Name:
+                <InputText id="name" @bind-Value="Model.Name"/>
+            </label>
+            <label for="host">
+                Host: <InputText id="host" @bind-Value="Model.Host"/>
+            </label>
+            <label for="port">Port:<InputNumber id="port" @bind-Value="Model.Port"/></label>
+
+            <button class="btn btn-primary" type="submit">Create</button>
+        </EditForm>
+    </BSCard>
+</BSCard>
+
 <button class="btn btn-primary" @onclick="RemoveConnections">Remove</button>
 <button class="btn btn-primary" @onclick="DumpConnections">Dump</button>
 
-<FlexGrid ItemsSource="Connections.Items" 
-          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star" 
+<FlexGrid ItemsSource="Connections.Items"
+          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
           ColumnHeaderStyle="@("font-weight:bold")"
           SelectionChanged="@Connections.SelectionChanged"
           SelectionMode="GridSelectionMode.Row"
           CellTapped="Connections.OnCellTaped"
           CellDoubleTapped="Connections.OnCellDoubleTaped"
-          CellFactory="@GridCellFactory"
-          >  
-    <FlexGridColumns>  
+          CellFactory="@GridCellFactory">
+    <FlexGridColumns>
         <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50"/>
-        <GridColumn Binding="Status" IsReadOnly="true"/>  
-        <GridColumn Binding="Name" IsReadOnly="true"/>  
-        <GridColumn Binding="Host" IsReadOnly="true"/>  
-        <GridColumn Binding="Port" IsReadOnly="true" />  
-    </FlexGridColumns>  
+        <GridColumn Binding="Status" IsReadOnly="true"/>
+        <GridColumn Binding="Name" IsReadOnly="true"/>
+        <GridColumn Binding="Host" IsReadOnly="true"/>
+        <GridColumn Binding="Port" IsReadOnly="true"/>
+    </FlexGridColumns>
 </FlexGrid>

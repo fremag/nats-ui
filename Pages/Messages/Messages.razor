@@ -3,32 +3,40 @@
 
 @using C1.Blazor.Grid
 
-<EditForm Model="@Model" OnSubmit="@SaveMessage">
-    <DataAnnotationsValidator/>
-    <ValidationSummary/>
-    <div class="form-group row">
-        <label for="subject" class="col-sm-2 col-form-label">Subject:</label>
-        <div class="col-sm-10">
-            <InputText id="subject" class="form-control" @bind-Value="Model.Subject"/>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="url" class="col-sm-2 col-form-label">Url:</label>
-        <div class="col-sm-10">
+<BSCard>
+    <BSCard CardType="CardType.Body">
+        <BSCard CardType="CardType.Title">Message details</BSCard>
+        <BSCard CardType="CardType.Subtitle">Edit and save message to later use</BSCard>
+    </BSCard>
 
-            <InputText id="url" class="form-control" @bind-Value="Model.Url"/>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="data" class="col-sm-2 col-form-label">Data:</label>
-        <div class="col-sm-10">
-            <InputTextArea id="data" class="form-control" @bind-Value="Model.Data"/>
-        </div>
-    </div>
-    <div class="form-group row">
-        <button class="btn btn-primary" type="submit">Save</button>
-    </div>
-</EditForm>
+    <BSCard CardType="CardType.Body">
+        <EditForm Model="@Model" OnSubmit="@SaveMessage">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+            <div class="form-group row">
+                <label for="subject" class="col-sm-2 col-form-label">Subject:</label>
+                <div class="col-sm-10">
+                    <InputText id="subject" class="form-control" @bind-Value="Model.Subject"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="url" class="col-sm-2 col-form-label">Url:</label>
+                <div class="col-sm-10">
+                    <InputText id="url" class="form-control" @bind-Value="Model.Url"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="data" class="col-sm-2 col-form-label">Data:</label>
+                <div class="col-sm-10">
+                    <InputTextArea id="data" class="form-control" @bind-Value="Model.Data"/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <button class="btn btn-primary" type="submit">Save</button>
+            </div>
+        </EditForm>
+    </BSCard>
+</BSCard>
 
 <hr/>
 

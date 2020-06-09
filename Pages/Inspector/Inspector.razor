@@ -7,9 +7,9 @@
         <BSForm Model="@Model" Class="col-sm-12">
             <BSFormGroup IsRow="true">
                 <BSLabel For="type">Type</BSLabel>
-                <BSBasicInput T="string" Id="type" InputType="InputType.Select" Size="Size.Small" @bind-value="Model.Type">
-                    <option>@(PatternType.Json.ToString())</option>
-                    <option>@(PatternType.Regex.ToString())</option>
+                <BSBasicInput T="PatternType" Id="type" InputType="InputType.Select" Size="Size.Small" @bind-value="Model.Type">
+                    <option>@(PatternType.Json)</option>
+                    <option>@(PatternType.Regex)</option>
                 </BSBasicInput>
             </BSFormGroup>
             <BSFormGroup IsRow="true">
@@ -17,8 +17,8 @@
                 <BSInput Size="Size.ExtraLarge" Id="pattern" @bind-Value="Model.Pattern"/>
             </BSFormGroup>
             <BSFormGroup IsRow="true">
-                <BSButton @onclick="Test">Test</BSButton>
-                <BSButton @onclick="Add">Add</BSButton>
+                <BSButton @onclick="TestPattern">Test</BSButton>
+                <BSButton @onclick="AddCommand">Add</BSButton>
             </BSFormGroup>
         </BSForm>
     </BSRow>

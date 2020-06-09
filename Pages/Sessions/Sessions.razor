@@ -1,58 +1,83 @@
 @page "/sessions" 
-@inherits SessionsComponent     
+@inherits SessionsComponent
+
 
 @using C1.Blazor.Grid
+<BSCard Class="mb-1">
+    <BSCard CardType="CardType.Body">
+        <BSCard CardType="CardType.Subtitle">Save current connections / subscriptions</BSCard>
+    </BSCard>
 
-<EditForm Model="@Model" OnSubmit="@CreateSession">
-    <label for="name">
-        Name:
-        <InputText id="name" @bind-Value="Model.Name"/>
-    </label>
+    <BSCard CardType="CardType.Body">
+        <EditForm Model="@Model" OnSubmit="@CreateSession">
+            <label for="name">Name:</label>
+            <InputText id="name" @bind-Value="Model.Name"/>
+            <button class="btn btn-primary" type="submit">Save</button>
+        </EditForm>
+    </BSCard>
+</BSCard>
 
-    <button class="btn btn-primary" type="submit">Save</button>
-</EditForm>
-<button class="btn btn-primary" @onclick="RemoveSession">Remove</button>
+<BSCard Class="mb-1">
+    <BSCard CardType="CardType.Body">
+        <BSCard CardType="CardType.Subtitle">Select a session to display its connections and subscriptions</BSCard>
+    </BSCard>
 
-<FlexGrid ItemsSource="Sessions.Items"
-          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
-          ColumnHeaderStyle="@("font-weight:bold")"
-          SelectionChanged="@Sessions.SelectionChanged"
-          SelectionMode="GridSelectionMode.Row"
-          CellTapped="Sessions.OnCellTaped"
-          CellDoubleTapped="Sessions.OnCellDoubleTaped"
-          CellFactory="@GridCellFactory">
-    <FlexGridColumns>
-        <GridColumn Binding="Checked" IsReadOnly="true" Width="50" Header="Sel"/>
-        <GridColumn Binding="Name" IsReadOnly="true"/>
-        <GridColumn Binding="ConnectionCount" IsReadOnly="true" Width="50" Header="# Conn"/>
-        <GridColumn Binding="SubscriptionCount" IsReadOnly="true" Width="50" Header="# Sub"/>
-    </FlexGridColumns>
-</FlexGrid>
-<hr/>
-<div class="container">
-    <div class="row">
-        <h2>Session: </h2><span>@SelectedName</span>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-            <FlexGrid ItemsSource="Urls.Items"
-                      AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
-                      ColumnHeaderStyle="@("font-weight:bold")"
-                      SelectionMode="GridSelectionMode.Row">
-                <FlexGridColumns>
-                    <GridColumn Binding="Url" IsReadOnly="true"/>
-                </FlexGridColumns>
-            </FlexGrid>
+    <BSCard CardType="CardType.Body">
+        <FlexGrid ItemsSource="Sessions.Items"
+                  AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+                  ColumnHeaderStyle="@("font-weight:bold")"
+                  SelectionChanged="@Sessions.SelectionChanged"
+                  SelectionMode="GridSelectionMode.Row"
+                  CellTapped="Sessions.OnCellTaped"
+                  CellDoubleTapped="Sessions.OnCellDoubleTaped"
+                  CellFactory="@GridCellFactory">
+            <FlexGridColumns>
+                <GridColumn Binding="Name" IsReadOnly="true"/>
+                <GridColumn Binding="ConnectionCount" IsReadOnly="true" Width="100" Header="# Conn."/>
+                <GridColumn Binding="SubscriptionCount" IsReadOnly="true" Width="100" Header="# Sub."/>
+                <GridColumn Binding="Run" IsReadOnly="true" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Run session: create connections and subscriptions"></span>
+                    </CellTemplate>
+                </GridColumn>
+                <GridColumn Binding="Trash" IsReadOnly="true" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Delete session"></span>
+                    </CellTemplate>
+                </GridColumn>
+            </FlexGridColumns>
+        </FlexGrid>
+    </BSCard>
+</BSCard>
+
+<BSCard Class="mb-1">
+    <BSCard CardType="CardType.Body">
+        <BSCard CardType="CardType.Subtitle">Details: @SelectedName</BSCard>
+    </BSCard>
+    <BSCard CardType="CardType.Body">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <FlexGrid ItemsSource="Urls.Items"
+                              AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+                              ColumnHeaderStyle="@("font-weight:bold")"
+                              SelectionMode="GridSelectionMode.Row">
+                        <FlexGridColumns>
+                            <GridColumn Binding="Url" IsReadOnly="true"/>
+                        </FlexGridColumns>
+                    </FlexGrid>
+                </div>
+                <div class="col-sm">
+                    <FlexGrid ItemsSource="Subjects.Items"
+                              AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+                              ColumnHeaderStyle="@("font-weight:bold")"
+                              SelectionMode="GridSelectionMode.Row">
+                        <FlexGridColumns>
+                            <GridColumn Binding="Subject" IsReadOnly="true"/>
+                        </FlexGridColumns>
+                    </FlexGrid>
+                </div>
+            </div>
         </div>
-        <div class="col-sm">
-            <FlexGrid ItemsSource="Subjects.Items"
-                      AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
-                      ColumnHeaderStyle="@("font-weight:bold")"
-                      SelectionMode="GridSelectionMode.Row">
-                <FlexGridColumns>
-                    <GridColumn Binding="Subject" IsReadOnly="true"/>
-                </FlexGridColumns>
-            </FlexGrid>
-        </div>
-    </div>
-</div>
+    </BSCard>
+</BSCard>

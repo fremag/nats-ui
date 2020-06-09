@@ -220,6 +220,7 @@ namespace nats_ui.Data
         public void Save(NatsMessage message)
         {
             Configuration.SavedMessages.Add(message);
+            Save();
             MessageSaved?.Invoke(message);
         }
 

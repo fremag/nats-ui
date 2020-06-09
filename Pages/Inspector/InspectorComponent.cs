@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -20,7 +21,7 @@ namespace nats_ui.Pages.Inspector
         protected ScriptService ScriptService { get; set; }
 
         protected string Data { get; set; }
-        protected PatternModel Model { get; set; } = new PatternModel();
+        protected PatternModel Model { get; } = new PatternModel();
         
         protected override Task OnInitializedAsync()
         {
@@ -28,29 +29,40 @@ namespace nats_ui.Pages.Inspector
             return Task.CompletedTask;
         }
 
-        public void Test()
+        public void TestPattern()
         {
-            if (Model.Type == PatternType.Regex.ToString())
+            if (string.IsNullOrEmpty(Model.Pattern))
             {
-                TestRegex();
+                var msg = "Pattern is null or empty !";
+                Logger.Warn(msg);
+                Model.Result = msg;
+                return;
             }
-            else
+            if (string.IsNullOrEmpty(Data))
             {
-                TestJson();
+                var msg = "Data is null or empty !";
+                Logger.Warn(msg);
+                Model.Result = msg;
+                return;
+            }
+            switch (Model.Type)
+            {
+                case PatternType.Regex:
+                    TestRegex();
+                    break;
+                case PatternType.Json:
+                    TestJson();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(Model.Type.ToString());
             }
         }
-        
 
-        public void Add()
+        public void AddCommand()
         {
-            if (Model.Type == PatternType.Regex.ToString())
-            {
-                ScriptService.Current.Statements.Add(new ScriptStatement { Name = nameof(CheckRegexCommand), Param1 = Model.Pattern, Param2 = Model.Result});
-            }
-            else
-            {
-                ScriptService.Current.Statements.Add(new ScriptStatement { Name = nameof(CheckJsonCommand), Param1 = Model.Pattern, Param2 = Model.Result});
-            }
+            var scriptStatement = new ScriptStatement { Param1 = Model.Pattern, Param2 = Model.Result};
+            scriptStatement.Name = Model.Type == PatternType.Regex ? nameof(CheckRegexCommand) : nameof(CheckJsonCommand);
+            ScriptService.Current.Statements.Add(scriptStatement);
         }
 
         protected void TestRegex()
@@ -70,8 +82,17 @@ namespace nats_ui.Pages.Inspector
 
         protected void TestJson()
         {
-            IReadOnlyList<JsonElement> result = JsonPath.ExecutePath(Model.Pattern, Data);
-            Model.Result = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
+            try
+            {
+                IReadOnlyList<JsonElement> result = JsonPath.ExecutePath(Model.Pattern, Data);
+                Model.Result = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
+            }
+            catch (Exception e)
+            {
+                var msg = $"Failed to apply Json path: {e.Message}";
+                Logger.Error(msg);
+                Model.Result = msg;
+            }
         }
     }
 
@@ -85,6 +106,6 @@ namespace nats_ui.Pages.Inspector
     {
         public string Pattern { get; set; }
         public string Result { get; set; }
-        public string Type { get; set; }
+        public PatternType Type { get; set; }
     }
 }

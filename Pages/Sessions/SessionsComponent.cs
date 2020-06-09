@@ -46,6 +46,7 @@ namespace nats_ui.Pages.Sessions
             Subjects.SetData(new SubjectData[0]);
             Sessions.SelectedItemChanged += OnSelectedItemChanged;
             Sessions.ItemDoubleClicked += OnItemDoubleClicked;
+            Sessions.ItemClicked += OnItemClicked;
             return Task.CompletedTask;
         }
 
@@ -63,15 +64,11 @@ namespace nats_ui.Pages.Sessions
             OnSelectedItemChanged(session);
         }
 
-        protected void RemoveSession()
+        protected void RemoveSession(Session session)
         {
-            Logger.Info(nameof(RemoveSession));
-            foreach(var (i, session) in Sessions.GetCheckedItems())
-            {
-                Logger.Info($"{nameof(RemoveSession)}: {session}");
-                NatsService.Remove(session);
-                Sessions.Remove(i);
-            }
+            Logger.Info($"{nameof(RemoveSession)}: {session}");
+            NatsService.Remove(session);
+            Sessions.Remove(session);
         }
         
         private void OnSelectedItemChanged(Session session)
@@ -86,6 +83,19 @@ namespace nats_ui.Pages.Sessions
         private void OnItemDoubleClicked(string colName, Session session)
         {
             NatsService.Init(session);
+        }
+
+        private void OnItemClicked(string colName, Session session)
+        {
+            switch (colName)
+            {
+                case nameof(Session.Trash):
+                    RemoveSession(session);
+                    break;
+                case nameof(Session.Run):
+                    NatsService.Init(session);
+                    break;
+            }
         }
     }
 }
