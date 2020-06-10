@@ -1,40 +1,101 @@
 @page "/inspector" 
 @using InputType = BlazorStrap.InputType
+@using nats_ui.Data
+@using C1.Blazor.Grid
+
 @inherits InspectorComponent
 
 <BSContainer IsFluid="true">
     <BSRow>
-        <BSForm Model="@Model" Class="col-sm-12">
-            <BSFormGroup IsRow="true">
-                <BSLabel For="type">Type</BSLabel>
-                <BSBasicInput T="PatternType" Id="type" InputType="InputType.Select" Size="Size.Small" @bind-value="Model.Type">
-                    <option>@(PatternType.Json)</option>
-                    <option>@(PatternType.Regex)</option>
-                </BSBasicInput>
-            </BSFormGroup>
-            <BSFormGroup IsRow="true">
-                <BSLabel For="pattern">Pattern</BSLabel>
-                <BSInput Size="Size.ExtraLarge" Id="pattern" @bind-Value="Model.Pattern"/>
-            </BSFormGroup>
-            <BSFormGroup IsRow="true">
-                <BSButton @onclick="TestPattern">Test</BSButton>
-                <BSButton @onclick="AddCommand">Add</BSButton>
-            </BSFormGroup>
-        </BSForm>
+        <BSCol XS="12">
+            <BSCard Class="mb-1" Color="Color.Secondary" IsOutline="true">
+                <BSCard CardType="CardType.Header">Apply Regex / JSon path to data to extract some values</BSCard>
+                <BSCard CardType="CardType.Body">
+                    <BSForm Model="@Model" Class="col-sm-12">
+                        <BSFormGroup IsRow="true">
+                            <BSLabel For="name">Name</BSLabel>
+                            <BSInput Size="Size.ExtraLarge" Id="name" @bind-Value="Model.Name"/>
+                        </BSFormGroup>
+                        <BSFormGroup IsRow="true">
+                            <BSLabel For="type">Type</BSLabel>
+                            <BSBasicInput T="CaptureType" Id="type" InputType="InputType.Select" Size="Size.Small" @bind-value="Model.CaptureType">
+                                <option>@(CaptureType.JsonPath)</option>
+                                <option>@(CaptureType.Regex)</option>
+                            </BSBasicInput>
+                        </BSFormGroup>
+                        <BSFormGroup IsRow="true">
+                            <BSLabel For="pattern">Pattern</BSLabel>
+                            <BSInput Size="Size.ExtraLarge" Id="pattern" @bind-Value="Model.Expression"/>
+                        </BSFormGroup>
+                        <BSFormGroup IsRow="true">
+                            <BSButton @onclick="TestCapture">Test</BSButton>
+                            <BSButton @onclick="SaveCapture">Save</BSButton>
+                            <BSButton @onclick="AddCommand">Add</BSButton>
+                        </BSFormGroup>
+                    </BSForm>
+                </BSCard>
+            </BSCard>
+        </BSCol>
     </BSRow>
-    <hr/>
+    <BSRow>
+        <BSCol XS="12">
+            <BSCard Class="mb-1">
+                <BSCard CardType="CardType.Body">
+
+                    <FlexGrid ItemsSource="DataCaptureGrid.Items"
+                              AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+                              ColumnHeaderStyle="@("font-weight:bold")"
+                              HeadersVisibility="GridHeadersVisibility.All"
+                              SelectionMode="GridSelectionMode.Row"
+                              SelectionChanged="DataCaptureGrid.SelectionChanged"
+                              CellTapped="DataCaptureGrid.OnCellTaped"
+                              CellDoubleTapped="DataCaptureGrid.OnCellDoubleTaped"
+
+                              CellFactory="@GridCellFactory">
+                        <FlexGridColumns>
+                            <GridColumn Binding="Type" IsReadOnly="true"/>
+                            <GridColumn Binding="Name" IsReadOnly="true"/>
+                            <GridColumn Binding="Expression" IsReadOnly="true"/>
+                            <GridColumn Binding="Run" IsReadOnly="true" Header="" Width="50">
+                                <CellTemplate>
+                                    <span class="@context" data-toggle="tooltip" title="Test data capture "></span>
+                                </CellTemplate>
+                            </GridColumn>
+                            <GridColumn Binding="Trash" IsReadOnly="true" Header="" Width="50">
+                                <CellTemplate>
+                                    <span class="@context" data-toggle="tooltip" title="Delete data capture"></span>
+                                </CellTemplate>
+                            </GridColumn>
+
+                        </FlexGridColumns>
+                    </FlexGrid>
+                </BSCard>
+            </BSCard>
+        </BSCol>
+    </BSRow>
     <BSRow>
         <BSCol XS="6">
-            <h1>Data<hr/></h1>
-            <div class="overflow-auto">
-                <pre>@Data</pre>
-            </div>
+            <BSCard Class="mb-1">
+                <BSCard CardType="CardType.Body">
+                    <BSCard CardType="CardType.Subtitle">Data</BSCard>
+                </BSCard>
+
+                <BSCard CardType="CardType.Body">
+                    <pre>@Model.Data</pre>
+                </BSCard>
+            </BSCard>
+
         </BSCol>
         <BSCol XS="6">
-            <h1>Result<hr/></h1>
-            <div>
-                <pre>@Model.Result</pre>
-            </div>
+            <BSCard Class="mb-1">
+                <BSCard CardType="CardType.Body">
+                    <BSCard CardType="CardType.Subtitle">Result</BSCard>
+                </BSCard>
+
+                <BSCard CardType="CardType.Body">
+                    <pre>@Model.Result</pre>
+                </BSCard>
+            </BSCard>
         </BSCol>
     </BSRow>
 

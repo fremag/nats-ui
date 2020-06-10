@@ -20,55 +20,99 @@ namespace nats_ui.Pages.Inspector
         [Inject]
         protected ScriptService ScriptService { get; set; }
 
-        protected string Data { get; set; }
-        protected PatternModel Model { get; } = new PatternModel();
+        [Inject]
+        protected NatsService NatsService { get; set; }
+        
+        protected DataCaptureModel Model { get; } = new DataCaptureModel();
+        protected StandardGridModel<DataCapture> DataCaptureGrid { get; } = new StandardGridModel<DataCapture>();
+        protected DataCaptureCellFactory GridCellFactory { get; } = new DataCaptureCellFactory();
         
         protected override Task OnInitializedAsync()
         {
-            Data = Inspector.Data;
+            DataCaptureGrid.SetData(NatsService.Configuration.DataCaptures);
+            DataCaptureGrid.ItemClicked += OnItemClicked;
+            DataCaptureGrid.ItemDoubleClicked += OnItemDoubleClicked;
+            DataCaptureGrid.SelectedItemChanged += OnSelectedItemChanged;
+            Model.Data = Inspector.Data;
             return Task.CompletedTask;
         }
 
-        public void TestPattern()
+        private void OnSelectedItemChanged(DataCapture dataCapture)
         {
-            if (string.IsNullOrEmpty(Model.Pattern))
+            Model.CaptureType = dataCapture.Type;
+            Model.Name = dataCapture.Name;
+            Model.Expression = dataCapture.Expression;
+        }
+
+        private void OnItemDoubleClicked(string colName, DataCapture dataCapture)
+        {
+            OnSelectedItemChanged(dataCapture);
+            TestCapture();
+            InvokeAsync(StateHasChanged);
+        }
+
+        private void OnItemClicked(string colName, DataCapture dataCapture)
+        {
+            switch(colName)
             {
-                var msg = "Pattern is null or empty !";
+              case nameof(DataCapture.Trash):
+                  NatsService.Configuration.DataCaptures.Remove(dataCapture);
+                  NatsService.Save();
+                  break;
+              case nameof(DataCapture.Run):
+                  OnSelectedItemChanged(dataCapture);
+                  TestCapture();
+                  break;
+            }
+            InvokeAsync(StateHasChanged);
+        }
+
+        public void SaveCapture()
+        {
+            NatsService.Configuration.DataCaptures.Add(new DataCapture{Expression = Model.Expression, Name = Model.Name, Type = Model.CaptureType});
+            NatsService.Save();
+        }
+
+        public void TestCapture()
+        {
+            if (string.IsNullOrEmpty(Model.Expression))
+            {
+                var msg = "Expression is null or empty !";
                 Logger.Warn(msg);
                 Model.Result = msg;
                 return;
-            }
-            if (string.IsNullOrEmpty(Data))
+            } 
+            else if (string.IsNullOrEmpty(Model.Data))
             {
                 var msg = "Data is null or empty !";
                 Logger.Warn(msg);
                 Model.Result = msg;
                 return;
             }
-            switch (Model.Type)
+            switch (Model.CaptureType)
             {
-                case PatternType.Regex:
+                case CaptureType.Regex:
                     TestRegex();
                     break;
-                case PatternType.Json:
+                case CaptureType.JsonPath:
                     TestJson();
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(Model.Type.ToString());
+                    throw new ArgumentOutOfRangeException(Model.CaptureType.ToString());
             }
         }
 
         public void AddCommand()
         {
-            var scriptStatement = new ScriptStatement { Param1 = Model.Pattern, Param2 = Model.Result};
-            scriptStatement.Name = Model.Type == PatternType.Regex ? nameof(CheckRegexCommand) : nameof(CheckJsonCommand);
+            var scriptStatement = new ScriptStatement { Param1 = Model.Expression, Param2 = Model.Result};
+            scriptStatement.Name = Model.CaptureType == CaptureType.Regex ? nameof(CheckRegexCommand) : nameof(CheckJsonCommand);
             ScriptService.Current.Statements.Add(scriptStatement);
         }
 
         protected void TestRegex()
         {
-            Regex regex = new Regex(Model.Pattern);
-            var match = regex.Match(Data);
+            Regex regex = new Regex(Model.Expression);
+            var match = regex.Match(Model.Data);
             if (match.Success && match.Groups.Count > 1)
             {
                 var capture = match.Groups[1];
@@ -84,7 +128,7 @@ namespace nats_ui.Pages.Inspector
         {
             try
             {
-                IReadOnlyList<JsonElement> result = JsonPath.ExecutePath(Model.Pattern, Data);
+                IReadOnlyList<JsonElement> result = JsonPath.ExecutePath(Model.Expression, Model.Data);
                 Model.Result = JsonSerializer.Serialize(result, new JsonSerializerOptions {WriteIndented = true});
             }
             catch (Exception e)
@@ -96,16 +140,12 @@ namespace nats_ui.Pages.Inspector
         }
     }
 
-    public enum PatternType
+    public class DataCaptureModel
     {
-        Json,
-        Regex
-    }
-
-    public class PatternModel
-    {
-        public string Pattern { get; set; }
+        public CaptureType CaptureType { get; set; }
+        public string Name { get; set; }
+        public string Expression { get; set; }
         public string Result { get; set; }
-        public PatternType Type { get; set; }
+        public string Data { get; set; }
     }
 }
