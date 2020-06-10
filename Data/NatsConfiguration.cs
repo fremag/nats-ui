@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NLog;
 using XSerializer;
 
 namespace nats_ui.Data
 {
     public class NatsConfiguration
     {
+        private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
+    
         private static XmlSerializer<NatsConfiguration> Serializer { get; }= new XmlSerializer<NatsConfiguration>(typeof(NatsSubscription), typeof(Connection));
         public List<Connection> Connections { get; } = new List<Connection>();
         public List<NatsSubscription> Subscriptions { get; } = new List<NatsSubscription>();
@@ -64,6 +67,7 @@ namespace nats_ui.Data
 
         public void Save(string xmlFile)
         {
+            Logger.Info($"Save: {xmlFile}");
             using var stream = File.Open(xmlFile, FileMode.Create);
             Serializer.Serialize(stream, this);
         }

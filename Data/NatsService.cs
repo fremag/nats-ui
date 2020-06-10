@@ -44,6 +44,7 @@ namespace nats_ui.Data
                 return false;
             }
             Configuration.Add(connection);
+            Configuration.Save(NatsXml);
             msg =  $"Connection created: {connection}";
             return true;
         }
@@ -52,6 +53,7 @@ namespace nats_ui.Data
         {
             Logger.Info($"Remove Connection: {connection.Url}");
             Configuration.RemoveConnection(connection.Name);
+            Configuration.Save(NatsXml);
         }
 
         public bool Create(NatsSubscription natsSubscription, out string msg)
@@ -64,6 +66,8 @@ namespace nats_ui.Data
                 return false;
             }
             Configuration.Add(natsSubscription);
+            Configuration.Save(NatsXml);
+           
             msg = $"NatsSubject created: {natsSubscription}";
             return true;
         }
@@ -72,6 +76,7 @@ namespace nats_ui.Data
         {
             Logger.Info($"Remove NatsSubject: {natsSubscription.Subject}");
             Configuration.RemoveSubject(natsSubscription.Subject);
+            Configuration.Save(NatsXml);
         }
 
         public IConnection Connect(Connection connection)
@@ -160,6 +165,7 @@ namespace nats_ui.Data
             session.Connections.AddRange(ConnectionsByName.Keys);
 
             Configuration.Add(session);
+            Configuration.Save(NatsXml);
             
             msg = $"Session created: {session.Name}";
             return true;
@@ -169,6 +175,7 @@ namespace nats_ui.Data
         {
             Logger.Info($"Remove Session: {session.Name}");
             Configuration.RemoveSession(session.Name);
+            Configuration.Save(NatsXml);
         }
 
         public void Init(Session session)

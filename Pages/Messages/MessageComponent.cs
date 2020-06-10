@@ -46,6 +46,11 @@ namespace nats_ui.Pages.Messages
                 Inspector.Data = message.Data;
                 NavMgr.NavigateTo("/inspector");
             }
+
+            if (colName == nameof(NatsMessage.Pin))
+            {
+                NatsService.Save(message.Clone());
+            }
         }
 
         private void OnSelectedItemChanged(NatsMessage message)

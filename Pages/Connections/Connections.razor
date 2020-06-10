@@ -11,14 +11,12 @@
         <EditForm Model="@Model" OnSubmit="@CreateConnection">
             <DataAnnotationsValidator/>
             <ValidationSummary/>
-            <label for="name">
-                Name:
-                <InputText id="name" @bind-Value="Model.Name"/>
-            </label>
-            <label for="host">
-                Host: <InputText id="host" @bind-Value="Model.Host"/>
-            </label>
-            <label for="port">Port:<InputNumber id="port" @bind-Value="Model.Port"/></label>
+            <label for="name">Name</label>
+            <InputText id="name" @bind-Value="Model.Name"/>
+            <label for="host">Host</label>
+            <InputText id="host" @bind-Value="Model.Host"/>
+            <label for="port">Port</label>
+            <InputNumber id="port" @bind-Value="Model.Port"/>
 
             <button class="btn btn-primary" type="submit">Create</button>
         </EditForm>
