@@ -11,6 +11,15 @@ using NLog;
 
 namespace nats_ui.Pages.Inspector
 {
+    public class DataCaptureModel
+    {
+        public CaptureType CaptureType { get; set; }
+        public string Name { get; set; }
+        public string Expression { get; set; }
+        public string Result { get; set; }
+        public string Data { get; set; }
+    }
+
     public class InspectorComponent : ComponentBase
     {
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
@@ -58,6 +67,7 @@ namespace nats_ui.Pages.Inspector
               case nameof(DataCapture.Trash):
                   NatsService.Configuration.DataCaptures.Remove(dataCapture);
                   NatsService.Save();
+                  DataCaptureGrid.Remove(dataCapture);                  
                   break;
               case nameof(DataCapture.Run):
                   OnSelectedItemChanged(dataCapture);
@@ -67,28 +77,32 @@ namespace nats_ui.Pages.Inspector
             InvokeAsync(StateHasChanged);
         }
 
-        public void SaveCapture()
+        protected void SaveCapture()
         {
-            NatsService.Configuration.DataCaptures.Add(new DataCapture{Expression = Model.Expression, Name = Model.Name, Type = Model.CaptureType});
+            var dataCapture = new DataCapture{Expression = Model.Expression, Name = Model.Name, Type = Model.CaptureType};
+            NatsService.Configuration.DataCaptures.Add(dataCapture);
             NatsService.Save();
+            DataCaptureGrid.Insert(0, dataCapture);
         }
 
-        public void TestCapture()
+        protected void TestCapture()
         {
             if (string.IsNullOrEmpty(Model.Expression))
             {
-                var msg = "Expression is null or empty !";
-                Logger.Warn(msg);
-                Model.Result = msg;
-                return;
-            } 
-            else if (string.IsNullOrEmpty(Model.Data))
-            {
-                var msg = "Data is null or empty !";
+                const string msg = "Expression is null or empty !";
                 Logger.Warn(msg);
                 Model.Result = msg;
                 return;
             }
+
+            if (string.IsNullOrEmpty(Model.Data))
+            {
+                const string msg = "Data is null or empty !";
+                Logger.Warn(msg);
+                Model.Result = msg;
+                return;
+            }
+            
             switch (Model.CaptureType)
             {
                 case CaptureType.Regex:
@@ -102,14 +116,14 @@ namespace nats_ui.Pages.Inspector
             }
         }
 
-        public void AddCommand()
+        protected void AddCommand()
         {
             var scriptStatement = new ScriptStatement { Param1 = Model.Expression, Param2 = Model.Result};
             scriptStatement.Name = Model.CaptureType == CaptureType.Regex ? nameof(CheckRegexCommand) : nameof(CheckJsonCommand);
             ScriptService.Current.Statements.Add(scriptStatement);
         }
 
-        protected void TestRegex()
+        private void TestRegex()
         {
             Regex regex = new Regex(Model.Expression);
             var match = regex.Match(Model.Data);
@@ -124,7 +138,7 @@ namespace nats_ui.Pages.Inspector
             }
         }
 
-        protected void TestJson()
+        private void TestJson()
         {
             try
             {
@@ -138,14 +152,5 @@ namespace nats_ui.Pages.Inspector
                 Model.Result = msg;
             }
         }
-    }
-
-    public class DataCaptureModel
-    {
-        public CaptureType CaptureType { get; set; }
-        public string Name { get; set; }
-        public string Expression { get; set; }
-        public string Result { get; set; }
-        public string Data { get; set; }
     }
 }

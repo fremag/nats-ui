@@ -4,8 +4,8 @@
 @using C1.Blazor.Grid
 
 <BSCard Class="mb-1">
+    <BSCard CardType="CardType.Header">Details</BSCard>
     <BSCard CardType="CardType.Body">
-        <BSCard CardType="CardType.Title">Details</BSCard>
         <BSCard CardType="CardType.Subtitle">Edit and save message to later use</BSCard>
     </BSCard>
     <BSCard CardType="CardType.Body">
@@ -38,9 +38,7 @@
 </BSCard>
 
 <BSCard Class="mb-1">
-    <BSCard CardType="CardType.Body">
-        <BSCard CardType="CardType.Title">Sent / Received Messages</BSCard>
-    </BSCard>
+    <BSCard CardType="CardType.Header">Sent / Received Messages</BSCard>
     <BSCard CardType="CardType.Body">
         <FlexGrid ItemsSource="MessageGrid.Items"
                   AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"

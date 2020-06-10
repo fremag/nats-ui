@@ -4,10 +4,7 @@
 
 @using C1.Blazor.Grid
 <BSCard Class="mb-1">
-    <BSCard CardType="CardType.Body">
-        <BSCard CardType="CardType.Subtitle">Save current connections / subscriptions</BSCard>
-    </BSCard>
-
+    <BSCard CardType="CardType.Header">Save current connections / subscriptions</BSCard>
     <BSCard CardType="CardType.Body">
         <EditForm Model="@Model" OnSubmit="@CreateSession">
             <label for="name">Name</label>
@@ -18,10 +15,7 @@
 </BSCard>
 
 <BSCard Class="mb-1">
-    <BSCard CardType="CardType.Body">
-        <BSCard CardType="CardType.Subtitle">Select a session to display its connections and subscriptions</BSCard>
-    </BSCard>
-
+    <BSCard CardType="CardType.Header">Select a session to display its connections and subscriptions</BSCard>
     <BSCard CardType="CardType.Body">
         <FlexGrid ItemsSource="Sessions.Items"
                   AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
@@ -51,9 +45,7 @@
 </BSCard>
 
 <BSCard Class="mb-1">
-    <BSCard CardType="CardType.Body">
-        <BSCard CardType="CardType.Subtitle">Details: @SelectedName</BSCard>
-    </BSCard>
+    <BSCard CardType="CardType.Header">Details: @SelectedName</BSCard>
     <BSCard CardType="CardType.Body">
         <div class="container">
             <div class="row">
