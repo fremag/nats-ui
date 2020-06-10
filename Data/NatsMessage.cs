@@ -38,10 +38,9 @@ namespace nats_ui.Data
         public string Data { get; set; }
         public string Url { get; set; }
 
-        [XmlIgnore]
         public string Inspect => "oi oi-zoom-in";
-        
-        [XmlIgnore]
+        public string Trash => "oi oi-trash";
+        public string Run => "oi oi-media-play";
         public string Pin => "oi oi-pin";
 
         public NatsMessage Clone()

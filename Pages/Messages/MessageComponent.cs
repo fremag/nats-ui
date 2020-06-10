@@ -41,15 +41,15 @@ namespace nats_ui.Pages.Messages
 
         private void OnItemClicked(string colName, NatsMessage message)
         {
-            if (colName == nameof(NatsMessage.Inspect))
+            switch (colName)
             {
-                Inspector.Data = message.Data;
-                NavMgr.NavigateTo("/inspector");
-            }
-
-            if (colName == nameof(NatsMessage.Pin))
-            {
-                NatsService.Save(message.Clone());
+                case nameof(NatsMessage.Inspect):
+                    Inspector.Data = message.Data;
+                    NavMgr.NavigateTo("/inspector");
+                    break;
+                case nameof(NatsMessage.Pin):
+                    NatsService.Save(message.Clone());
+                    break;
             }
         }
 
