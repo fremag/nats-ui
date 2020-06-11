@@ -2,6 +2,7 @@
 @inherits SendComponent
 
 @using C1.Blazor.Grid
+@using C1.Blazor.Core
 
 <BSCard Class="mb-1">
     <BSCard CardType="CardType.Header">Message</BSCard>
@@ -71,17 +72,17 @@
             <FlexGridColumns>
                 <GridColumn Binding="Subject" IsReadOnly="true"/>
                 <GridColumn Binding="Data" IsReadOnly="true"/>
-                <GridColumn Binding="Inspect" IsReadOnly="true" Width="100">
+                <GridColumn Binding="Inspect"  HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
                     <CellTemplate>
                         <span class="@context" data-toggle="tooltip" title="Inspect data"></span>
                     </CellTemplate>
                 </GridColumn>
-                <GridColumn Binding="Run" IsReadOnly="true" Width="100">
+                <GridColumn Binding="Run"  HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
                     <CellTemplate>
                         <span class="@context" data-toggle="tooltip" title="Send message to selected connections"></span>
                     </CellTemplate>
                 </GridColumn>
-                <GridColumn Binding="Trash" IsReadOnly="true" Width="100">
+                <GridColumn Binding="Trash"  HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
                     <CellTemplate>
                         <span class="@context" data-toggle="tooltip" title="Delete message"></span>
                     </CellTemplate>

@@ -1,6 +1,7 @@
 ﻿@page "/connections"
 @inherits ConnectionsComponent
 @using C1.Blazor.Grid
+@using C1.Blazor.Core
 
 
 <BSCard Class="mb-1">
@@ -32,7 +33,7 @@
                   CellDoubleTapped="Connections.OnCellDoubleTaped"
                   CellFactory="@GridCellFactory">
             <FlexGridColumns>
-                <GridColumn Binding="StatusImg" IsReadOnly="true" Header="" Width="50">
+                <GridColumn Binding="StatusImg"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
                     <CellTemplate>
                         <span class="@context" data-toggle="tooltip" title="Connection status"></span>
                     </CellTemplate>
@@ -41,17 +42,17 @@
                 <GridColumn Binding="Name" IsReadOnly="true"/>
                 <GridColumn Binding="Host" IsReadOnly="true"/>
                 <GridColumn Binding="Port" IsReadOnly="true"/>
-                <GridColumn Binding="Run" IsReadOnly="true" Header="" Width="50">
+                <GridColumn Binding="Run"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
                     <CellTemplate>
                         <span class="@context" data-toggle="tooltip" title="Connect"></span>
                     </CellTemplate>
                 </GridColumn>
-                <GridColumn Binding="Stop" IsReadOnly="true" Header="" Width="50">
+                <GridColumn Binding="Stop"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
                     <CellTemplate>
                         <span class="@context" data-toggle="tooltip" title="Disconnect"></span>
                     </CellTemplate>
                 </GridColumn>
-                <GridColumn Binding="Trash" IsReadOnly="true" Header="" Width="50">
+                <GridColumn Binding="Trash"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
                     <CellTemplate>
                         <span class="@context" data-toggle="tooltip" title="Delete connection"></span>
                     </CellTemplate>

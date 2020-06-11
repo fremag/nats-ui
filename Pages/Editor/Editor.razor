@@ -3,6 +3,11 @@
 
 @using C1.Blazor.Grid
 @using nats_ui.Data.Scripts
+@using C1.Blazor.Core
+
+<BSCard Class="mb-1">
+    <BSCard CardType="CardType.Header">Save</BSCard>
+    <BSCard CardType="CardType.Body">
 
 <EditForm Model="@SaveModel">
     <DataAnnotationsValidator/>
@@ -33,7 +38,13 @@
         </div>
     </div>
 </EditForm>
-<hr/>
+</BSCard>
+</BSCard>
+<BSCard Class="mb-1">
+    <BSCard CardType="CardType.Header">Edit command</BSCard>
+    <BSCard CardType="CardType.Body">
+
+
 <EditForm Model="@StatementModel" OnSubmit="@StatementSubmit">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
@@ -66,7 +77,6 @@
             <div class="btn-group mr-10"  role="group" aria-label="First group">
                 <button class="btn btn-primary" type="submit" @onclick="@(() => StatementModel.Create = true)">Create</button>
                 <button class="btn btn-primary" type="submit" @onclick="@(() => StatementModel.Create = false)">Update</button>
-                <button class="btn btn-secondary" @onclick="Remove">Remove</button>
             </div>
         </div>
         <div class="btn-toolbar ml-5">
@@ -77,40 +87,48 @@
         </div>
     </div>
 </EditForm>
-<hr/>
-<FlexGrid ItemsSource="@StatementsGrid.Items"
-          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
-          ColumnHeaderStyle="@("font-weight:bold")"
-          SelectionChanged="@StatementsGrid.SelectionChanged"
-          SelectionMode="GridSelectionMode.Row"
-          CellTapped="@StatementsGrid.OnCellTaped"
-          CellDoubleTapped="@StatementsGrid.OnCellDoubleTaped"
-          CellFactory="@GridCellFactory"
-          AllowSorting="false">
-    <FlexGridColumns>
-        <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50"/>
-        <GridColumn Binding="Name" IsReadOnly="false" DataMap="@StatementMap"/>
-        <GridColumn Binding="Param1" IsReadOnly="false"/>
-        <GridColumn Binding="Param2" IsReadOnly="false"/>
-        <GridColumn Binding="Insert" IsReadOnly="true">
-        <CellTemplate>
-            <span class="@context" data-toggle="tooltip" title="Insert new statement"></span>
-        </CellTemplate>
-        </GridColumn>
-        <GridColumn Binding="Up" IsReadOnly="true">
-        <CellTemplate>
-            <span class="@context" data-toggle="tooltip" title="Move statement up"></span>
-        </CellTemplate>
-        </GridColumn>
-        <GridColumn Binding="Down" IsReadOnly="true">
-            <CellTemplate>
-                <span class="@context" data-toggle="tooltip" title="Move statement down"></span>
-            </CellTemplate>
-        </GridColumn>
-        <GridColumn Binding="Trash" IsReadOnly="true">
-            <CellTemplate>
-                <span class="@context" data-toggle="tooltip" title="Remove statement"></span>
-            </CellTemplate>
-        </GridColumn>
-    </FlexGridColumns>
-</FlexGrid>
+</BSCard>
+</BSCard>
+
+<BSCard Class="mb-1">
+    <BSCard CardType="CardType.Header">Commands</BSCard>
+    <BSCard CardType="CardType.Body">
+
+    <FlexGrid ItemsSource="@StatementsGrid.Items"
+              AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+              ColumnHeaderStyle="@("font-weight:bold")"
+              SelectionChanged="@StatementsGrid.SelectionChanged"
+              SelectionMode="GridSelectionMode.Row"
+              CellTapped="@StatementsGrid.OnCellTaped"
+              CellDoubleTapped="@StatementsGrid.OnCellDoubleTaped"
+              CellFactory="@GridCellFactory"
+              AllowSorting="false">
+        <FlexGridColumns>
+            <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50"/>
+            <GridColumn Binding="Name" IsReadOnly="false" DataMap="@StatementMap"/>
+            <GridColumn Binding="Param1" IsReadOnly="false"/>
+            <GridColumn Binding="Param2" IsReadOnly="false"/>
+            <GridColumn Binding="Insert"  HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
+                <CellTemplate>
+                    <span class="@context" data-toggle="tooltip" title="Insert new statement"></span>
+                </CellTemplate>
+            </GridColumn>
+            <GridColumn Binding="Up"  HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
+                <CellTemplate>
+                    <span class="@context" data-toggle="tooltip" title="Move statement up"></span>
+                </CellTemplate>
+            </GridColumn>
+            <GridColumn Binding="Down"  HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
+                <CellTemplate>
+                    <span class="@context" data-toggle="tooltip" title="Move statement down"></span>
+                </CellTemplate>
+            </GridColumn>
+            <GridColumn Binding="Trash"  HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
+                <CellTemplate>
+                    <span class="@context" data-toggle="tooltip" title="Remove statement"></span>
+                </CellTemplate>
+            </GridColumn>
+        </FlexGridColumns>
+    </FlexGrid>
+    </BSCard>
+    </BSCard>

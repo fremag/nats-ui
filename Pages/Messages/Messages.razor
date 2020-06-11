@@ -2,6 +2,7 @@
 @inherits MessagesComponent
 
 @using C1.Blazor.Grid
+@using C1.Blazor.Core
 
 <BSCard Class="mb-1">
     <BSCard CardType="CardType.Header">Details</BSCard>
@@ -49,7 +50,7 @@
                   CellDoubleTapped="MessageGrid.OnCellDoubleTaped"
                   CellFactory="@GridCellFactory">
             <FlexGridColumns>
-                <GridColumn Binding="Type" IsReadOnly="true" Width="100">
+                <GridColumn Binding="Type"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
                     <CellTemplate>
                         <span class="@context" data-toggle="tooltip" title="Message type: publish, received, request, reply"></span>
                     </CellTemplate>
@@ -58,12 +59,12 @@
                 <GridColumn Binding="Subject" IsReadOnly="true"/>
                 <GridColumn Binding="Data" IsReadOnly="true"/>
                 <GridColumn Binding="Url" IsReadOnly="true"/>
-                <GridColumn Binding="Inspect" IsReadOnly="true" Width="100">
+                <GridColumn Binding="Inspect"  HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
                     <CellTemplate>
                         <span class="@context" data-toggle="tooltip" title="Inspect data"></span>
                     </CellTemplate>
                 </GridColumn>
-                <GridColumn Binding="Pin" IsReadOnly="true" Width="100">
+                <GridColumn Binding="Pin"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
                     <CellTemplate>
                         <span class="@context" data-toggle="tooltip" title="Save message"></span>
                     </CellTemplate>

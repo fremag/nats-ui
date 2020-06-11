@@ -14,6 +14,15 @@ namespace nats_ui.Data.Scripts
         
         public override string Execute(NatsService natsService, ExecutorService executorService)
         {
+            if (executorService.Message == null)
+            {
+                throw new ScriptCommandException("No received message !");
+            }
+            if (executorService.Message.Data == null)
+            {
+                throw new ScriptCommandException("No data in message !");
+            }
+            
             string data = executorService.Message.Data;
             IReadOnlyList<JsonElement> resultJson = JsonPath.ExecutePath(Param1, data);
             var result = JsonSerializer.Serialize(resultJson, new JsonSerializerOptions {WriteIndented = true});

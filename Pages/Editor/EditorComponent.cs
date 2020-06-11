@@ -49,13 +49,18 @@ namespace nats_ui.Pages.Editor
             StatementMap.ItemsSource = ScriptService.CommandsByName.Keys;
             StatementModel = new CommandFormModel();
             SaveModel = new SaveFormModel();
-            StatementsGrid.SetData(ScriptService.Current.Statements);
             StatementsGrid.ItemClicked += OnItemClicked;
             StatementsGrid.SelectedItemChanged += OnSelectedItemChanged;
-            SaveModel.File = ScriptService.Current.File;
-            SaveModel.Name = ScriptService.Current.Name;
+            Init();
 
             return Task.CompletedTask;
+        }
+
+        private void Init()
+        {
+            StatementsGrid.SetData(ScriptService.Current.Statements);
+            SaveModel.File = ScriptService.Current.File;
+            SaveModel.Name = ScriptService.Current.Name;
         }
 
         private void OnItemClicked(string colName, ScriptStatement command)
@@ -165,16 +170,8 @@ namespace nats_ui.Pages.Editor
         {
             Logger.Info($"New Script");
             ScriptService.SetCurrent(new Script());
-        }
-        
-        protected void Remove()
-        {
-            foreach(var (index, statement) in StatementsGrid.GetCheckedItems()) 
-            {
-                Logger.Info($"Remove: {statement}");
-                StatementsGrid.Remove(index);
-                ScriptService.Current.Remove(index);
-            }
+            Init();
+            InvokeAsync(StateHasChanged);
         }
         
         protected void StartRecord()

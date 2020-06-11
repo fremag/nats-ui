@@ -3,6 +3,7 @@
 
 
 @using C1.Blazor.Grid
+@using C1.Blazor.Core
 <BSCard Class="mb-1">
     <BSCard CardType="CardType.Header">Save current connections / subscriptions</BSCard>
     <BSCard CardType="CardType.Body">
@@ -29,12 +30,12 @@
                 <GridColumn Binding="Name" IsReadOnly="true"/>
                 <GridColumn Binding="ConnectionCount" IsReadOnly="true" Width="100" Header="# Conn."/>
                 <GridColumn Binding="SubscriptionCount" IsReadOnly="true" Width="100" Header="# Sub."/>
-                <GridColumn Binding="Run" IsReadOnly="true" Header="" Width="50">
+                <GridColumn Binding="Run"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
                     <CellTemplate>
                         <span class="@context" data-toggle="tooltip" title="Run session: create connections and subscriptions"></span>
                     </CellTemplate>
                 </GridColumn>
-                <GridColumn Binding="Trash" IsReadOnly="true" Header="" Width="50">
+                <GridColumn Binding="Trash"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
                     <CellTemplate>
                         <span class="@context" data-toggle="tooltip" title="Delete session"></span>
                     </CellTemplate>

@@ -12,6 +12,15 @@ namespace nats_ui.Data.Scripts
         
         public override string Execute(NatsService natsService, ExecutorService executorService)
         {
+            if (executorService.Message == null)
+            {
+                throw new ScriptCommandException("No received message !");
+            }
+            if (executorService.Message.Data == null)
+            {
+                throw new ScriptCommandException("No data in message !");
+            }
+            
             string data = executorService.Message.Data;
             Regex regex = new Regex(Param1);
             var match = regex.Match(data);
