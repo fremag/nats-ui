@@ -2,30 +2,37 @@
 @inherits ScriptsComponent
 
 @using C1.Blazor.Grid
+@using C1.Blazor.Core
 
-<FlexGrid ItemsSource="ScriptGrid.Items"
-          AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
-          ColumnHeaderStyle="@("font-weight:bold")"
-          SelectionMode="GridSelectionMode.Row"
-          CellTapped="ScriptGrid.OnCellTaped"
-          CellDoubleTapped="ScriptGrid.OnCellDoubleTaped"
-          CellFactory="@GridCellFactory"
-          
->
-    <FlexGridColumns>
-        <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50"/>
-        <GridColumn Binding="Name" IsReadOnly="true"/>
-        <GridColumn Binding="File" IsReadOnly="true"/>
-        <GridColumn Binding="Count" IsReadOnly="true"/>
-        <GridColumn Binding="Load" IsReadOnly="true">
-            <CellTemplate>
-                <span class="@context" data-toggle="tooltip" title="Edit script"></span>
-            </CellTemplate>
-        </GridColumn>
-        <GridColumn Binding="Run" IsReadOnly="true">
-            <CellTemplate>
-                <span class="@context" data-toggle="tooltip" title="Run script"></span>
-            </CellTemplate>
-        </GridColumn>
-    </FlexGridColumns>
-</FlexGrid>
+
+<BSCard Class="mb-1">
+    <BSCard CardType="CardType.Header">Scripts</BSCard>
+    <BSCard CardType="CardType.Body">
+
+        <FlexGrid ItemsSource="ScriptGrid.Items"
+                  AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+                  ColumnHeaderStyle="@("font-weight:bold")"
+                  SelectionMode="GridSelectionMode.Row"
+                  CellTapped="ScriptGrid.OnCellTaped"
+                  CellDoubleTapped="ScriptGrid.OnCellDoubleTaped"
+                  CellFactory="@GridCellFactory">
+            <FlexGridColumns>
+                <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50"/>
+                <GridColumn Binding="Name" IsReadOnly="true"/>
+                <GridColumn Binding="File" IsReadOnly="true"/>
+                <GridColumn Binding="Count" IsReadOnly="true"/>
+                <GridColumn Binding="Load"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Edit script"></span>
+                    </CellTemplate>
+                </GridColumn>
+                <GridColumn Binding="Run" IsReadOnly="true"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Run script"></span>
+                    </CellTemplate>
+                </GridColumn>
+            </FlexGridColumns>
+        </FlexGrid>
+
+    </BSCard>
+</BSCard>

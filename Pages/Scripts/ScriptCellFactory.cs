@@ -1,26 +1,13 @@
 using C1.Blazor.Core;
-using C1.Blazor.Grid;
 using nats_ui.Data;
+using nats_ui.Data.Scripts;
 
 namespace nats_ui.Pages.Scripts
 {
-    public class ScriptCellFactory : GridCellFactory
+    public class ScriptCellFactory : StandardCellFactory<Script>
     {
-        
-        public override void PrepareCellStyle(GridCellType cellType, GridCellRange range, C1Style style)
+        protected override void PrepareCellStyle(string colName, Script item, C1Style cellType)
         {
-            base.PrepareCellStyle(cellType, range, style);
-            if (cellType != GridCellType.Cell)
-            {
-                return;
-            }
-
-            var selectedColumn = Grid.Columns[nameof(NatsMessage.Checked)];
-            var isSelected = (bool) Grid[range.Row, selectedColumn.Index];
-            if (isSelected)
-            {
-                style.BackgroundColor = C1Color.Gray;
-            }
         }
     }
 }
