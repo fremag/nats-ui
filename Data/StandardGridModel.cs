@@ -20,6 +20,8 @@ namespace nats_ui.Data
         public IEnumerator<T> GetEnumerator() => Items.OfType<T>().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        public T this[in int row] => Items[row] as T;
+
         public void SetData(IEnumerable<T> data)
         {
             Items = new C1DataCollection<T>(new List<T>(data));

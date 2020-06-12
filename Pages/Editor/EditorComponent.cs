@@ -40,6 +40,9 @@ namespace nats_ui.Pages.Editor
         
         [Inject]
         protected ExecutorService ExecutorService { get; set; }
+
+        [Inject]
+        private NavigationManager NavMgr { get; set; }
         
         protected FlexGrid StatementsGrid { get; set; }
         
@@ -50,6 +53,9 @@ namespace nats_ui.Pages.Editor
         protected SaveFormModel SaveModel { get; private set; }
         public GridDataMap StatementMap { get; } = new GridDataMap();
 
+        protected string ResultClass { get; set; } = "d-none";
+        protected string Result  { get; set; } = "";
+        
         protected override Task OnInitializedAsync()
         {
             StatementMap.ItemsSource = ScriptService.CommandsByName.Keys;
@@ -183,11 +189,33 @@ namespace nats_ui.Pages.Editor
         public void Run()
         {
             Logger.Info($"{nameof(Run)}");
+            ExecutorService.Setup(ScriptService.Current, ScriptService);
+            NavMgr.NavigateTo("/executor");
+            ExecutorService.Run();
         }
         
         public void Step()
         {
-            Logger.Info($"{nameof(Step)}");
+            int row = StatementsGrid.Selection?.Row ?? -1;
+            if (row != -1)
+            {
+                Logger.Info($"{nameof(Step)}");
+                try
+                {
+                    var stmt = Statements[row];
+                    var command = ScriptService.BuildCommand(stmt);
+                    var result = command.Execute(NatsService, ExecutorService);
+                    Logger.Info($"Success ! {result}");
+                    Result = result;
+                    ResultClass = "d-block";
+                    InvokeAsync(StateHasChanged);
+                }
+                catch (Exception e)
+                {
+                    Logger.Error($"Command failed ! {e.Message}");
+                }
+            }            
+            GoNext();
         }
         
         public void GoNext()

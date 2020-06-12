@@ -37,20 +37,11 @@ namespace nats_ui.Data
             var commands = new List<IScriptCommand>();
             foreach (var statement in script.Statements)
             {
-                var scriptCommand = BuildCommand(statement);
+                var scriptCommand = ScriptService.BuildCommand(statement);
                 commands.Add(scriptCommand);
             }
 
             return commands;
-        }
-
-        private IScriptCommand BuildCommand(ScriptStatement statement)
-        {
-            var command = ScriptService.Create(statement.Name);
-            command.Param1 = statement.Param1;
-            command.Param2 = statement.Param2;
-            command.Status = CommandStatus.Unknown;
-            return command;
         }
 
         public void Run()

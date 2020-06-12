@@ -108,6 +108,16 @@
                 </button>
             </div>
         </div>
+        
+    <BSCard Class="@ResultClass">
+    <BSCard CardType="CardType.Header">
+        Result
+    </BSCard>
+        <BSCard CardType="CardType.Body" Class="pb-0">
+            @Result
+        </BSCard>
+    </BSCard>
+    
         <FlexGrid ItemsSource="@Statements.Items"
                   AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
                   ColumnHeaderStyle="@("font-weight:bold")"
