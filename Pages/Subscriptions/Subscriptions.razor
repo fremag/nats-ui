@@ -5,7 +5,7 @@
 @using C1.Blazor.Grid
 
 <BSCard Class="mb-1">
-    <BSCard CardType="CardType.Body">
+    <BSCard CardType="CardType.Body" Class="pb-0">
         <EditForm Model="@Model" OnSubmit="@CreateSubscription">
             <label for="subject">Subject</label>
             <InputText id="subject" @bind-Value="Model.Subject"/>
@@ -14,7 +14,7 @@
     </BSCard>
 </BSCard>
 <BSCard Class="mb-1">
-    <BSCard CardType="CardType.Body">
+    <BSCard CardType="CardType.Body" Class="pb-0">
 
         <FlexGrid ItemsSource="Subscriptions.Items"
                   AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"

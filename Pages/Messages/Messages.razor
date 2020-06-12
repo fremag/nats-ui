@@ -6,10 +6,10 @@
 
 <BSCard Class="mb-1">
     <BSCard CardType="CardType.Header">Details</BSCard>
-    <BSCard CardType="CardType.Body">
+    <BSCard CardType="CardType.Body" Class="pb-0">
         <BSCard CardType="CardType.Subtitle">Edit and save message to later use</BSCard>
     </BSCard>
-    <BSCard CardType="CardType.Body">
+    <BSCard CardType="CardType.Body" Class="pb-0">
         <EditForm Model="@Model" OnSubmit="@SaveMessage">
             <DataAnnotationsValidator/>
             <ValidationSummary/>
@@ -40,7 +40,7 @@
 
 <BSCard Class="mb-1">
     <BSCard CardType="CardType.Header">Sent / Received Messages</BSCard>
-    <BSCard CardType="CardType.Body">
+    <BSCard CardType="CardType.Body" Class="pb-0">
         <FlexGrid ItemsSource="MessageGrid.Items"
                   AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
                   ColumnHeaderStyle="@("font-weight:bold")"

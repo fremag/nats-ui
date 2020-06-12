@@ -6,7 +6,7 @@
 
 <BSCard Class="mb-1">
     <BSCard CardType="CardType.Header">Create new connection</BSCard>
-    <BSCard CardType="CardType.Body">
+    <BSCard CardType="CardType.Body" Class="pb-0">
         <EditForm Model="@Model" OnSubmit="@CreateConnection">
             <DataAnnotationsValidator/>
             <ValidationSummary/>
@@ -23,7 +23,7 @@
 </BSCard>
 
 <BSCard Class="mb-1">
-    <BSCard CardType="CardType.Body">
+    <BSCard CardType="CardType.Body" Class="pb-0">
         <FlexGrid ItemsSource="Connections.Items"
                   AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
                   ColumnHeaderStyle="@("font-weight:bold")"

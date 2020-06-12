@@ -6,7 +6,7 @@
 
 <BSCard Class="mb-1">
     <BSCard CardType="CardType.Header">Message</BSCard>
-    <BSCard CardType="CardType.Body">
+    <BSCard CardType="CardType.Body" Class="pb-0">
 
         <EditForm Model="@Model">
             <DataAnnotationsValidator/>
@@ -40,7 +40,7 @@
 
 <BSCard Class="mb-1">
     <BSCard CardType="CardType.Header">Connections</BSCard>
-    <BSCard CardType="CardType.Body">
+    <BSCard CardType="CardType.Body" Class="pb-0">
         <FlexGrid ItemsSource="UrlGrid.Items"
                   AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
                   ColumnHeaderStyle="@("font-weight:bold")"
@@ -59,7 +59,7 @@
 
 <BSCard Class="mb-1">
     <BSCard CardType="CardType.Header">Saved Messages</BSCard>
-    <BSCard CardType="CardType.Body">
+    <BSCard CardType="CardType.Body" Class="pb-0">
 
         <FlexGrid ItemsSource="MessageGrid.Items"
                   AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
