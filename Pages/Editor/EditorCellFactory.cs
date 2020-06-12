@@ -4,9 +4,9 @@ using nats_ui.Data.Scripts;
 
 namespace nats_ui.Pages.Editor
 {
-    public class EditorCellFactory : StandardCellFactory<AbstractScriptCommand>
+    public class EditorCellFactory : StandardCellFactory<ScriptStatement>
     {
-        protected override void PrepareCellStyle(string colName, AbstractScriptCommand item, C1Style cellType)
+        protected override void PrepareCellStyle(string colName, ScriptStatement item, C1Style cellType)
         {
             
         }

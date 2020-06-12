@@ -5,130 +5,149 @@
 @using nats_ui.Data.Scripts
 @using C1.Blazor.Core
 
-<BSCard Class="mb-1">
-    <BSCard CardType="CardType.Header">Current script</BSCard>
-    <BSCard CardType="CardType.Body">
-
 <EditForm Model="@SaveModel">
-    <DataAnnotationsValidator/>
-    <ValidationSummary/>
-    <div class="form-group row">
-        <label for="scriptName" class="col-sm-2 col-form-label">Name</label>
-        <div class="col-sm-10">
-            <InputText id="scriptName" class="form-control" @bind-Value="SaveModel.Name"/>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="file" class="col-sm-2 col-form-label">File</label>
-        <div class="col-sm-10">
-            <InputText id="file" class="form-control" @bind-Value="SaveModel.File"/>
-        </div>
-    </div>
-    <div class="form-group row">
-        <div class="btn-toolbar">
-            <div class="btn-group mr-2"  role="group" aria-label="First group">
-                <button class="btn btn-primary"  @onclick="Save">Save</button>
+    <BSCard Class="mb-1">
+        <BSCard CardType="CardType.Header">Current script</BSCard>
+        <BSCard CardType="CardType.Body" Class="pb-0">
+            <div class="form-group row">
+                <label for="scriptName" class="col-sm-2 col-form-label">Name</label>
+                <div class="col-sm-10">
+                    <InputText id="scriptName" class="form-control" @bind-Value="SaveModel.Name"/>
+                </div>
+                <label for="file" class="col-sm-2 col-form-label">File</label>
+                <div class="col-sm-10">
+                    <InputText id="file" class="form-control" @bind-Value="SaveModel.File"/>
+                </div>
+                <div class="btn-toolbar">
+                    <div class="btn-group mr-2" role="group" aria-label="First group">
+                        <button class="btn btn-primary" @onclick="Save">Save</button>
+                    </div>
+                    <div class="btn-group mr-2" role="group" aria-label="Second group">
+                        <button class="btn btn-primary" @onclick="ReloadScript">Reload</button>
+                    </div>
+                    <div class="btn-group mr-2" role="group" aria-label="Third group">
+                        <button class="btn btn-primary" @onclick="NewScript">New</button>
+                    </div>
+                </div>
             </div>
-            <div class="btn-group mr-2" role="group" aria-label="Second group">
-                <button class="btn btn-primary" @onclick="ReloadScript">Reload</button>
-            </div>
-            <div class="btn-group mr-2" role="group" aria-label="Third group">
-                <button class="btn btn-primary" @onclick="NewScript">New</button>
-            </div>
-        </div>
-    </div>
+        </BSCard>
+    </BSCard>
 </EditForm>
-</BSCard>
-</BSCard>
+
 <BSCard Class="mb-1">
     <BSCard CardType="CardType.Header">Edit command</BSCard>
-    <BSCard CardType="CardType.Body">
-
-
-<EditForm Model="@StatementModel" OnSubmit="@StatementSubmit">
-    <DataAnnotationsValidator/>
-    <ValidationSummary/>
-    <div class="form-group row">
-        <label for="name" class="col-sm-2 col-form-label">Name</label>
-        <div class="col-sm-10">
-            <InputSelect id="name" class="form-control" @bind-Value="StatementModel.Name">
-                <option value="">Select a command...</option>
-                @foreach (var name in ScriptService.CommandsByName.Keys)
-                {
-                    <option value="@name">@name</option>
-                }
-            </InputSelect>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="param1" class="col-sm-2 col-form-label">@StatementModel.ParamName1</label>
-        <div class="col-sm-10">
-            <InputText id="param1" class="form-control" @bind-Value="StatementModel.Param1"/>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="param2" class="col-sm-2 col-form-label">@StatementModel.ParamName2</label>
-        <div class="col-sm-10">
-            <InputTextArea id="param2" class="form-control" @bind-Value="StatementModel.Param2"/>
-        </div>
-    </div>
-    <div class="form-group row">
-        <div class="btn-toolbar">
-            <div class="btn-group mr-10"  role="group" aria-label="First group">
-                <button class="btn btn-primary" type="submit" @onclick="@(() => StatementModel.Create = true)">Create</button>
-                <button class="btn btn-primary" type="submit" @onclick="@(() => StatementModel.Create = false)">Update</button>
+    <BSCard CardType="CardType.Body" Class="pb-0">
+        <EditForm Model="@StatementModel">
+            <DataAnnotationsValidator/>
+            <ValidationSummary/>
+            <div class="form-group row">
+                <label for="name" class="col-sm-2 col-form-label">Name</label>
+                <div class="col-sm-10">
+                    <InputSelect id="name" class="form-control" @bind-Value="StatementModel.Name">
+                        <option value="">Select a command...</option>
+                        @foreach (var name in ScriptService.CommandsByName.Keys)
+                        {
+                            <option value="@name">@name</option>
+                        }
+                    </InputSelect>
+                </div>
+                <label for="param1" class="col-sm-2 col-form-label">@StatementModel.ParamName1</label>
+                <div class="col-sm-10">
+                    <InputText id="param1" class="form-control" @bind-Value="StatementModel.Param1"/>
+                </div>
+                <label for="param2" class="col-sm-2 col-form-label">@StatementModel.ParamName2</label>
+                <div class="col-sm-10">
+                    <InputTextArea id="param2" class="form-control" @bind-Value="StatementModel.Param2"/>
+                </div>
             </div>
-        </div>
-        <div class="btn-toolbar ml-5">
-            <div class="btn-group"  role="group" aria-label="Second group">
-                <button class="btn btn-primary" @onclick="StartRecord">Record</button>
-                <button class="btn btn-secondary" @onclick="StopRecord">Stop</button>
+            <div class="form-group row">
+                <div class="btn-toolbar">
+                    <div class="btn-group mr-10" role="group" aria-label="First group">
+                        <button class="btn btn-primary" @onclick="Create">Create</button>
+                        <button class="btn btn-primary" @onclick="Update">Update</button>
+                    </div>
+                </div>
+                <div class="btn-toolbar ml-5">
+                    <div class="btn-group" role="group" aria-label="Second group">
+                        <button class="btn btn-primary" @onclick="StartRecord">Record</button>
+                        <button class="btn btn-secondary" @onclick="StopRecord">Stop</button>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</EditForm>
-</BSCard>
+        </EditForm>
+    </BSCard>
 </BSCard>
 
 <BSCard Class="mb-1">
-    <BSCard CardType="CardType.Header">Commands</BSCard>
-    <BSCard CardType="CardType.Body">
+    <BSCard CardType="CardType.Header">
+        Commands
+    </BSCard>
+    <BSCard CardType="CardType.Body" Class="pb-0">
+        <div class="btn-toolbar">
+            <div class="btn-group" role="group" aria-label="First group">
+                <button class="btn btn-primary" @onclick="Run"  data-toggle="tooltip" title="Run script">
+                    <i class="oi oi-media-play"></i>
+                </button>
+                <button class="btn btn-primary" @onclick="Step"  data-toggle="tooltip" title="Run selected statement and go to next">
+                    <i class="oi oi-media-step-forward"></i>
+                </button>
+            </div>
 
-    <FlexGrid ItemsSource="@StatementsGrid.Items"
-              AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
-              ColumnHeaderStyle="@("font-weight:bold")"
-              SelectionChanged="@StatementsGrid.SelectionChanged"
-              SelectionMode="GridSelectionMode.Row"
-              CellTapped="@StatementsGrid.OnCellTaped"
-              CellDoubleTapped="@StatementsGrid.OnCellDoubleTaped"
-              CellFactory="@GridCellFactory"
-              AllowSorting="false">
-        <FlexGridColumns>
-            <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50"/>
-            <GridColumn Binding="Name" IsReadOnly="false" DataMap="@StatementMap"/>
-            <GridColumn Binding="Param1" IsReadOnly="false"/>
-            <GridColumn Binding="Param2" IsReadOnly="false"/>
-            <GridColumn Binding="Insert"  HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
-                <CellTemplate>
-                    <span class="@context" data-toggle="tooltip" title="Insert new statement"></span>
-                </CellTemplate>
-            </GridColumn>
-            <GridColumn Binding="Up"  HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
-                <CellTemplate>
-                    <span class="@context" data-toggle="tooltip" title="Move statement up"></span>
-                </CellTemplate>
-            </GridColumn>
-            <GridColumn Binding="Down"  HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
-                <CellTemplate>
-                    <span class="@context" data-toggle="tooltip" title="Move statement down"></span>
-                </CellTemplate>
-            </GridColumn>
-            <GridColumn Binding="Trash"  HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
-                <CellTemplate>
-                    <span class="@context" data-toggle="tooltip" title="Remove statement"></span>
-                </CellTemplate>
-            </GridColumn>
-        </FlexGridColumns>
-    </FlexGrid>
+            <div class="btn-group ml-5" role="group" aria-label="Second group">
+                <button class="btn btn-primary" @onclick="GoTop"  data-toggle="tooltip" title="Select first statement">
+                    <i class="oi oi-media-skip-backward"></i>
+                </button>
+                <button class="btn btn-primary" @onclick="GoNext"  data-toggle="tooltip" title="Select next up">
+                    <i class="oi oi-caret-bottom"></i>
+                </button>
+                <button class="btn btn-primary" @onclick="GoPrevious" data-toggle="tooltip" title="Select previous up">
+                    <i class="oi oi-caret-top"></i>
+                </button>
+                <button class="btn btn-primary" @onclick="GoBottom"  data-toggle="tooltip" title="Select last statement">
+                    <i class="oi oi-media-skip-forward"></i>
+                </button>
+            </div>
+        </div>
+        <FlexGrid ItemsSource="@Statements.Items"
+                  AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+                  ColumnHeaderStyle="@("font-weight:bold")"
+                  SelectionChanged="@Statements.SelectionChanged"
+                  SelectionMode="GridSelectionMode.Row"
+                  CellTapped="@Statements.OnCellTaped"
+                  CellDoubleTapped="@Statements.OnCellDoubleTaped"
+                  CellFactory="@GridCellFactory"
+                  AllowSorting="false"
+                  @ref="@StatementsGrid">
+            <FlexGridColumns>
+                <GridColumn Binding="Name" IsReadOnly="false" DataMap="@StatementMap"/>
+                <GridColumn Binding="Param1" IsReadOnly="false"/>
+                <GridColumn Binding="Param2" IsReadOnly="false"/>
+                <GridColumn Binding="Run" HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Execute statement"></span>
+                    </CellTemplate>
+                </GridColumn>
+                <GridColumn Binding="Insert" HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Add a new statement after this one"></span>
+                    </CellTemplate>
+                </GridColumn>
+                <GridColumn Binding="Up" HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Move statement up"></span>
+                    </CellTemplate>
+                </GridColumn>
+                <GridColumn Binding="Down" HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Move statement down"></span>
+                    </CellTemplate>
+                </GridColumn>
+                <GridColumn Binding="Trash" HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Remove statement"></span>
+                    </CellTemplate>
+                </GridColumn>
+            </FlexGridColumns>
+        </FlexGrid>
     </BSCard>
-    </BSCard>
+</BSCard>

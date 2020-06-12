@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using C1.Blazor.Grid;
 using Microsoft.AspNetCore.Components;
@@ -19,7 +21,6 @@ namespace nats_ui.Pages.Editor
             public string ParamName1 { get; set; }
             public string ParamName2 { get; set; }
             public ScriptStatement CurrentStatement { get; set; }
-            public bool Create { get; set; }
         }
 
         public class SaveFormModel
@@ -37,7 +38,12 @@ namespace nats_ui.Pages.Editor
         [Inject]
         protected RecordService RecordService { get; set; }
         
-        protected StandardGridModel<ScriptStatement> StatementsGrid { get; } = new StandardGridModel<ScriptStatement>();
+        [Inject]
+        protected ExecutorService ExecutorService { get; set; }
+        
+        protected FlexGrid StatementsGrid { get; set; }
+        
+        protected StandardGridModel<ScriptStatement> Statements { get; } = new StandardGridModel<ScriptStatement>();
         protected EditorCellFactory GridCellFactory { get; } = new EditorCellFactory();
 
         protected CommandFormModel StatementModel { get; private set; }
@@ -49,8 +55,8 @@ namespace nats_ui.Pages.Editor
             StatementMap.ItemsSource = ScriptService.CommandsByName.Keys;
             StatementModel = new CommandFormModel();
             SaveModel = new SaveFormModel();
-            StatementsGrid.ItemClicked += OnItemClicked;
-            StatementsGrid.SelectedItemChanged += OnSelectedItemChanged;
+            Statements.ItemClicked += OnItemClicked;
+            Statements.SelectedItemChanged += OnSelectedItemChanged;
             Init();
 
             return Task.CompletedTask;
@@ -58,7 +64,7 @@ namespace nats_ui.Pages.Editor
 
         private void Init()
         {
-            StatementsGrid.SetData(ScriptService.Current.Statements);
+            Statements.SetData(ScriptService.Current.Statements);
             SaveModel.File = ScriptService.Current.File;
             SaveModel.Name = ScriptService.Current.Name;
         }
@@ -71,22 +77,22 @@ namespace nats_ui.Pages.Editor
                 case nameof(ScriptStatement.Insert):
                     Logger.Debug($"Insert ! {index}");
                     var scriptStatement = new ScriptStatement();
-                    StatementsGrid.Insert(index+1, scriptStatement);
+                    Statements.Insert(index+1, scriptStatement);
                     ScriptService.Current.Insert(index+1, scriptStatement);
                     break;
                 case nameof(ScriptStatement.Up):
                     Logger.Debug($"Up ! {index}");
-                    StatementsGrid.Swap(index, index - 1);
+                    Statements.Swap(index, index - 1);
                     ScriptService.Current.Swap(index, index - 1);
                     break;
                 case nameof(ScriptStatement.Down):
                     Logger.Debug($"Down !  {index}");
-                    StatementsGrid.Swap(index, index + 1);
+                    Statements.Swap(index, index + 1);
                     ScriptService.Current.Swap(index, index + 1);
                     break;
                 case nameof(ScriptStatement.Trash):
                     Logger.Debug($"Trash !  {index}");
-                    StatementsGrid.Remove(index);
+                    Statements.Remove(index);
                     ScriptService.Current.Remove(index);
                     break;
             }
@@ -107,35 +113,22 @@ namespace nats_ui.Pages.Editor
             InvokeAsync(StateHasChanged);
         }
 
-        protected void StatementSubmit()
+        protected void Create()
         {
-            Logger.Info($"{nameof(StatementSubmit)}: Create: {StatementModel.Create}");
-            if (StatementModel.Create)
-            {
-                Create();
-            }
-            else
-            {
-                Update();
-            }
-
-            InvokeAsync(StateHasChanged);
-        }
-
-        private void Create()
-        {
-            Logger.Info($"Create new statement");
+            Logger.Info($"Creating a new statement: {StatementModel.Name}");
             if (string.IsNullOrEmpty(StatementModel.Name))
             {
+                Logger.Warn("Statement not created, command name is null or empty.");
                 return;
             }
 
             var scriptCommand = new ScriptStatement {Name = StatementModel.Name, Param1 = StatementModel.Param1, Param2 = StatementModel.Param2};
             ScriptService.Add(scriptCommand);
-            StatementsGrid.Add(scriptCommand);
+            Statements.Add(scriptCommand);
+            InvokeAsync(StateHasChanged);
         }
 
-        private void Update()
+        protected void Update()
         {
             Logger.Info($"Update: {StatementModel.Name}");
 
@@ -149,7 +142,8 @@ namespace nats_ui.Pages.Editor
             currentStatement.Name = StatementModel.Name;
             currentStatement.Param1 = StatementModel.Param1;
             currentStatement.Param2 = StatementModel.Param2;
-            StatementsGrid.Update(currentStatement);
+            Statements.Update(currentStatement);
+            InvokeAsync(StateHasChanged);
         }
 
         protected void Save()
@@ -163,12 +157,12 @@ namespace nats_ui.Pages.Editor
         {
             Logger.Info($"Reload current script: {ScriptService.Current.Name}");
             ScriptService.Reload(ScriptService.Current);
-            StatementsGrid.SetData(ScriptService.Current.Statements);
+            Statements.SetData(ScriptService.Current.Statements);
         }
 
         protected void NewScript()
         {
-            Logger.Info($"New Script");
+            Logger.Info("New Script.");
             ScriptService.SetCurrent(new Script());
             Init();
             InvokeAsync(StateHasChanged);
@@ -176,14 +170,62 @@ namespace nats_ui.Pages.Editor
         
         protected void StartRecord()
         {
-            Logger.Info($"Start record");
+            Logger.Info("Starting to record.");
             RecordService.StartRecord(NatsService, ScriptService);
         }
 
         protected void StopRecord()
         {
-            Logger.Info($"Stop record");
+            Logger.Info("Stop recording");
             RecordService.StopRecord(NatsService);
+        }
+
+        public void Run()
+        {
+            Logger.Info($"{nameof(Run)}");
+        }
+        
+        public void Step()
+        {
+            Logger.Info($"{nameof(Step)}");
+        }
+        
+        public void GoNext()
+        {
+            int row = StatementsGrid.Selection?.Row ?? -1;
+            int nextRow = Math.Min(Statements.Count()-1, row + 1);
+            Logger.Debug($"{nameof(GoNext)}: {row} => {nextRow}");
+            StatementsGrid.Select(new GridCellRange(nextRow, 0), true); 
+        }
+
+        public void GoTop()
+        {
+            if (!Statements.Any())
+            {
+                return;
+            }
+
+            Logger.Debug($"{nameof(GoTop)}");
+            StatementsGrid.Select(new GridCellRange(0, 0), true);
+        }
+        
+        public void GoBottom()
+        {
+            if (!Statements.Any())
+            {
+                return;
+            }
+
+            Logger.Debug($"{nameof(GoBottom)}");
+            StatementsGrid.Select(new GridCellRange(Statements.Count()-1, 0), true);
+        }
+        
+        public void GoPrevious()
+        {
+            int row = StatementsGrid.Selection?.Row ?? -1;
+            int nextRow = Math.Max(0, row - 1);
+            Logger.Debug($"{nameof(GoPrevious)}: {row} => {nextRow}");
+            StatementsGrid.Select(new GridCellRange(nextRow, 0), true); 
         }
     }
 }
