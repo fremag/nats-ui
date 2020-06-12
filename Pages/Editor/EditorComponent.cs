@@ -212,7 +212,10 @@ namespace nats_ui.Pages.Editor
                 }
                 catch (Exception e)
                 {
-                    Logger.Error($"Command failed ! {e.Message}");
+                    Result = $"Command failed ! {e.Message}";
+                    ResultClass = "d-block";
+                    InvokeAsync(StateHasChanged);
+                    Logger.Error(Result);
                 }
             }            
             GoNext();
