@@ -6,7 +6,7 @@ namespace nats_ui.Pages.Executor
 {
     public class ScriptCommandCellFactory : StandardCellFactory<IScriptCommand>
     {
-        protected override void PrepareCellStyle(string colName, IScriptCommand item, C1Style cellType)
+        protected override void PrepareCellStyle(string colName, IScriptCommand job, C1Style cellType)
         {
             
         }

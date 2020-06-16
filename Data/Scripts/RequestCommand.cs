@@ -19,7 +19,7 @@ namespace nats_ui.Data.Scripts
                     Data = Param2,
                     Url = connection.Url
                 };
-                var reply = natsService.Request(msg);
+                var reply = natsService.Request(msg, 1000);
                 result += $"Url: {connection.Url} ";
                 result += $"Data: {reply?.Data ?? "No data !"}";
                 executorService.Message = reply;

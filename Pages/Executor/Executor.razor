@@ -1,7 +1,10 @@
 ﻿@page "/executor"
+@page "/executor/{JobId:int}"
+
 @inherits ExecutorComponent
 
 @using C1.Blazor.Grid
+@* ReSharper disable once RedundantUsingDirective *@
 @using nats_ui.Data.Scripts
 
 <FlexGrid ItemsSource="ScriptCommandGrid.Items"

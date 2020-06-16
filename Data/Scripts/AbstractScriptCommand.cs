@@ -4,7 +4,7 @@ namespace nats_ui.Data.Scripts
 {
     public enum CommandStatus
     {
-        Unknown, Waiting, Executed, Failed
+        Unknown, Waiting, Running, Executed, Failed
     }
 
     public abstract class AbstractScriptCommand : IScriptCommand

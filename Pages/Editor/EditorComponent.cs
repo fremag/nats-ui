@@ -189,9 +189,9 @@ namespace nats_ui.Pages.Editor
         public void Run()
         {
             Logger.Info($"{nameof(Run)}");
-            ExecutorService.Setup(ScriptService.Current, ScriptService);
-            NavMgr.NavigateTo("/executor");
-            ExecutorService.Run();
+            var report = ExecutorService.Setup(ScriptService.Current, ScriptService);
+            NavMgr.NavigateTo($"/executor/{report.Id}");
+            ExecutorService.Run(report);
         }
         
         public void Step()

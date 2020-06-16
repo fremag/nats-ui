@@ -252,7 +252,7 @@ namespace nats_ui.Data
             }
         }
 
-        public NatsMessage Request(NatsMessage message)
+        public NatsMessage Request(NatsMessage message, int timeoutMs=1000)
         {
             Logger.Info($"{nameof(Publish)}: {message.Subject}, {message.Url}");
             var conn = ConnectionsByName.Values.FirstOrDefault(c => c.ConnectedUrl == message.Url);
@@ -262,7 +262,7 @@ namespace nats_ui.Data
                 {
                     var payload = message.Data == null ? new byte[0] : Encoding.Default.GetBytes(message.Data);
                     
-                    Msg reply = conn.Request(message.Subject, payload);
+                    Msg reply = conn.Request(message.Subject, payload, timeoutMs);
                     var clone = message.Clone();
                     clone.MessageType = MessageType.Request;
                     Messages.Add(clone);

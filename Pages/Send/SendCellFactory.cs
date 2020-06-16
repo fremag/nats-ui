@@ -5,7 +5,7 @@ namespace nats_ui.Pages.Send
 {
     public class SendCellFactory : StandardCellFactory<NatsMessage>
     {
-        protected override void PrepareCellStyle(string colName, NatsMessage item, C1Style cellType)
+        protected override void PrepareCellStyle(string colName, NatsMessage job, C1Style cellType)
         {
             
         }

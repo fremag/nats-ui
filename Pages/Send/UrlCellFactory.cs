@@ -5,7 +5,7 @@ namespace nats_ui.Pages.Send
 {
     public class UrlCellFactory : StandardCellFactory<Connection>
     {
-        protected override void PrepareCellStyle(string colName, Connection item, C1Style cellType)
+        protected override void PrepareCellStyle(string colName, Connection job, C1Style cellType)
         {
             
         }

@@ -6,7 +6,7 @@ namespace nats_ui.Pages.Scripts
 {
     public class ScriptCellFactory : StandardCellFactory<Script>
     {
-        protected override void PrepareCellStyle(string colName, Script item, C1Style cellType)
+        protected override void PrepareCellStyle(string colName, Script job, C1Style cellType)
         {
         }
     }

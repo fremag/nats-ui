@@ -17,14 +17,28 @@ namespace nats_ui.Pages.Executor
         [Inject]
         private NavigationManager NavMgr { get; set; }
 
+        [Parameter]
+        public int JobId { get; set; } = -1;
+
         protected StandardGridModel<IScriptCommand> ScriptCommandGrid { get; } = new StandardGridModel<IScriptCommand>(); 
         protected ScriptCommandCellFactory GridCellFactory { get; } = new ScriptCommandCellFactory();
 
         protected override Task OnInitializedAsync()
         {
-            if (ExecutorService.Commands != null)
+            if (JobId < 0 || JobId >= ExecutorService.Jobs.Count)
             {
-                ScriptCommandGrid.SetData(new List<IScriptCommand>(ExecutorService.Commands));
+                if (ExecutorService.LastJob == null)
+                {
+                    return Task.CompletedTask;
+                }
+
+                JobId = ExecutorService.LastJob.Id;
+            }
+            
+            var job = ExecutorService.Jobs[JobId];
+            if (job.Commands != null)
+            {
+                ScriptCommandGrid.SetData(new List<IScriptCommand>(job.Commands));
             }
 
             ExecutorService.CommandUpdated += OnCommandUpdated; 

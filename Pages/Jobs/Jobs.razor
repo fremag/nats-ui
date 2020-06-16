@@ -1,0 +1,38 @@
+﻿@page "/jobs"
+@inherits JobsComponent
+
+@using C1.Blazor.Grid
+@using C1.Blazor.Core
+
+
+<BSCard Class="mb-1">
+    <BSCard CardType="CardType.Header">Scripts</BSCard>
+    <BSCard CardType="CardType.Body" Class="pb-0">
+
+        <FlexGrid ItemsSource="@JobsGrid.Items"
+                  AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
+                  ColumnHeaderStyle="@("font-weight:bold")"
+                  SelectionMode="GridSelectionMode.Row"
+                  CellTapped="JobsGrid.OnCellTaped"
+                  CellDoubleTapped="JobsGrid.OnCellDoubleTaped"
+                  CellFactory="@JobCellFactory">
+            <FlexGridColumns>
+                <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50"/>
+                <GridColumn Binding="Name" IsReadOnly="true"/>
+                <GridColumn Binding="File" IsReadOnly="true"/>
+                <GridColumn Binding="Count" IsReadOnly="true"/>
+                <GridColumn Binding="Display"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Display job"></span>
+                    </CellTemplate>
+                </GridColumn>
+                <GridColumn Binding="Run" IsReadOnly="true"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
+                    <CellTemplate>
+                        <span class="@context" data-toggle="tooltip" title="Run script"></span>
+                    </CellTemplate>
+                </GridColumn>
+            </FlexGridColumns>
+        </FlexGrid>
+
+    </BSCard>
+</BSCard>
