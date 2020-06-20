@@ -28,19 +28,22 @@ namespace nats_ui.Pages.Jobs
 
         protected override Task OnInitializedAsync()
         {
+            ExecutorService.JobUpdated += OnJobUpdated;
             JobsGrid.SetData(ExecutorService.Jobs);
             JobsGrid.ItemDoubleClicked += OnItemDoubleClicked; 
             JobsGrid.ItemClicked += OnItemClicked; 
             return Task.CompletedTask;
         }
 
+        private void OnJobUpdated(Job job)
+        {
+            InvokeAsync(() => JobsGrid.Update(job));
+        }
+
         private void OnItemClicked(string colName, Job report)
         {
             switch (colName)
             {
-                case nameof(Job.Display):
-                    OnItemDoubleClicked(colName, report);
-                    break;
                 case nameof(Script.Run):
                     var newReport = ExecutorService.Setup(report, ScriptService);
                     NavMgr.NavigateTo($"/executor/{report.Id}");

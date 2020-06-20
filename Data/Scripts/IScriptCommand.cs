@@ -12,7 +12,7 @@ namespace nats_ui.Data.Scripts
         string Param1 { get; set; }
         string Param2 { get; set; }
 
-        CommandStatus Status { get; set; }
+        ExecutionStatus Status { get; set; }
         public string Result { get; set; }
         public DateTime TimeStamp { get; set; }
         public TimeSpan Duration { get; set; }

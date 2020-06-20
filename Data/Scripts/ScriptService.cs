@@ -139,7 +139,7 @@ namespace nats_ui.Data.Scripts
             var command = Create(statement.Name);
             command.Param1 = statement.Param1;
             command.Param2 = statement.Param2;
-            command.Status = CommandStatus.Unknown;
+            command.Status = ExecutionStatus.Unknown;
             return command;
         }
     }

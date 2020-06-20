@@ -2,11 +2,6 @@ using System;
 
 namespace nats_ui.Data.Scripts
 {
-    public enum CommandStatus
-    {
-        Unknown, Waiting, Running, Executed, Failed
-    }
-
     public abstract class AbstractScriptCommand : IScriptCommand
     {
         public virtual string ParamName1 { get; } = null;
@@ -18,7 +13,7 @@ namespace nats_ui.Data.Scripts
 
         public bool Checked { get; set; }
         public string Result { get; set; }
-        public CommandStatus Status { get; set; } = CommandStatus.Unknown;
+        public ExecutionStatus Status { get; set; } = ExecutionStatus.Unknown;
         public DateTime TimeStamp { get; set; }
         public TimeSpan Duration { get; set; }
 

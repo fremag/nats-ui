@@ -1,38 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 using nats_ui.Data.Scripts;
 using NLog;
 
 namespace nats_ui.Data
 {
     public delegate void CommandUpdated(IScriptCommand command);
+    public delegate void JobUpdated(Job job);
 
-    public class Job : ICheckable
-    {
-        public bool Checked { get; set; }
-        public int Id { get; set; }
-        public string Name { get; set; } 
-        public string File { get; set; } 
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public List<IScriptCommand> Commands { get; set; } = new List<IScriptCommand>();
-        public TimeSpan Duration => EndTime - StartTime;
-        
-        [XmlIgnore]
-        public string Run => "oi oi-media-play";
-        [XmlIgnore]
-        public string Display => "oi oi-media-play";
-    }
-    
     public class ExecutorService
     {
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
-
+        
+        public event JobUpdated JobUpdated;
         public event CommandUpdated CommandUpdated;
+        
         private NatsService NatsService { get; set; }
         private ScriptService ScriptService { get; set; }
         public NatsMessage Message { get; set; }
@@ -58,11 +42,11 @@ namespace nats_ui.Data
             NatsService = new NatsService();
             ScriptService = scriptService;
 
-            var report = new Job {Id = Jobs.Count, File = oldReport.File, Name = oldReport.Name};
+            var job = new Job {Id = Jobs.Count, File = oldReport.File, Name = oldReport.Name, Status = ExecutionStatus.Waiting};
             var commands = BuildCommands(oldReport.Commands);
-            report.Commands.AddRange(commands);
-            Jobs.Add(report);
-            return report;
+            job.Commands.AddRange(commands);
+            Jobs.Add(job);
+            return job;
         }
 
         private IEnumerable<IScriptCommand> BuildCommands(List<IScriptCommand> commands)
@@ -89,9 +73,10 @@ namespace nats_ui.Data
         {
             Logger.Info($"{nameof(Run)}: {job.Commands.Count}");
             LastJob = job;
+            job.Status = ExecutionStatus.Waiting; 
             foreach (var scriptCommand in job.Commands)
             {
-                scriptCommand.Status = CommandStatus.Waiting;
+                scriptCommand.Status = ExecutionStatus.Waiting;
                 CommandUpdated?.Invoke(scriptCommand);
             }
 
@@ -101,6 +86,7 @@ namespace nats_ui.Data
         public void Execute(Job job)
         {
             job.StartTime = DateTime.Now;
+            job.Status = ExecutionStatus.Running;
             Stopwatch sw = new Stopwatch();
             var scriptCommands = job.Commands.ToArray();
             Logger.Info($"Execute: Begin, Nb Commands: {scriptCommands}");
@@ -112,11 +98,11 @@ namespace nats_ui.Data
                 {
                     scriptCommand.TimeStamp = DateTime.Now;
                     sw.Restart();
-                    scriptCommand.Status = CommandStatus.Running;
+                    scriptCommand.Status = ExecutionStatus.Running;
                     CommandUpdated?.Invoke(scriptCommand);
                     var result = scriptCommand.Execute(NatsService, this);
                     sw.Stop();
-                    scriptCommand.Status = CommandStatus.Executed;
+                    scriptCommand.Status = ExecutionStatus.Executed;
                     scriptCommand.Result = result;
                     Logger.Info($"Executed: {result}");
                 }
@@ -124,7 +110,7 @@ namespace nats_ui.Data
                 {
                     sw.Stop();
                     Logger.Error($"Command failed ! {scriptCommand}");
-                    scriptCommand.Status = CommandStatus.Failed;
+                    scriptCommand.Status = ExecutionStatus.Failed;
                     scriptCommand.Result = e.Message;
                 }
 
@@ -132,7 +118,9 @@ namespace nats_ui.Data
                 CommandUpdated?.Invoke(scriptCommand);
             }
             job.EndTime = DateTime.Now;
+            job.Status = ExecutionStatus.Executed;
             Logger.Info($"Execute: End, TotalTime: {job.Duration}");
+            JobUpdated?.Invoke(job);
         }
     }
 }

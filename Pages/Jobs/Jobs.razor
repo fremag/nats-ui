@@ -6,7 +6,7 @@
 
 
 <BSCard Class="mb-1">
-    <BSCard CardType="CardType.Header">Scripts</BSCard>
+    <BSCard CardType="CardType.Header">Jobs</BSCard>
     <BSCard CardType="CardType.Body" Class="pb-0">
 
         <FlexGrid ItemsSource="@JobsGrid.Items"
@@ -18,14 +18,16 @@
                   CellFactory="@JobCellFactory">
             <FlexGridColumns>
                 <GridColumn Binding="Checked" Header="Sel" IsReadOnly="true" Width="50"/>
+                <GridColumn Binding="Status" Header="Status" IsReadOnly="true"/>
                 <GridColumn Binding="Name" IsReadOnly="true"/>
                 <GridColumn Binding="File" IsReadOnly="true"/>
+                <GridColumn Binding="StartTime" IsReadOnly="true" Format="HH:mm:ss" Header="Start"/>
+                <GridColumn Binding="EndTime" IsReadOnly="true" Format="HH:mm:ss" Header="End"/>
+                <GridColumn Binding="Duration" IsReadOnly="true" Format="hh\:mm\:ss"/>
                 <GridColumn Binding="Count" IsReadOnly="true"/>
-                <GridColumn Binding="Display"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
-                    <CellTemplate>
-                        <span class="@context" data-toggle="tooltip" title="Display job"></span>
-                    </CellTemplate>
-                </GridColumn>
+                <GridColumn Binding="Errors" IsReadOnly="true"/>
+                <GridHyperlinkColumn Binding="DisplayLink" ContentBinding="Display" Header="Url"/>
+                
                 <GridColumn Binding="Run" IsReadOnly="true"   HorizontalAlignment="C1HorizontalAlignment.Center" HeaderHorizontalAlignment="C1HorizontalAlignment.Center" Header="" Width="50">
                     <CellTemplate>
                         <span class="@context" data-toggle="tooltip" title="Run script"></span>
