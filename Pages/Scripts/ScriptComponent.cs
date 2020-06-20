@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using nats_ui.Data;
@@ -53,6 +54,16 @@ namespace nats_ui.Pages.Scripts
             Logger.Info($"Set current script: {script.Name}");
             ScriptService.SetCurrent(script);
             NavMgr.NavigateTo("/editor");
+        }
+
+        protected void Run()
+        {
+            foreach (var (_, script) in ScriptGrid.GetCheckedItems())
+            {
+                ExecutorService.Setup(script, ScriptService);
+            }
+
+            ExecutorService.Run();
         }
     }
 }

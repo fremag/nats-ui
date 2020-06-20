@@ -7,7 +7,7 @@ using NLog;
 
 namespace nats_ui.Data
 {
-    public class NatsService
+    public class NatsService : IDisposable
     {
         private static Logger Logger { get; } = LogManager.GetCurrentClassLogger();
         private const string NatsXml = "nats.xml";
@@ -291,6 +291,14 @@ namespace nats_ui.Data
             }
 
             return null;
+        }
+
+        public void Dispose()
+        {
+            foreach (var connection in ConnectionsByName.Values)
+            {
+                connection.Dispose();
+            }           
         }
     }
 }

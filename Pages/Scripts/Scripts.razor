@@ -1,10 +1,9 @@
 ﻿@page "/scripts"
 @inherits ScriptsComponent
-
 @using C1.Blazor.Grid
 @using C1.Blazor.Core
 
-
+<BSButton Class="btn btn-primary" OnClick="@Run" data-togle="tooltip" title="Run selected scripts" >Run</BSButton>
 <BSCard Class="mb-1">
     <BSCard CardType="CardType.Header">Scripts</BSCard>
     <BSCard CardType="CardType.Body" Class="pb-0">

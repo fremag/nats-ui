@@ -13,9 +13,10 @@ namespace nats_ui.Data
         public string Name { get; set; } 
         public string File { get; set; } 
         public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateTime EndTime { get; set; } = DateTime.MinValue;
         public List<IScriptCommand> Commands { get; set; } = new List<IScriptCommand>();
-        public TimeSpan Duration => EndTime - StartTime;
+        public TimeSpan? Duration => EndTime == DateTime.MinValue ? (TimeSpan?) null : EndTime - StartTime;
+        public int Executed => Commands.Count(command => command.Status == ExecutionStatus.Failed || command.Status == ExecutionStatus.Executed);
         public int Errors => Commands.Count(command => command.Status == ExecutionStatus.Failed);
         public int Count => Commands.Count;
         

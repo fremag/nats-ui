@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using nats_ui.Data.Scripts;
 using NLog;
@@ -17,7 +18,6 @@ namespace nats_ui.Data
         public event JobUpdated JobUpdated;
         public event CommandUpdated CommandUpdated;
         
-        private NatsService NatsService { get; set; }
         private ScriptService ScriptService { get; set; }
         public NatsMessage Message { get; set; }
         public Job LastJob { get; set; }
@@ -26,24 +26,22 @@ namespace nats_ui.Data
         public Job Setup(Script script, ScriptService scriptService)
         {
             Logger.Info($"{nameof(Setup)}: {script.Name}, {script.File}");
-            NatsService = new NatsService();
             ScriptService = scriptService;
 
-            var report = new Job {Id = Jobs.Count, File = script.File, Name = script.Name};
+            var report = new Job {Id = Jobs.Count, File = script.File, Name = script.Name, Status = ExecutionStatus.Waiting};
             var commands = BuildCommands(script);
             report.Commands.AddRange(commands);
             Jobs.Add(report);
             return report;
         }
         
-        public Job Setup(Job oldReport, ScriptService scriptService)
+        public Job Setup(Job oldJob, ScriptService scriptService)
         {
-            Logger.Info($"{nameof(Setup)}: {oldReport.Name}, {oldReport.File}");
-            NatsService = new NatsService();
+            Logger.Info($"{nameof(Setup)}: {oldJob.Name}, {oldJob.File}");
             ScriptService = scriptService;
 
-            var job = new Job {Id = Jobs.Count, File = oldReport.File, Name = oldReport.Name, Status = ExecutionStatus.Waiting};
-            var commands = BuildCommands(oldReport.Commands);
+            var job = new Job {Id = Jobs.Count, File = oldJob.File, Name = oldJob.Name, Status = ExecutionStatus.Waiting};
+            var commands = BuildCommands(oldJob.Commands);
             job.Commands.AddRange(commands);
             Jobs.Add(job);
             return job;
@@ -69,6 +67,15 @@ namespace nats_ui.Data
             return commands;
         }
 
+        public void Run()
+        {
+            var job = Jobs.FirstOrDefault(j => j.Status == ExecutionStatus.Waiting);
+            if (job != null)
+            {
+                Run(job);
+            }
+        }
+        
         public void Run(Job job)
         {
             Logger.Info($"{nameof(Run)}: {job.Commands.Count}");
@@ -85,6 +92,8 @@ namespace nats_ui.Data
 
         public void Execute(Job job)
         {
+            var natsService = new NatsService();
+            
             job.StartTime = DateTime.Now;
             job.Status = ExecutionStatus.Running;
             Stopwatch sw = new Stopwatch();
@@ -100,10 +109,11 @@ namespace nats_ui.Data
                     sw.Restart();
                     scriptCommand.Status = ExecutionStatus.Running;
                     CommandUpdated?.Invoke(scriptCommand);
-                    var result = scriptCommand.Execute(NatsService, this);
+                    var result = scriptCommand.Execute(natsService, this);
                     sw.Stop();
                     scriptCommand.Status = ExecutionStatus.Executed;
                     scriptCommand.Result = result;
+                    JobUpdated?.Invoke(job);
                     Logger.Info($"Executed: {result}");
                 }
                 catch (Exception e)
@@ -117,10 +127,18 @@ namespace nats_ui.Data
                 scriptCommand.Duration = sw.Elapsed;
                 CommandUpdated?.Invoke(scriptCommand);
             }
+
             job.EndTime = DateTime.Now;
             job.Status = ExecutionStatus.Executed;
             Logger.Info($"Execute: End, TotalTime: {job.Duration}");
             JobUpdated?.Invoke(job);
+            natsService.Dispose();
+
+            var nextJob = Jobs.FirstOrDefault(aJob => aJob.Status == ExecutionStatus.Waiting);
+            if (nextJob != null)
+            {
+                Execute(nextJob);
+            }
         }
     }
 }
