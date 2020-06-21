@@ -5,7 +5,7 @@ namespace nats_ui.Pages.Sessions
 {
     public class SessionCellFactory : StandardCellFactory<Session>
     {
-        protected override void PrepareCellStyle(string colName, Session job, C1Style cellType)
+        protected override void PrepareCellStyle(string colName, Session job, C1Style cellStyle)
         {
             
         }

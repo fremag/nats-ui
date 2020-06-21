@@ -5,7 +5,7 @@ namespace nats_ui.Pages.Messages
 {
     public class MessageCellFactory : StandardCellFactory<NatsMessage>
     {
-        protected override void PrepareCellStyle(string colName, NatsMessage job, C1Style cellType)
+        protected override void PrepareCellStyle(string colName, NatsMessage job, C1Style cellStyle)
         {
             
         }

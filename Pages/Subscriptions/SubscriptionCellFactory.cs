@@ -5,7 +5,7 @@ namespace nats_ui.Pages.Subscriptions
 {
     public class SubscriptionCellFactory : StandardCellFactory<NatsSubscription>
     {
-        protected override void PrepareCellStyle(string colName, NatsSubscription job, C1Style cellType)
+        protected override void PrepareCellStyle(string colName, NatsSubscription job, C1Style cellStyle)
         {
         }
    }

@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using nats_ui.Data;
 using nats_ui.Data.Scripts;
-using nats_ui.Pages.History;
 using NLog;
 
 namespace nats_ui.Pages.Jobs

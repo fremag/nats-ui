@@ -5,7 +5,7 @@ namespace nats_ui.Data
 {
     public abstract class StandardCellFactory<T> : GridCellFactory where T : ICheckable
     {
-        protected abstract void PrepareCellStyle(string colName, T job, C1Style cellType);
+        protected abstract void PrepareCellStyle(string colName, T job, C1Style cellStyle);
 
         public override void PrepareCellStyle(GridCellType cellType, GridCellRange range, C1Style style)
         {
