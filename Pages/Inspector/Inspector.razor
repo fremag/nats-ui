@@ -10,7 +10,7 @@
         <BSCol XS="12">
             <BSCard Class="mb-1">
                 <BSCard CardType="CardType.Header">Apply Regex / JSon path to data to extract some values</BSCard>
-                <BSCard CardType="CardType.Body"  Class="pb-0">
+                <BSCard CardType="CardType.Body" Class="pb-0">
                     <BSForm Model="@Model" Class="col-sm-12">
                         <BSFormGroup IsRow="true">
                             <BSLabel For="name">Name</BSLabel>
@@ -40,7 +40,7 @@
     <BSRow>
         <BSCol XS="12">
             <BSCard Class="mb-1">
-                <BSCard CardType="CardType.Body"  Class="pb-0">
+                <BSCard CardType="CardType.Body" Class="pb-0">
                     <FlexGrid ItemsSource="DataCaptureGrid.Items"
                               AutoGenerateColumns="false" DefaultColumnWidth="GridLength.Star"
                               ColumnHeaderStyle="@("font-weight:bold")"
@@ -76,8 +76,8 @@
         <BSCol XS="6">
             <BSCard Class="mb-1">
                 <BSCard CardType="CardType.Header">Data</BSCard>
-                <BSCard CardType="CardType.Body"  Class="pb-0">
-                    <pre>@Model.Data</pre>
+                <BSCard CardType="CardType.Body" Class="pb-0">
+                    <textarea class="md-textarea form-control" rows="50">@Model.Data</textarea>
                 </BSCard>
             </BSCard>
 
@@ -86,7 +86,7 @@
             <BSCard Class="mb-1">
                 <BSCard CardType="CardType.Header">Result</BSCard>
                 <BSCard CardType="CardType.Body" Class="pb-0">
-                    <pre>@Model.Result</pre>
+                    <textarea class="md-textarea form-control" rows="50">@Model.Result</textarea>
                 </BSCard>
             </BSCard>
         </BSCol>

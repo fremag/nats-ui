@@ -48,6 +48,11 @@ namespace nats_ui.Data.Scripts
         public ScriptService(string scriptDirectory = DefaultScriptDirectory)
         {
             ScriptDirectory = scriptDirectory;
+            if (!Directory.Exists(ScriptDirectory))
+            {
+                Logger.Info($"Create script directory: {ScriptDirectory}");
+                Directory.CreateDirectory(ScriptDirectory);
+            }
             Load();
         }
         
